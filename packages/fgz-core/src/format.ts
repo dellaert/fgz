@@ -23,7 +23,8 @@ function formatVar(statement: VarDecl): string {
 }
 
 function formatFactor(statement: FactorDecl): string {
-  const base = `factor {${statement.vars.join(", ")}} ${formatPoint(statement.pos)}`;
+  const point = statement.pos ? ` ${formatPoint(statement.pos)}` : "";
+  const base = `factor {${statement.vars.join(", ")}}${point}`;
   return statement.shape ? `${base} shape=${statement.shape}` : base;
 }
 
@@ -62,4 +63,3 @@ export function formatFgz(doc: Document): string {
   const lines = ["fgz 1", ...doc.statements.map(formatStatement)];
   return `${lines.join("\n")}\n`;
 }
-

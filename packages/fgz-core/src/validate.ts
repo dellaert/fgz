@@ -11,6 +11,13 @@ import type {
 } from "./types.js";
 
 type SymbolDecl = VarDecl | BNDecl;
+type FgSymbolDecl = VarDecl;
+type BnSymbolDecl = BNDecl;
+
+interface SymbolBinding {
+  fg: FgSymbolDecl | undefined;
+  bn: BnSymbolDecl | undefined;
+}
 
 function symbolLabel(kind: SymbolDecl["kind"]): string {
   switch (kind) {
@@ -41,8 +48,38 @@ function isBnSymbol(kind: SymbolDecl["kind"]): boolean {
   return kind === "node" || kind === "known_node";
 }
 
-function collectSymbols(statements: Statement[], errors: ValidationIssue[]): Map<string, SymbolDecl> {
-  const symbols = new Map<string, SymbolDecl>();
+function isObserved(kind: SymbolDecl["kind"]): boolean {
+  return kind === "known" || kind === "known_node";
+}
+
+function samePosition(left: VarDecl["pos"], right: BNDecl["pos"]): boolean {
+  return left.x === right.x && left.y === right.y;
+}
+
+function ensureCompatibleBinding(name: string, binding: SymbolBinding, errors: ValidationIssue[]): void {
+  if (!binding.fg || !binding.bn) {
+    return;
+  }
+
+  if (!samePosition(binding.fg.pos, binding.bn.pos)) {
+    addIssue(
+      errors,
+      binding.bn.loc.line,
+      `mixed symbol "${name}" must reuse the same position in factor-graph and Bayes-net declarations`
+    );
+  }
+
+  if (isObserved(binding.fg.kind) !== isObserved(binding.bn.kind)) {
+    addIssue(
+      errors,
+      binding.bn.loc.line,
+      `mixed symbol "${name}" must agree on observed status across variable/node declarations`
+    );
+  }
+}
+
+function collectSymbols(statements: Statement[], errors: ValidationIssue[]): Map<string, SymbolBinding> {
+  const symbols = new Map<string, SymbolBinding>();
 
   for (const statement of statements) {
     if (
@@ -54,16 +91,32 @@ function collectSymbols(statements: Statement[], errors: ValidationIssue[]): Map
       continue;
     }
 
-    const existing = symbols.get(statement.name);
-    if (existing) {
-      addIssue(
-        errors,
-        statement.loc.line,
-        `duplicate symbol "${statement.name}" already declared as ${symbolLabel(existing.kind)} on line ${existing.loc.line}`
-      );
-      continue;
+    const binding = symbols.get(statement.name) ?? { fg: undefined, bn: undefined };
+
+    if (statement.kind === "var" || statement.kind === "known") {
+      if (binding.fg) {
+        addIssue(
+          errors,
+          statement.loc.line,
+          `duplicate symbol "${statement.name}" already declared as ${symbolLabel(binding.fg.kind)} on line ${binding.fg.loc.line}`
+        );
+        continue;
+      }
+      binding.fg = statement;
+    } else if (statement.kind === "node" || statement.kind === "known_node") {
+      if (binding.bn) {
+        addIssue(
+          errors,
+          statement.loc.line,
+          `duplicate symbol "${statement.name}" already declared as ${symbolLabel(binding.bn.kind)} on line ${binding.bn.loc.line}`
+        );
+        continue;
+      }
+      binding.bn = statement;
     }
-    symbols.set(statement.name, statement);
+
+    ensureCompatibleBinding(statement.name, binding, errors);
+    symbols.set(statement.name, binding);
   }
 
   return symbols;
@@ -100,38 +153,25 @@ function collectCurveTargets(statements: Statement[]): Map<string, FactorDecl[]>
 
 function validateFactorDecl(
   statement: FactorDecl,
-  symbols: Map<string, SymbolDecl>,
+  symbols: Map<string, SymbolBinding>,
   errors: ValidationIssue[]
 ): void {
   for (const name of statement.vars) {
-    const symbol = symbols.get(name);
+    const binding = symbols.get(name);
+    const symbol = binding?.fg;
     if (!symbol) {
       addIssue(errors, statement.loc.line, `factor references unknown symbol "${name}"`);
       continue;
     }
-    if (!isFactorSymbol(symbol.kind)) {
-      addIssue(
-        errors,
-        statement.loc.line,
-        `factor references "${name}", which is declared as ${symbolLabel(symbol.kind)}`
-      );
-    }
   }
 }
 
-function validateBnDecl(statement: BNDecl, symbols: Map<string, SymbolDecl>, errors: ValidationIssue[]): void {
+function validateBnDecl(statement: BNDecl, symbols: Map<string, SymbolBinding>, errors: ValidationIssue[]): void {
   for (const parent of statement.parents) {
-    const symbol = symbols.get(parent);
+    const binding = symbols.get(parent);
+    const symbol = binding?.fg ?? binding?.bn;
     if (!symbol) {
       addIssue(errors, statement.loc.line, `node references unknown parent "${parent}"`);
-      continue;
-    }
-    if (!isBnSymbol(symbol.kind)) {
-      addIssue(
-        errors,
-        statement.loc.line,
-        `node parent "${parent}" is declared as ${symbolLabel(symbol.kind)}`
-      );
     }
   }
 }

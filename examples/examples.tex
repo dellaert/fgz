@@ -2,6 +2,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{tikz}
 \usepackage{fancyvrb}
+\usepackage{subcaption}
 
 \input{../tikz/fgz.tikz.tex}
 
@@ -13,6 +14,48 @@
 \maketitle
 
 \section*{Example Gallery}
+
+\subsection*{Toy SLAM Elimination Sequence}
+This sequence approximates the variable-elimination figure from the booklet using five separate fgz files. The early panels mix factor-graph structure with directed node dependencies by letting factor-graph variables act as parents of Bayes-net nodes. As elimination proceeds, the remaining structure transitions from mixed graph fragments to a pure Bayes net.
+
+\begin{figure}[p]
+\centering
+\subcaptionbox{(a)\label{fig:booklet-a}}[0.45\textwidth]{\input{booklet-a.fgz.tex}}
+\hfill
+\subcaptionbox{(b)\label{fig:booklet-b}}[0.45\textwidth]{\input{booklet-b.fgz.tex}}
+
+\medskip
+
+\subcaptionbox{(c)\label{fig:booklet-c}}[0.45\textwidth]{\input{booklet-c.fgz.tex}}
+\hfill
+\subcaptionbox{(d)\label{fig:booklet-d}}[0.45\textwidth]{\input{booklet-d.fgz.tex}}
+
+\medskip
+
+\subcaptionbox{(e)\label{fig:booklet-e}}[0.45\textwidth]{\input{booklet-e.fgz.tex}}
+\caption{A five-panel elimination sequence recreated as separate fgz sources and assembled with LaTeX subfigures.}
+\end{figure}
+
+\paragraph{(a)} The starting panel mixes unary and binary factors over $x_1$, $x_2$, and $x_3$ with directed landmark nodes $l_1$ and $l_2$ above them.
+\paragraph{(b)} The second panel keeps the mixed representation but shifts the unary structure to emphasize the pending elimination of $x_1$.
+\paragraph{(c)} The third panel replaces $x_1$ with a directed dependency $x_2 \rightarrow x_1$ while $x_2$ and $x_3$ still carry the remaining factor-graph terms.
+\paragraph{(d)} The fourth panel advances the elimination so that $x_2$ is also represented as a node, leaving only the unary terms attached to $x_3$.
+\paragraph{(e)} The final panel is a pure Bayes net with the chain $x_3 \rightarrow x_2 \rightarrow x_1$, plus landmark conditionals on $l_1$ and $l_2$.
+
+\noindent\textbf{Source: \texttt{examples/booklet-a.fgz}}
+\VerbatimInput[frame=single,fontsize=\small]{booklet-a.fgz}
+
+\noindent\textbf{Source: \texttt{examples/booklet-b.fgz}}
+\VerbatimInput[frame=single,fontsize=\small]{booklet-b.fgz}
+
+\noindent\textbf{Source: \texttt{examples/booklet-c.fgz}}
+\VerbatimInput[frame=single,fontsize=\small]{booklet-c.fgz}
+
+\noindent\textbf{Source: \texttt{examples/booklet-d.fgz}}
+\VerbatimInput[frame=single,fontsize=\small]{booklet-d.fgz}
+
+\noindent\textbf{Source: \texttt{examples/booklet-e.fgz}}
+\VerbatimInput[frame=single,fontsize=\small]{booklet-e.fgz}
 
 \subsection*{Basic Mixed Diagram}
 This example mixes the two supported diagram families in one file. The lower portion is a factor-graph fragment with one known variable, one latent variable, and one implied factor edge set. The upper portion is a Bayes net fragment with a curved directed edge override.

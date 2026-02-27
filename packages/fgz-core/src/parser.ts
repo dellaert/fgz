@@ -101,18 +101,19 @@ function parseVarLike(raw: string, line: number): VarDecl | undefined {
 
 function parseFactor(raw: string, line: number): FactorDecl | undefined {
   const match = raw.match(
-    new RegExp(`^factor\\s+\\{([^}]*)\\}\\s+${POINT_PATTERN}(?:\\s+shape=(circle|square))?\\s*$`)
+    new RegExp(`^factor\\s+\\{([^}]*)\\}(?:\\s+${POINT_PATTERN})?(?:\\s+shape=(circle|square))?\\s*$`)
   );
   if (!match) {
     return undefined;
   }
 
+  const hasPoint = match[2] !== undefined && match[3] !== undefined;
   const shape = match[4] as FactorDecl["shape"] | undefined;
 
   return {
     kind: "factor",
     vars: parseNameList(capture(match, 1, line), line, "factor variable list", false),
-    pos: parsePoint(line, capture(match, 2, line), capture(match, 3, line)),
+    ...(hasPoint ? { pos: parsePoint(line, capture(match, 2, line), capture(match, 3, line)) } : {}),
     ...(shape ? { shape } : {}),
     loc: { line }
   };

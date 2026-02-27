@@ -13,10 +13,12 @@ for (const file of fgzFiles) {
   });
 }
 
-execFileSync(
-  "pdflatex",
-  ["-interaction=nonstopmode", "-halt-on-error", "-output-directory", examplesDir, join(examplesDir, "examples.tex")],
-  {
-    stdio: "inherit"
-  }
-);
+for (let pass = 0; pass < 2; pass += 1) {
+  execFileSync(
+    "pdflatex",
+    ["-interaction=nonstopmode", "-halt-on-error", "-output-directory", examplesDir, join(examplesDir, "examples.tex")],
+    {
+      stdio: "inherit"
+    }
+  );
+}

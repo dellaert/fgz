@@ -29,4 +29,24 @@ curve y -> x via (1, 2)
     });
     expect(() => assertValid(doc)).toThrow(FgzError);
   });
+
+  it("accepts mixed diagrams where factor-graph variables are parents of nodes", () => {
+    const doc = parseFgz(`fgz 1
+variable x (0, 0)
+node l {x} (1, 1)
+`);
+
+    expect(validate(doc)).toEqual({ ok: true, errors: [] });
+  });
+
+  it("accepts missing factor positions for higher-arity factors", () => {
+    const doc = parseFgz(`fgz 1
+variable x (0, 0)
+variable y (2, 0)
+variable z (4, 0)
+factor {x, y, z}
+`);
+
+    expect(validate(doc)).toEqual({ ok: true, errors: [] });
+  });
 });

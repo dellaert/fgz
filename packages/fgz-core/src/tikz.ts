@@ -1,5 +1,6 @@
 import { assertValid } from "./validate.js";
-import type { BNDecl, CurveDecl, Document, FactorDecl, Statement, Theme, VarDecl } from "./types.js";
+import { FgzError } from "./error.js";
+import type { BNDecl, CurveDecl, Document, FactorDecl, Point, Statement, Theme, VarDecl } from "./types.js";
 
 interface FactorBinding {
   factor: FactorDecl;
@@ -96,11 +97,44 @@ function nodeLine(statement: VarDecl | BNDecl, doc: Document): string {
   )}}{${labelFor(statement.name, doc)}}`;
 }
 
-function factorLine(statement: FactorDecl, factorIds: Map<FactorDecl, string>): string {
+function midpointRaw(left: number, right: number): string {
+  const value = (left + right) / 2;
+  return String(value);
+}
+
+function resolveFactorPoint(statement: FactorDecl, positions: Map<string, Point>): Point {
+  if (statement.pos) {
+    return statement.pos;
+  }
+
+  const first = statement.vars[0];
+  const second = statement.vars[1];
+  if (!first || !second) {
+    throw new FgzError("binary factor position inference requires two variables", statement.loc.line);
+  }
+
+  const left = positions.get(first);
+  const right = positions.get(second);
+  if (!left || !right) {
+    throw new FgzError("binary factor position inference requires declared variable positions", statement.loc.line);
+  }
+
+  const rawX = midpointRaw(left.x, right.x);
+  const rawY = midpointRaw(left.y, right.y);
+  return {
+    x: (left.x + right.x) / 2,
+    y: (left.y + right.y) / 2,
+    rawX,
+    rawY
+  };
+}
+
+function factorLine(statement: FactorDecl, factorIds: Map<FactorDecl, string>, positions: Map<string, Point>): string {
   const macro = statement.shape === "square" ? "\\fgzFactorSquare" : "\\fgzFactor";
+  const point = resolveFactorPoint(statement, positions);
   return `${macro}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${formatCoordinate(
-    statement.pos.rawX
-  )}}{${formatCoordinate(statement.pos.rawY)}}`;
+    point.rawX
+  )}}{${formatCoordinate(point.rawY)}}`;
 }
 
 /**
@@ -115,6 +149,8 @@ export function toTikz(doc: Document): string {
   const curves = collectCurveOverrides(doc.statements);
   const curvedFactorEdges = new Set<string>();
   const edgeLines: string[] = [];
+  const positions = new Map<string, Point>();
+  const renderedSymbols = new Set<string>();
 
   for (const statement of doc.statements) {
     switch (statement.kind) {
@@ -122,10 +158,16 @@ export function toTikz(doc: Document): string {
       case "known":
       case "node":
       case "known_node":
-        lines.push(nodeLine(statement, doc));
+        if (!renderedSymbols.has(statement.name)) {
+          lines.push(nodeLine(statement, doc));
+          renderedSymbols.add(statement.name);
+        }
+        if (!positions.has(statement.name)) {
+          positions.set(statement.name, statement.pos);
+        }
         break;
       case "factor":
-        lines.push(factorLine(statement, factorIds));
+        lines.push(factorLine(statement, factorIds, positions));
         break;
       default:
         break;

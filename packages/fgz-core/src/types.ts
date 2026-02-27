@@ -37,7 +37,7 @@ export interface VarDecl {
 export interface FactorDecl {
   kind: "factor";
   vars: string[];
-  pos: Point;
+  pos?: Point;
   shape?: "circle" | "square";
   loc: SourceLocation;
 }
@@ -85,4 +85,3 @@ export interface ValidationResult {
   ok: boolean;
   errors: ValidationIssue[];
 }
-

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { parseFgz } from "../src/index.js";
+import { formatFgz, parseFgz } from "../src/index.js";
 
 const basicExample = readFileSync(new URL("../../../examples/basic.fgz", import.meta.url), "utf8");
 
@@ -25,5 +25,20 @@ describe("parseFgz", () => {
       node: 1,
       curve: 1
     });
+  });
+
+  it("preserves binary factors without authored positions", () => {
+    const doc = parseFgz(`fgz 1
+variable x (0, 0)
+variable y (2, 0)
+factor {x, y}
+`);
+
+    expect(doc.statements[2]).toMatchObject({
+      kind: "factor",
+      vars: ["x", "y"]
+    });
+    expect(doc.statements[2] && "pos" in doc.statements[2] ? doc.statements[2].pos : undefined).toBeUndefined();
+    expect(formatFgz(doc)).toContain("factor {x, y}\n");
   });
 });
