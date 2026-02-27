@@ -117,4 +117,19 @@ node x {} (0, 0) size=16mm font=scriptsize
 
     expect(tikz).toContain("\\fgzVarOpts{fgz_x}{0}{0}{$x$}{, minimum size=16mm, font=\\scriptsize}");
   });
+
+  it("emits text, line, and box annotations", () => {
+    const tikz = toTikz(
+      parseFgz(`fgz 1
+t = k-1
+text t (0, 1) font=small
+line (1, 0) (1, 2) style=dashed
+box (2, 0) (4, 3) color=black!50
+`)
+    );
+
+    expect(tikz).toContain("\\fgzTextOpts{0}{1}{$k-1$}{, font=\\small}");
+    expect(tikz).toContain("\\fgzLineOpts{1}{0}{1}{2}{, dashed}");
+    expect(tikz).toContain("\\fgzBoxOpts{2}{0}{4}{3}{, draw=black!50}");
+  });
 });

@@ -1,10 +1,12 @@
 import { FgzError } from "./error.js";
 import type {
   BNDecl,
+  BoxDecl,
   CurveDecl,
   Document,
   EdgeDecl,
   FactorDecl,
+  LineDecl,
   Statement,
   ValidationIssue,
   ValidationResult,
@@ -239,6 +241,16 @@ function validateEdgeDecl(statement: EdgeDecl, statements: Statement[], errors: 
   }
 }
 
+function validateLinearStyle(
+  statement: LineDecl | BoxDecl,
+  noun: "line" | "box",
+  errors: ValidationIssue[]
+): void {
+  if (statement.style && statement.style !== "solid" && statement.style !== "dashed") {
+    addIssue(errors, statement.loc.line, `unknown ${noun} style "${statement.style}"`);
+  }
+}
+
 /**
  * Validate a parsed document.
  */
@@ -266,6 +278,12 @@ export function validate(doc: Document): ValidationResult {
         break;
       case "edge":
         validateEdgeDecl(statement, doc.statements, errors);
+        break;
+      case "line":
+        validateLinearStyle(statement, "line", errors);
+        break;
+      case "box":
+        validateLinearStyle(statement, "box", errors);
         break;
       default:
         break;

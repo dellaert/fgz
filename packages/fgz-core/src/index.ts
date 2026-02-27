@@ -4,15 +4,18 @@ export { parseFgz } from "./parser.js";
 export { toTikz } from "./tikz.js";
 export type {
   BNDecl,
+  BoxDecl,
   CurveDecl,
   Document,
   EdgeDecl,
   FactorDecl,
+  LineDecl,
   MacroDef,
   Point,
   SourceLocation,
   StyleDecl,
   Statement,
+  TextDecl,
   Theme,
   ThemeDecl,
   ValidationIssue,

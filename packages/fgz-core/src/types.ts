@@ -88,6 +88,33 @@ export interface EdgeDecl {
   loc: SourceLocation;
 }
 
+export interface TextDecl {
+  kind: "text";
+  name: string;
+  pos: Point;
+  color?: string;
+  font?: string;
+  loc: SourceLocation;
+}
+
+export interface LineDecl {
+  kind: "line";
+  from: Point;
+  to: Point;
+  style?: "solid" | "dashed";
+  color?: string;
+  loc: SourceLocation;
+}
+
+export interface BoxDecl {
+  kind: "box";
+  from: Point;
+  to: Point;
+  style?: "solid" | "dashed";
+  color?: string;
+  loc: SourceLocation;
+}
+
 export type Statement =
   | ThemeDecl
   | StyleDecl
@@ -96,7 +123,10 @@ export type Statement =
   | FactorDecl
   | BNDecl
   | CurveDecl
-  | EdgeDecl;
+  | EdgeDecl
+  | TextDecl
+  | LineDecl
+  | BoxDecl;
 
 /** Parsed fgz document. */
 export interface Document {

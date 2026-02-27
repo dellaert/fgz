@@ -1,13 +1,16 @@
 import type {
   BNDecl,
+  BoxDecl,
   CurveDecl,
   Document,
   EdgeDecl,
   FactorDecl,
+  LineDecl,
   MacroDef,
   Point,
   StyleDecl,
   Statement,
+  TextDecl,
   VarDecl
 } from "./types.js";
 
@@ -76,6 +79,27 @@ function formatEdge(statement: EdgeDecl): string {
   ])}`;
 }
 
+function formatText(statement: TextDecl): string {
+  return `text ${statement.name} ${formatPoint(statement.pos)}${formatAttributes([
+    ["color", statement.color],
+    ["font", statement.font]
+  ])}`;
+}
+
+function formatLine(statement: LineDecl): string {
+  return `line ${formatPoint(statement.from)} ${formatPoint(statement.to)}${formatAttributes([
+    ["style", statement.style],
+    ["color", statement.color]
+  ])}`;
+}
+
+function formatBox(statement: BoxDecl): string {
+  return `box ${formatPoint(statement.from)} ${formatPoint(statement.to)}${formatAttributes([
+    ["style", statement.style],
+    ["color", statement.color]
+  ])}`;
+}
+
 function formatStatement(statement: Statement): string {
   switch (statement.kind) {
     case "theme":
@@ -96,6 +120,12 @@ function formatStatement(statement: Statement): string {
       return formatCurve(statement);
     case "edge":
       return formatEdge(statement);
+    case "text":
+      return formatText(statement);
+    case "line":
+      return formatLine(statement);
+    case "box":
+      return formatBox(statement);
   }
 }
 

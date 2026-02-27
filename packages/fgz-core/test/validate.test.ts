@@ -112,4 +112,19 @@ edge x_1 -> x_0 label=0 label_pos=1.2
       message: 'edge label_pos must be between 0 and 1, got "1.2"'
     });
   });
+
+  it("rejects invalid annotation styles", () => {
+    const doc = parseFgz(`fgz 1
+line (0, 0) (0, 1) style=dotty
+box (0, 0) (1, 1) style=wiggly
+`);
+
+    const result = validate(doc);
+
+    expect(result.ok).toBe(false);
+    expect(result.errors).toEqual([
+      { line: 2, message: 'unknown line style "dotty"' },
+      { line: 3, message: 'unknown box style "wiggly"' }
+    ]);
+  });
 });

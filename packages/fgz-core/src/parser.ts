@@ -1,14 +1,17 @@
 import { FgzError } from "./error.js";
 import type {
   BNDecl,
+  BoxDecl,
   CurveDecl,
   Document,
   EdgeDecl,
   FactorDecl,
+  LineDecl,
   MacroDef,
   Point,
   StyleDecl,
   Statement,
+  TextDecl,
   Theme,
   ThemeDecl,
   VarDecl
@@ -272,6 +275,71 @@ function parseEdge(raw: string, line: number): EdgeDecl | undefined {
   };
 }
 
+function parseText(raw: string, line: number): TextDecl | undefined {
+  const match = raw.match(new RegExp(`^text\\s+${NAME_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
+  if (!match) {
+    return undefined;
+  }
+
+  const attrs = parseAttributes(match[4], line, ["color", "font"]);
+  return {
+    kind: "text",
+    name: capture(match, 1, line),
+    pos: parsePoint(line, capture(match, 2, line), capture(match, 3, line)),
+    ...(attrs.color ? { color: attrs.color } : {}),
+    ...(attrs.font ? { font: attrs.font } : {}),
+    loc: { line }
+  };
+}
+
+function parseLine(raw: string, line: number): LineDecl | undefined {
+  const match = raw.match(new RegExp(`^line\\s+${POINT_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
+  if (!match) {
+    return undefined;
+  }
+
+  const attrs = parseAttributes(match[5], line, ["style", "color"]);
+  const statement: LineDecl = {
+    kind: "line",
+    from: parsePoint(line, capture(match, 1, line), capture(match, 2, line)),
+    to: parsePoint(line, capture(match, 3, line), capture(match, 4, line)),
+    loc: { line }
+  };
+
+  if (attrs.style) {
+    statement.style = attrs.style as NonNullable<LineDecl["style"]>;
+  }
+  if (attrs.color) {
+    statement.color = attrs.color;
+  }
+
+  return statement;
+}
+
+function parseBox(raw: string, line: number): BoxDecl | undefined {
+  const match = raw.match(new RegExp(`^box\\s+${POINT_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
+  if (!match) {
+    return undefined;
+  }
+
+  const attrs = parseAttributes(match[5], line, ["style", "color"]);
+  const statement: BoxDecl = {
+    kind: "box",
+    from: parsePoint(line, capture(match, 1, line), capture(match, 2, line)),
+    to: parsePoint(line, capture(match, 3, line), capture(match, 4, line)),
+    loc: { line }
+  };
+
+  if (attrs.style) {
+    statement.style = attrs.style as NonNullable<BoxDecl["style"]>;
+  }
+  if (attrs.color) {
+    statement.color = attrs.color;
+  }
+
+  return statement;
+}
+
 function parseStatement(raw: string, line: number): Statement {
   return (
     parseTheme(raw, line) ??
@@ -281,6 +349,9 @@ function parseStatement(raw: string, line: number): Statement {
     parseBn(raw, line) ??
     parseCurve(raw, line) ??
     parseEdge(raw, line) ??
+    parseText(raw, line) ??
+    parseLine(raw, line) ??
+    parseBox(raw, line) ??
     parseMacro(raw, line) ??
     (() => {
       throw new FgzError("could not parse statement", line);

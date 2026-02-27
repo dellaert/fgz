@@ -1,6 +1,6 @@
 fgz 1
 theme textbook
-style node_size=8.4mm factor_size=3.0mm label_sep=0.2pt label_font=small
+style node_size=9mm factor_size=3.0mm label_sep=0.2pt label_font=scriptsize
 
 v0 = \twist_0
 va = \twist_a
@@ -39,34 +39,34 @@ variable va (4.0, 5.9)
 variable vb (8.0, 5.9)
 variable vc (12.0, 5.9)
 
-known qd1 (2.42, 6.95) size=9.6mm font=scriptsize
-known qd2 (6.42, 6.95) size=9.6mm font=scriptsize
-known qd3 (10.42, 6.95) size=9.6mm font=scriptsize
+known qd1 (2.42, 6.95)
+known qd2 (6.42, 6.95)
+known qd3 (10.42, 6.95)
 
 variable dv0 (1.0, 4.1)
 variable dva (5.2, 4.1)
 variable dvb (9.2, 4.1)
 variable dvc (13.2, 4.1)
 
-known qdd1 (2.42, 5.0) size=9.8mm font=scriptsize
-known qdd2 (6.42, 5.0) size=9.8mm font=scriptsize
-known qdd3 (10.42, 5.0) size=9.8mm font=scriptsize
+known qdd1 (2.42, 5.0)
+known qdd2 (6.42, 5.0)
+known qdd3 (10.42, 5.0)
 
-variable f01 (1.8, 2.6) size=11.6mm font=footnotesize
-variable fa1 (4.2, 2.6) size=11.6mm font=footnotesize
-variable fa2 (5.8, 2.6) size=11.6mm font=footnotesize
-variable fb2 (8.2, 2.6) size=11.6mm font=footnotesize
-variable fb3 (9.8, 2.6) size=11.6mm font=footnotesize
-variable fc3 (12.2, 2.6) size=11.6mm font=footnotesize
-known fct (14.6, 2.6) size=11.8mm font=footnotesize
+variable f01 (1.8, 2.6) size=11.4mm font=footnotesize
+variable fa1 (4.2, 2.6) size=11.4mm font=footnotesize
+variable fa2 (5.8, 2.6) size=11.4mm font=footnotesize
+variable fb2 (8.2, 2.6) size=11.4mm font=footnotesize
+variable fb3 (9.8, 2.6) size=11.4mm font=footnotesize
+variable fc3 (12.2, 2.6) size=11.4mm font=footnotesize
+known fct (14.6, 2.6) size=11.4mm font=footnotesize
 
-known tau1 (3.0, 1.35) size=8.8mm font=scriptsize
-known tau2 (7.0, 1.35) size=8.8mm font=scriptsize
-known tau3 (11.0, 1.35) size=8.8mm font=scriptsize
+known tau1 (3.0, 1.35)
+known tau2 (7.0, 1.35)
+known tau3 (11.0, 1.35)
 
-known ga (5.0, 0.75) size=10.6mm font=scriptsize
-known gb (9.0, 0.75) size=10.6mm font=scriptsize
-known gc (13.0, 0.75) size=10.6mm font=scriptsize
+known ga (5.0, 0.75)
+known gb (9.0, 0.75)
+known gc (13.0, 0.75)
 
 factor {v0, qd1, va} (3.0, 5.9) color=black
 factor {va, qd2, vb} (7.0, 5.9) color=black

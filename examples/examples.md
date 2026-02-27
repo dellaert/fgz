@@ -565,3 +565,39 @@ factor {fa1, tau1} (3.0, 1.95) color=black
 factor {fb2, tau2} (7.0, 1.95) color=black
 factor {fc3, tau3} (11.0, 1.95) color=black
 ```
+
+### 16. Tracking Message-Passing Panels
+
+These four panels reconstruct a multitarget-tracking factor-graph decomposition and
+exercise the new annotation statements for dashed separators, free text, and outline
+boxes.
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="./guide-tracking-temporal-chain.svg" alt="Temporal chain panel" width="320"><br>
+      <strong>(a)</strong> Temporal chain.
+    </td>
+    <td align="center">
+      <img src="./guide-tracking-association-star.svg" alt="Association star panel" width="320"><br>
+      <strong>(b)</strong> Association star.
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./guide-tracking-bipartite-block.svg" alt="Bipartite block panel" width="320"><br>
+      <strong>(c)</strong> Bipartite block.
+    </td>
+    <td align="center">
+      <img src="./guide-tracking-lifted-box.svg" alt="Lifted box panel" width="320"><br>
+      <strong>(d)</strong> Lifted box construction.
+    </td>
+  </tr>
+</table>
+
+Sources:
+
+- [`guide-tracking-temporal-chain.fgz`](./guide-tracking-temporal-chain.fgz)
+- [`guide-tracking-association-star.fgz`](./guide-tracking-association-star.fgz)
+- [`guide-tracking-bipartite-block.fgz`](./guide-tracking-bipartite-block.fgz)
+- [`guide-tracking-lifted-box.fgz`](./guide-tracking-lifted-box.fgz)

@@ -104,7 +104,13 @@
 \newcommand{\fgzFactorColor}[4]{\node[fgz factor, draw=#4, fill=#4] (#1) at (#2,#3) {};}
 \newcommand{\fgzFactorSquare}[3]{\node[fgz factor square] (#1) at (#2,#3) {};}
 \newcommand{\fgzFactorSquareColor}[4]{\node[fgz factor square, draw=#4, fill=#4] (#1) at (#2,#3) {};}
+\newcommand{\fgzText}[3]{\node[draw=none, inner sep=0pt] at (#1,#2) {#3};}
+\newcommand{\fgzTextOpts}[4]{\node[draw=none, inner sep=0pt#4] at (#1,#2) {#3};}
 \newcommand{\fgz@bgdraw}[1]{\begin{pgfonlayer}{fgzbg}#1\end{pgfonlayer}}
+\newcommand{\fgzLine}[4]{\fgz@bgdraw{\draw[fgz edge] (#1,#2) -- (#3,#4);}}
+\newcommand{\fgzLineOpts}[5]{\fgz@bgdraw{\draw[fgz edge#5] (#1,#2) -- (#3,#4);}}
+\newcommand{\fgzBox}[4]{\fgz@bgdraw{\draw[fgz edge] (#1,#2) rectangle (#3,#4);}}
+\newcommand{\fgzBoxOpts}[5]{\fgz@bgdraw{\draw[fgz edge#5] (#1,#2) rectangle (#3,#4);}}
 \newcommand{\fgzEdgeU}[2]{\fgz@bgdraw{\draw[fgz edge] (#1) -- (#2);}}
 \newcommand{\fgzEdgeUColor}[3]{\fgz@bgdraw{\draw[fgz edge, draw=#3] (#1) -- (#2);}}
 \newcommand{\fgzEdgeD}[2]{\fgz@bgdraw{\draw[fgz edge directed] (#1) -- (#2);}}

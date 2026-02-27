@@ -1,0 +1,43 @@
+fgz 1
+style node_size=9mm label_sep=0.2pt label_font=scriptsize
+
+km2 = k-2
+km1 = k-1
+k0 = k
+xa = x_{-}
+xc = x
+fp = f_{-}
+fz = f^{z}
+pa = (a)
+
+text km2 (0.6, 4.0)
+text km1 (3.6, 4.0)
+text k0 (7.2, 4.0)
+text pa (5.1, -0.2)
+
+line (1.7, 0.8) (1.7, 4.1) style=dashed color=black!50
+line (5.3, 0.8) (5.3, 4.1) style=dashed color=black!50
+
+variable x_l (1.0, 2.3) color=gray!15
+known f_l (2.9, 2.3) color=green!20
+variable x_m (4.6, 2.3) color=gray!15
+known z_m (4.6, 1.35) color=red!20
+known f_r (6.7, 2.3) color=green!20
+variable x_r (8.6, 2.3) color=gray!15
+known z_r (8.6, 1.35) color=red!20
+
+x_l = x_{-}
+f_l = f_{-}
+x_m = x_{-}
+z_m = f^{z}
+f_r = f
+x_r = x
+z_r = f^{z}
+
+line (0.0, 2.3) (1.0, 2.3)
+line (1.0, 2.3) (2.9, 2.3)
+line (2.9, 2.3) (4.6, 2.3)
+line (4.6, 2.3) (4.6, 1.35)
+line (4.6, 2.3) (6.7, 2.3)
+line (6.7, 2.3) (8.6, 2.3)
+line (8.6, 2.3) (8.6, 1.35)

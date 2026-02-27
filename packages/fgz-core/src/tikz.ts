@@ -1,6 +1,19 @@
 import { assertValid } from "./validate.js";
 import { FgzError } from "./error.js";
-import type { BNDecl, CurveDecl, Document, EdgeDecl, FactorDecl, Point, Statement, StyleDecl, Theme, VarDecl } from "./types.js";
+import type {
+  BNDecl,
+  BoxDecl,
+  CurveDecl,
+  Document,
+  EdgeDecl,
+  FactorDecl,
+  LineDecl,
+  Point,
+  Statement,
+  TextDecl,
+  Theme,
+  VarDecl
+} from "./types.js";
 
 interface FactorBinding {
   factor: FactorDecl;
@@ -51,6 +64,59 @@ function bridgeMacro(color: string | undefined): string {
   const head = "BridgeU";
   const colored = color ? "Color" : "";
   return `\\fgz${head}${colored}`;
+}
+
+function textLine(statement: TextDecl, doc: Document): string {
+  const options: string[] = [];
+  if (statement.color) {
+    options.push(`text=${statement.color}`);
+  }
+  if (statement.font) {
+    options.push(`font=${latexFont(statement.font)}`);
+  }
+
+  return options.length === 0
+    ? `\\fgzText{${formatCoordinate(statement.pos.rawX)}}{${formatCoordinate(statement.pos.rawY)}}{${labelFor(
+        statement.name,
+        doc
+      )}}`
+    : `\\fgzTextOpts{${formatCoordinate(statement.pos.rawX)}}{${formatCoordinate(statement.pos.rawY)}}{${labelFor(
+        statement.name,
+        doc
+      )}}{, ${options.join(", ")}}`;
+}
+
+function linearOptionSuffix(style: "solid" | "dashed" | undefined, color: string | undefined): string {
+  const options: string[] = [];
+  if (style === "dashed") {
+    options.push("dashed");
+  }
+  if (color) {
+    options.push(`draw=${color}`);
+  }
+  return edgeOptionSuffix(options);
+}
+
+function lineDeclLine(statement: LineDecl): string {
+  const options = linearOptionSuffix(statement.style, statement.color);
+  return options === ""
+    ? `\\fgzLine{${formatCoordinate(statement.from.rawX)}}{${formatCoordinate(statement.from.rawY)}}{${formatCoordinate(
+        statement.to.rawX
+      )}}{${formatCoordinate(statement.to.rawY)}}`
+    : `\\fgzLineOpts{${formatCoordinate(statement.from.rawX)}}{${formatCoordinate(
+        statement.from.rawY
+      )}}{${formatCoordinate(statement.to.rawX)}}{${formatCoordinate(statement.to.rawY)}}{${options}}`;
+}
+
+function boxDeclLine(statement: BoxDecl): string {
+  const options = linearOptionSuffix(statement.style, statement.color);
+  return options === ""
+    ? `\\fgzBox{${formatCoordinate(statement.from.rawX)}}{${formatCoordinate(statement.from.rawY)}}{${formatCoordinate(
+        statement.to.rawX
+      )}}{${formatCoordinate(statement.to.rawY)}}`
+    : `\\fgzBoxOpts{${formatCoordinate(statement.from.rawX)}}{${formatCoordinate(
+        statement.from.rawY
+      )}}{${formatCoordinate(statement.to.rawX)}}{${formatCoordinate(statement.to.rawY)}}{${options}}`;
 }
 
 function edgeOptionSuffix(options: string[]): string {
@@ -409,6 +475,15 @@ export function toTikz(doc: Document): string {
         if (!positions.has(statement.name)) {
           positions.set(statement.name, statement.pos);
         }
+        break;
+      case "text":
+        lines.push(textLine(statement, doc));
+        break;
+      case "line":
+        lines.push(lineDeclLine(statement));
+        break;
+      case "box":
+        lines.push(boxDeclLine(statement));
         break;
       case "factor":
         factorGeometry.set(statement, resolveFactorGeometry(statement, positions));

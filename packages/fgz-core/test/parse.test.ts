@@ -116,4 +116,20 @@ node p {x} (0, 0) size=16mm font=scriptsize
     });
     expect(formatFgz(doc)).toContain("node p {x} (0, 0) size=16mm font=scriptsize\n");
   });
+
+  it("parses text, line, and box annotations", () => {
+    const doc = parseFgz(`fgz 1
+t = k-1
+text t (0, 1) font=small
+line (1, 0) (1, 2) style=dashed
+box (2, 0) (4, 3) color=black!50
+`);
+
+    expect(doc.statements[1]).toMatchObject({ kind: "text", name: "t", font: "small" });
+    expect(doc.statements[2]).toMatchObject({ kind: "line", style: "dashed" });
+    expect(doc.statements[3]).toMatchObject({ kind: "box", color: "black!50" });
+    expect(formatFgz(doc)).toContain("text t (0, 1) font=small\n");
+    expect(formatFgz(doc)).toContain("line (1, 0) (1, 2) style=dashed\n");
+    expect(formatFgz(doc)).toContain("box (2, 0) (4, 3) color=black!50\n");
+  });
 });
