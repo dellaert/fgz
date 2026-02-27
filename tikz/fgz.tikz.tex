@@ -2,6 +2,9 @@
 
 \makeatletter
 
+\pgfdeclarelayer{fgzbg}
+\pgfsetlayers{fgzbg,main}
+
 \definecolor{fgzClassicStroke}{HTML}{1F2933}
 \definecolor{fgzClassicFactor}{HTML}{111827}
 \definecolor{fgzTextbookStroke}{HTML}{0F172A}
@@ -14,8 +17,8 @@
 
 \newcommand{\fgz@applystyles}{%
   \tikzset{
-    fgz var/.style={draw=fgz@stroke, circle, minimum size=8mm, inner sep=0pt, line width=0.9pt},
-    fgz known/.style={draw=fgz@stroke, rectangle, minimum size=8mm, inner sep=0pt, line width=0.9pt},
+    fgz var/.style={draw=fgz@stroke, fill=white, circle, minimum size=8mm, inner sep=0pt, line width=0.9pt},
+    fgz known/.style={draw=fgz@stroke, fill=white, rectangle, minimum size=8mm, inner sep=0pt, line width=0.9pt},
     fgz factor/.style={draw=fgz@factor, fill=fgz@factor, circle, minimum size=3.2mm, inner sep=0pt},
     fgz factor square/.style={draw=fgz@factor, fill=fgz@factor, rectangle, minimum size=3.2mm, inner sep=0pt},
     fgz edge/.style={draw=fgz@stroke, line width=0.9pt},
@@ -55,13 +58,16 @@
 \newcommand{\fgzFactorColor}[4]{\node[fgz factor, draw=#4, fill=#4] (#1) at (#2,#3) {};}
 \newcommand{\fgzFactorSquare}[3]{\node[fgz factor square] (#1) at (#2,#3) {};}
 \newcommand{\fgzFactorSquareColor}[4]{\node[fgz factor square, draw=#4, fill=#4] (#1) at (#2,#3) {};}
-\newcommand{\fgzEdgeU}[2]{\draw[fgz edge] (#1) -- (#2);}
-\newcommand{\fgzEdgeUColor}[3]{\draw[fgz edge, draw=#3] (#1) -- (#2);}
-\newcommand{\fgzEdgeD}[2]{\draw[fgz edge directed] (#1) -- (#2);}
-\newcommand{\fgzEdgeDColor}[3]{\draw[fgz edge directed, draw=#3] (#1) -- (#2);}
-\newcommand{\fgzCurveU}[4]{\draw[fgz edge] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}
-\newcommand{\fgzCurveUColor}[5]{\draw[fgz edge, draw=#5] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}
-\newcommand{\fgzCurveD}[4]{\draw[fgz edge directed] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}
-\newcommand{\fgzCurveDColor}[5]{\draw[fgz edge directed, draw=#5] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}
+\newcommand{\fgz@bgdraw}[1]{\begin{pgfonlayer}{fgzbg}#1\end{pgfonlayer}}
+\newcommand{\fgzEdgeU}[2]{\fgz@bgdraw{\draw[fgz edge] (#1) -- (#2);}}
+\newcommand{\fgzEdgeUColor}[3]{\fgz@bgdraw{\draw[fgz edge, draw=#3] (#1) -- (#2);}}
+\newcommand{\fgzEdgeD}[2]{\fgz@bgdraw{\draw[fgz edge directed] (#1) -- (#2);}}
+\newcommand{\fgzEdgeDColor}[3]{\fgz@bgdraw{\draw[fgz edge directed, draw=#3] (#1) -- (#2);}}
+\newcommand{\fgzCurveU}[4]{\fgz@bgdraw{\draw[fgz edge] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}}
+\newcommand{\fgzCurveUColor}[5]{\fgz@bgdraw{\draw[fgz edge, draw=#5] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}}
+\newcommand{\fgzCurveD}[4]{\fgz@bgdraw{\draw[fgz edge directed] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}}
+\newcommand{\fgzCurveDColor}[5]{\fgz@bgdraw{\draw[fgz edge directed, draw=#5] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}}
+\newcommand{\fgzBridgeU}[4]{\fgz@bgdraw{\draw[fgz edge] (#1.center) .. controls (#2,#3) and (#2,#3) .. (#4.center);}}
+\newcommand{\fgzBridgeUColor}[5]{\fgz@bgdraw{\draw[fgz edge, draw=#5] (#1.center) .. controls (#2,#3) and (#2,#3) .. (#4.center);}}
 
 \makeatother

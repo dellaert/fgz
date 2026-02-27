@@ -1,0 +1,4 @@
+fgz 1
+variable x_1 (0, 0)
+known x_2 (3.5, 0)
+node l_1 {x_1, x_2} (1.75, 3.5)

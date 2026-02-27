@@ -1,0 +1,8 @@
+fgz 1
+u = u_t
+x = x_t
+l = \ell_t
+known u (0, 0)
+variable x (3.5, 0)
+node l {x} (3.5, 3.5)
+factor {u, x} (1.75, 1.75)

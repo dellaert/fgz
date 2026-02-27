@@ -1,0 +1,5 @@
+fgz 1
+theme textbook
+known z (0, 0)
+variable x (3.5, 0)
+factor {z, x} (1.75, 1.75) shape=square

@@ -9,8 +9,14 @@ interface FactorBinding {
 
 interface FactorGeometry {
   point: Point;
-  curveControl?: Point;
-  curvedVars: Set<string>;
+  bridgedPair?: [string, string];
+}
+
+interface BridgeSpec {
+  left: string;
+  right: string;
+  control: Point;
+  color: string | undefined;
 }
 
 function nodeMacro(statement: VarDecl | BNDecl): string {
@@ -25,6 +31,12 @@ function edgeMacro(directed: boolean, color: string | undefined, curved: boolean
   const direction = directed ? "D" : "U";
   const colored = color ? "Color" : "";
   return `\\fgz${head}${direction}${colored}`;
+}
+
+function bridgeMacro(color: string | undefined): string {
+  const head = "BridgeU";
+  const colored = color ? "Color" : "";
+  return `\\fgz${head}${colored}`;
 }
 
 function symbolId(name: string): string {
@@ -110,6 +122,33 @@ function collectCurveOverrides(statements: Statement[]) {
   return { directed, undirected };
 }
 
+function collectUndirectedOverridesByFactor(
+  statements: Statement[],
+  factorBindings: Map<string, FactorBinding>
+): Map<FactorDecl, CurveDecl[]> {
+  const overrides = new Map<FactorDecl, CurveDecl[]>();
+
+  for (const statement of statements) {
+    if (statement.kind !== "curve" || statement.directed) {
+      continue;
+    }
+
+    const binding = factorBindings.get(factorCurveKey(statement.a, statement.b));
+    if (!binding) {
+      continue;
+    }
+
+    const current = overrides.get(binding.factor);
+    if (current) {
+      current.push(statement);
+    } else {
+      overrides.set(binding.factor, [statement]);
+    }
+  }
+
+  return overrides;
+}
+
 function nodeLine(statement: VarDecl | BNDecl, doc: Document): string {
   const macro = nodeMacro(statement);
   const base = `${macro}{${symbolId(statement.name)}}{${formatCoordinate(statement.pos.rawX)}}{${formatCoordinate(
@@ -141,9 +180,18 @@ function offsetPoint(base: Point, offset: Point): Point {
   };
 }
 
+function controlFromFactorPoint(left: Point, factor: Point, right: Point): Point {
+  return {
+    x: (8 * factor.x - left.x - right.x) / 6,
+    y: (8 * factor.y - left.y - right.y) / 6,
+    rawX: String((8 * factor.x - left.x - right.x) / 6),
+    rawY: String((8 * factor.y - left.y - right.y) / 6)
+  };
+}
+
 function resolveFactorGeometry(statement: FactorDecl, positions: Map<string, Point>): FactorGeometry {
   if (statement.pos) {
-    return { point: statement.pos, curvedVars: new Set<string>() };
+    return { point: statement.pos };
   }
 
   const first = statement.vars[0];
@@ -160,18 +208,12 @@ function resolveFactorGeometry(statement: FactorDecl, positions: Map<string, Poi
 
   const midpoint = midpointPoint(left, right);
   if (!statement.offset) {
-    return { point: midpoint, curvedVars: new Set<string>() };
+    return { point: midpoint };
   }
 
   return {
     point: offsetPoint(midpoint, statement.offset),
-    curveControl: offsetPoint(midpoint, {
-      x: statement.offset.x * 2,
-      y: statement.offset.y * 2,
-      rawX: String(statement.offset.x * 2),
-      rawY: String(statement.offset.y * 2)
-    }),
-    curvedVars: new Set<string>([first, second])
+    bridgedPair: [first, second]
   };
 }
 
@@ -185,6 +227,15 @@ function factorLine(statement: FactorDecl, factorIds: Map<FactorDecl, string>, p
   return statement.color ? `${base}{${statement.color}}` : base;
 }
 
+function bridgeLine(statement: FactorDecl, spec: BridgeSpec): string {
+  const color = spec.color ?? statement.color;
+  const macro = bridgeMacro(color);
+  const base = `${macro}{${symbolId(spec.left)}}{${formatCoordinate(spec.control.rawX)}}{${formatCoordinate(
+    spec.control.rawY
+  )}}{${symbolId(spec.right)}}`;
+  return color ? `${base}{${color}}` : base;
+}
+
 /**
  * Convert a validated fgz document into a readable TikZ snippet.
  */
@@ -195,11 +246,13 @@ export function toTikz(doc: Document): string {
   const factorIds = collectFactorIds(doc.statements);
   const factorBindings = collectFactorCurveBindings(doc.statements, factorIds);
   const curves = collectCurveOverrides(doc.statements);
-  const curvedFactorEdges = new Set<string>();
+  const undirectedOverridesByFactor = collectUndirectedOverridesByFactor(doc.statements, factorBindings);
+  const consumedFactorEdges = new Set<string>();
   const edgeLines: string[] = [];
   const positions = new Map<string, Point>();
   const renderedSymbols = new Set<string>();
   const factorGeometry = new Map<FactorDecl, FactorGeometry>();
+  const bridgeSpecs = new Map<FactorDecl, BridgeSpec>();
 
   for (const statement of doc.statements) {
     switch (statement.kind) {
@@ -217,7 +270,6 @@ export function toTikz(doc: Document): string {
         break;
       case "factor":
         factorGeometry.set(statement, resolveFactorGeometry(statement, positions));
-        lines.push(factorLine(statement, factorIds, positions));
         break;
       default:
         break;
@@ -225,48 +277,70 @@ export function toTikz(doc: Document): string {
   }
 
   for (const statement of doc.statements) {
+    if (statement.kind !== "factor") {
+      continue;
+    }
+
+    const geometry = factorGeometry.get(statement);
+    const overrides = undirectedOverridesByFactor.get(statement) ?? [];
+    const override = overrides[0];
+
+    if (override) {
+      bridgeSpecs.set(statement, {
+        left: override.a,
+        right: override.b,
+        control: override.control,
+        color: override.color ?? statement.color
+      });
+      lines.push(factorLine(statement, factorIds, positions));
+      continue;
+    }
+
+    const pair = geometry?.bridgedPair;
+    if (!pair) {
+      lines.push(factorLine(statement, factorIds, positions));
+      continue;
+    }
+
+    const left = positions.get(pair[0]);
+    const right = positions.get(pair[1]);
+    if (!left || !right || !geometry) {
+      lines.push(factorLine(statement, factorIds, positions));
+      continue;
+    }
+
+    bridgeSpecs.set(statement, {
+      left: pair[0],
+      right: pair[1],
+      control: controlFromFactorPoint(left, geometry.point, right),
+      color: statement.color
+    });
+    lines.push(factorLine(statement, factorIds, positions));
+  }
+
+  for (const statement of doc.statements) {
     if (statement.kind === "factor") {
-      const geometry = factorGeometry.get(statement);
+      const factorId = factorIds.get(statement) ?? "fgz_factor_missing";
+      const bridge = bridgeSpecs.get(statement);
+      if (bridge) {
+        edgeLines.push(bridgeLine(statement, bridge));
+        consumedFactorEdges.add(`${factorId}\u0000${bridge.left}`);
+        consumedFactorEdges.add(`${factorId}\u0000${bridge.right}`);
+      }
+
       for (const name of statement.vars) {
-        const edgeKey = `${factorIds.get(statement) ?? "fgz_factor_missing"}\u0000${name}`;
-        if (curvedFactorEdges.has(edgeKey)) {
-          continue;
-        }
-        if (geometry?.curveControl && geometry.curvedVars.has(name)) {
-          curvedFactorEdges.add(edgeKey);
-          const macro = edgeMacro(false, statement.color, true);
-          const base = `${macro}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${symbolId(name)}}{${formatCoordinate(
-            geometry.curveControl.rawX
-          )}}{${formatCoordinate(geometry.curveControl.rawY)}}`;
-          edgeLines.push(statement.color ? `${base}{${statement.color}}` : base);
+        const edgeKey = `${factorId}\u0000${name}`;
+        if (consumedFactorEdges.has(edgeKey)) {
           continue;
         }
         const macro = edgeMacro(false, statement.color, false);
-        const base = `${macro}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${symbolId(name)}}`;
+        const base = `${macro}{${factorId}}{${symbolId(name)}}`;
         edgeLines.push(statement.color ? `${base}{${statement.color}}` : base);
       }
       continue;
     }
 
     if (statement.kind === "curve" && !statement.directed) {
-      const binding = factorBindings.get(factorCurveKey(statement.a, statement.b));
-      if (!binding) {
-        continue;
-      }
-
-      for (const name of binding.factor.vars) {
-        if (name !== statement.a && name !== statement.b) {
-          continue;
-        }
-        const edgeKey = `${binding.factorId}\u0000${name}`;
-        curvedFactorEdges.add(edgeKey);
-        const color = statement.color ?? binding.factor.color;
-        const macro = edgeMacro(false, color, true);
-        const base = `${macro}{${binding.factorId}}{${symbolId(name)}}{${formatCoordinate(
-          statement.control.rawX
-        )}}{${formatCoordinate(statement.control.rawY)}}`;
-        edgeLines.push(color ? `${base}{${color}}` : base);
-      }
       continue;
     }
 

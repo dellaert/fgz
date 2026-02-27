@@ -1,0 +1,4 @@
+fgz 1
+variable x_1 (0, 0)
+variable x_2 (3.5, 0)
+factor {x_1, x_2} offset=(0,-0.35)

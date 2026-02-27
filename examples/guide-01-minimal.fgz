@@ -1,0 +1,4 @@
+fgz 1
+variable x (0, 0)
+variable y (3.5, 0)
+factor {x, y}

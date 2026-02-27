@@ -2,13 +2,14 @@ fgz 1
 theme classic
 
 variable x_1 (0, 0)
-variable x_2 (2.8, 0)
-variable x_3 (5.6, 0)
-node l_1 {x_1, x_2} (2.8, 2.8)
-node l_2 {x_3} (5.6, 2.8) color=gray!25
+variable x_2 (3.5, 0)
+variable x_3 (7, 0)
+node l_1 {x_1, x_2} (3.5, 3.5)
+node l_2 {x_3} (7, 3.5) color=gray!25
 
-factor {x_1} (-1.4, 0) color=gray!55
-factor {x_1} (0, -1.4) color=gray!55
-factor {x_1, x_2} offset=(0,-0.55) color=gray!55
+factor {x_1} (-1.75, 0) color=gray!55
+factor {x_1} (0, -1.75) color=gray!55
+factor {x_1, x_2} color=gray!55
+factor {x_1, x_2} offset=(0,-0.7) color=gray!55
 factor {x_2, x_3} color=gray!55
-factor {x_3} (5.6, -1.4) color=red
+factor {x_3} (7, -1.75) color=red

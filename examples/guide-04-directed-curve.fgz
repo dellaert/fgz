@@ -1,0 +1,5 @@
+fgz 1
+node z_1 {} (0, 0)
+known_node y {z_1} (3.5, 0)
+node z_2 {z_1} (1.75, 3.5)
+curve z_1 -> z_2 via (0.9, 2.8)

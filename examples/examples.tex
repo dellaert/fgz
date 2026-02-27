@@ -1,84 +1,243 @@
 \documentclass{article}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=0.9in]{geometry}
 \usepackage{tikz}
 \usepackage{fancyvrb}
-\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{needspace}
 
 \input{../tikz/fgz.tikz.tex}
 
-\title{fgz Examples}
+\title{fgz User Guide}
 \author{}
 \date{}
+
+\raggedbottom
+\setlength{\parindent}{0pt}
+\newcommand{\fgzAdvancedScale}{0.62}
+\newcommand{\fgzAdvancedPanel}[1]{\scalebox{\fgzAdvancedScale}{\input{#1}}}
 
 \begin{document}
 \maketitle
 
-\section*{Example Gallery}
+\section*{Progressive Examples}
+
+Every fgz file starts with \texttt{fgz 1}. Positions are given in TikZ units, and the
+generated snippets assume the paper preamble already includes \verb|\input{fgz.tikz.tex}|.
+
+\Needspace{18\baselineskip}
+\subsection*{1. Minimal Factor Graph}
+Start with two variables and a binary factor. Because the factor has no explicit
+position, fgz places it halfway between the first two variables.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.5cm}
+    \input{guide-01-minimal.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-01-minimal.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-01-minimal.fgz}
+  \end{minipage}
+\end{samepage}
+
+\Needspace{18\baselineskip}
+\subsection*{2. Themes, Known Variables, and Square Factors}
+Observed factor-graph variables use \texttt{known}. Factors can be positioned explicitly,
+switched to \texttt{shape=square}, and styled through a file-level \texttt{theme}.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.5cm}
+    \input{guide-02-observed.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-02-observed.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-02-observed.fgz}
+  \end{minipage}
+\end{samepage}
+
+\Needspace{18\baselineskip}
+\subsection*{3. Curved Binary Factors}
+For binary factors, a small \texttt{offset=(dx,dy)} moves the factor away from the
+midpoint and bends the single factor-graph edge through that new factor position.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.5cm}
+    \input{guide-03-mixed.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-03-mixed.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-03-mixed.fgz}
+  \end{minipage}
+\end{samepage}
+
+\Needspace{18\baselineskip}
+\subsection*{4. Factor-Graph Parents for Nodes}
+Mixed diagrams are allowed when factor-graph variables or knowns act as parents of
+Bayes-net nodes. Nodes themselves do not participate in factors.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.5cm}
+    \input{guide-04-mixed.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-04-mixed.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-04-mixed.fgz}
+  \end{minipage}
+\end{samepage}
+
+\Needspace{18\baselineskip}
+\subsection*{5. Known Nodes and Directed Curve Overrides}
+Bayes-net declarations support both latent nodes and observed nodes. A directed
+\texttt{curve} statement overrides one implied parent-to-child edge.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.5cm}
+    \input{guide-04-directed-curve.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-04-directed-curve.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-04-directed-curve.fgz}
+  \end{minipage}
+\end{samepage}
+
+\Needspace{18\baselineskip}
+\subsection*{6. Color Accents}
+Colors apply to declarations and to their generated edges. This is useful for marking
+active variables, measurements, or elimination steps.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.5cm}
+    \input{guide-05-colors-offset.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-05-colors-offset.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-05-colors-offset.fgz}
+  \end{minipage}
+\end{samepage}
+
+\Needspace{18\baselineskip}
+\subsection*{7. Macros for LaTeX Labels}
+Once the structure is clear, macros keep the source readable while emitting richer math
+labels. References stay short in the graph definition, while the rendered labels come
+from the macro table.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.5cm}
+    \input{guide-07-macros.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-07-macros.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-07-macros.fgz}
+  \end{minipage}
+\end{samepage}
+
+\clearpage
+\section*{Advanced Example}
 
 \subsection*{Toy SLAM Elimination Sequence}
-This sequence approximates the variable-elimination figure from the booklet using five separate fgz files. The early panels mix factor-graph structure with directed node dependencies by letting factor-graph variables act as parents of Bayes-net nodes. As elimination proceeds, the remaining structure transitions from mixed graph fragments to a pure Bayes net.
+This reconstruction starts from the original SLAM factor graph and then uses five more
+fgz files to show the elimination sequence: unary and binary factors, color accents,
+factor offsets, and the transition from factor-graph structure toward a Bayes net as
+variables are eliminated.
 
-\begin{figure}[p]
-\centering
-\subcaptionbox{Eliminate $l_1$.\label{fig:booklet-a}}[0.45\textwidth]{\resizebox{0.42\textwidth}{!}{\input{booklet-a.fgz.tex}}}
-\hfill
-\subcaptionbox{Eliminate $l_2$.\label{fig:booklet-b}}[0.45\textwidth]{\resizebox{0.42\textwidth}{!}{\input{booklet-b.fgz.tex}}}
+\vspace{0.5cm}
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \fgzAdvancedPanel{booklet-original.fgz.tex}
+
+    \smallskip
+    \textbf{(a)} Original factor graph.
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \fgzAdvancedPanel{booklet-a.fgz.tex}
+
+    \smallskip
+    \textbf{(b)} Eliminate $l_1$.
+  \end{minipage}\hfill
+\end{samepage}
 
 \medskip
 
-\subcaptionbox{Eliminate $x_1$.\label{fig:booklet-c}}[0.45\textwidth]{\resizebox{0.42\textwidth}{!}{\input{booklet-c.fgz.tex}}}
-\hfill
-\subcaptionbox{Eliminate $x_2$.\label{fig:booklet-d}}[0.45\textwidth]{\resizebox{0.42\textwidth}{!}{\input{booklet-d.fgz.tex}}}
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \fgzAdvancedPanel{booklet-b.fgz.tex}
+
+    \smallskip
+    \textbf{(c)} Eliminate $l_2$.
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \fgzAdvancedPanel{booklet-c.fgz.tex}
+
+    \smallskip
+    \textbf{(d)} Eliminate $x_1$.
+  \end{minipage}
+\end{samepage}
 
 \medskip
 
-\subcaptionbox{Eliminate $x_3$.\label{fig:booklet-e}}[0.45\textwidth]{\resizebox{0.42\textwidth}{!}{\input{booklet-e.fgz.tex}}}
-\caption{A five-panel elimination sequence recreated as separate fgz sources and assembled with LaTeX subfigures.}
-\end{figure}
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \fgzAdvancedPanel{booklet-d.fgz.tex}
 
-\paragraph{(a)} The starting panel mixes unary and binary factors over $x_1$, $x_2$, and $x_3$ with directed landmark nodes $l_1$ and $l_2$ above them.
-\paragraph{(b)} The second panel keeps the mixed representation but shifts the unary structure to emphasize the pending elimination of $x_1$.
-\paragraph{(c)} The third panel replaces $x_1$ with a directed dependency $x_2 \rightarrow x_1$ while $x_2$ and $x_3$ still carry the remaining factor-graph terms.
-\paragraph{(d)} The fourth panel advances the elimination so that $x_2$ is also represented as a node, leaving only the unary terms attached to $x_3$.
-\paragraph{(e)} The final panel is a pure Bayes net with the chain $x_3 \rightarrow x_2 \rightarrow x_1$, plus landmark conditionals on $l_1$ and $l_2$.
+    \smallskip
+    \textbf{(e)} Eliminate $x_2$.
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \fgzAdvancedPanel{booklet-e.fgz.tex}
 
-\noindent\textbf{Source: \texttt{examples/booklet-a.fgz}}
-\VerbatimInput[frame=single,fontsize=\small]{booklet-a.fgz}
+    \smallskip
+    \textbf{(f)} Eliminate $x_3$.
+  \end{minipage}
+\end{samepage}
 
-\noindent\textbf{Source: \texttt{examples/booklet-b.fgz}}
-\VerbatimInput[frame=single,fontsize=\small]{booklet-b.fgz}
-
-\noindent\textbf{Source: \texttt{examples/booklet-c.fgz}}
-\VerbatimInput[frame=single,fontsize=\small]{booklet-c.fgz}
-
-\noindent\textbf{Source: \texttt{examples/booklet-d.fgz}}
-\VerbatimInput[frame=single,fontsize=\small]{booklet-d.fgz}
-
-\noindent\textbf{Source: \texttt{examples/booklet-e.fgz}}
-\VerbatimInput[frame=single,fontsize=\small]{booklet-e.fgz}
-
-\subsection*{Basic Mixed Diagram}
-This example mixes the two supported diagram families in one file. The lower portion is a factor-graph fragment with one known variable, one latent variable, and one implied factor edge set. The upper portion is a Bayes net fragment with a curved directed edge override.
-
-\begin{figure}[htbp]
-\centering
-\input{basic.fgz.tex}
-\caption{A mixed factor-graph and Bayes-net example with macro-based labels and a curved directed edge override.}
-\end{figure}
-
-\noindent\textbf{Source: \texttt{examples/basic.fgz}}
-\VerbatimInput[frame=single,fontsize=\small]{basic.fgz}
-
-\subsection*{Known Variables and Nodes}
-This example shows the observed-node variants in both notations. The factor graph uses a square factor and an observed variable, while the Bayes net uses an observed parent feeding a latent child.
-
-\begin{figure}[htbp]
-\centering
-\input{knowns.fgz.tex}
-\caption{Observed variables and observed Bayes-net nodes rendered with the shared textbook theme.}
-\end{figure}
-
-\noindent\textbf{Source: \texttt{examples/knowns.fgz}}
-\VerbatimInput[frame=single,fontsize=\small]{knowns.fgz}
+\Needspace{34\baselineskip}
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{Source: \texttt{booklet-original.fgz}}
+    \VerbatimInput[frame=single,fontsize=\tiny,baselinestretch=0.9]{booklet-original.fgz}
+    \textbf{Source: \texttt{booklet-b.fgz}}
+    \VerbatimInput[frame=single,fontsize=\tiny,baselinestretch=0.9]{booklet-b.fgz}
+    \textbf{Source: \texttt{booklet-d.fgz}}
+    \VerbatimInput[frame=single,fontsize=\tiny,baselinestretch=0.9]{booklet-d.fgz}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \textbf{Source: \texttt{booklet-a.fgz}}
+    \VerbatimInput[frame=single,fontsize=\tiny,baselinestretch=0.9]{booklet-a.fgz}
+    \textbf{Source: \texttt{booklet-c.fgz}}
+    \VerbatimInput[frame=single,fontsize=\tiny,baselinestretch=0.9]{booklet-c.fgz}
+    \textbf{Source: \texttt{booklet-e.fgz}}
+    \VerbatimInput[frame=single,fontsize=\tiny,baselinestretch=0.9]{booklet-e.fgz}
+  \end{minipage}
+\end{samepage}
 
 \end{document}

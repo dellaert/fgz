@@ -55,7 +55,7 @@ factor {x_1, x_2} color=red
     expect(tikz).toContain("\\fgzEdgeUColor{fgz_f1}{fgz_x_1}{red}");
   });
 
-  it("curves the first two factor edges when an offset is provided", () => {
+  it("draws a single bridged factor edge when an offset is provided", () => {
     const tikz = toTikz(
       parseFgz(`fgz 1
 variable x_1 (0, 0)
@@ -65,7 +65,23 @@ factor {x_1, x_2} offset=(0,-0.4) color=red
     );
 
     expect(tikz).toContain("\\fgzFactorColor{fgz_f1}{1}{-0.4}{red}");
-    expect(tikz).toContain("\\fgzCurveUColor{fgz_f1}{fgz_x_1}{1}{-0.8}{red}");
-    expect(tikz).toContain("\\fgzCurveUColor{fgz_f1}{fgz_x_2}{1}{-0.8}{red}");
+    expect(tikz).toContain("\\fgzBridgeUColor{fgz_x_1}{1}{-0.5333333333333333}{fgz_x_2}{red}");
+    expect(tikz).not.toContain("\\fgzEdgeUColor{fgz_f1}{fgz_x_1}{red}");
+    expect(tikz).not.toContain("\\fgzEdgeUColor{fgz_f1}{fgz_x_2}{red}");
+  });
+
+  it("draws a single bridged override for undirected factor curves", () => {
+    const tikz = toTikz(
+      parseFgz(`fgz 1
+variable x_1 (0, 0)
+variable x_2 (2, 0)
+factor {x_1, x_2}
+curve x_1 -- x_2 via (1, 1)
+`)
+    );
+
+    expect(tikz).toContain("\\fgzBridgeU{fgz_x_1}{1}{1}{fgz_x_2}");
+    expect(tikz).not.toContain("\\fgzEdgeU{fgz_f1}{fgz_x_1}");
+    expect(tikz).not.toContain("\\fgzEdgeU{fgz_f1}{fgz_x_2}");
   });
 });

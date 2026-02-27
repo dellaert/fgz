@@ -1,0 +1,18 @@
+fgz 1
+theme classic
+
+variable x_1 (0, 0)
+variable x_2 (3.5, 0)
+variable x_3 (7, 0)
+variable l_1 (3.5, 3.5)
+variable l_2 (7, 3.5)
+
+factor {x_1} (-1.75, 0)
+factor {x_1} (0, -1.75)
+factor {x_1, x_2}
+factor {x_2, x_3}
+factor {x_1, l_1}
+factor {x_2, l_1}
+factor {x_3, l_2}
+factor {l_1} (3.5, 5.25)
+factor {l_2} (7, 5.25)
