@@ -5,9 +5,9 @@ import type {
   Document,
   EdgeDecl,
   FactorDecl,
-  LineDecl,
   MacroDef,
   Point,
+  PlateDecl,
   StyleDecl,
   Statement,
   TextDecl,
@@ -51,7 +51,10 @@ function formatFactor(statement: FactorDecl): string {
   return `${base}${formatAttributes([
     ["offset", statement.offset ? formatPoint(statement.offset) : undefined],
     ["shape", statement.shape],
-    ["color", statement.color]
+    ["color", statement.color],
+    ["label", statement.label],
+    ["size", statement.size],
+    ["font", statement.font]
   ])}`;
 }
 
@@ -86,17 +89,18 @@ function formatText(statement: TextDecl): string {
   ])}`;
 }
 
-function formatLine(statement: LineDecl): string {
-  return `line ${formatPoint(statement.from)} ${formatPoint(statement.to)}${formatAttributes([
+function formatBox(statement: BoxDecl): string {
+  return `box ${formatPoint(statement.from)} ${formatPoint(statement.to)}${formatAttributes([
     ["style", statement.style],
     ["color", statement.color]
   ])}`;
 }
 
-function formatBox(statement: BoxDecl): string {
-  return `box ${formatPoint(statement.from)} ${formatPoint(statement.to)}${formatAttributes([
-    ["style", statement.style],
-    ["color", statement.color]
+function formatPlate(statement: PlateDecl): string {
+  return `plate ${formatPoint(statement.from)} ${formatPoint(statement.to)}${formatAttributes([
+    ["color", statement.color],
+    ["label", statement.label],
+    ["font", statement.font]
   ])}`;
 }
 
@@ -122,10 +126,10 @@ function formatStatement(statement: Statement): string {
       return formatEdge(statement);
     case "text":
       return formatText(statement);
-    case "line":
-      return formatLine(statement);
     case "box":
       return formatBox(statement);
+    case "plate":
+      return formatPlate(statement);
   }
 }
 

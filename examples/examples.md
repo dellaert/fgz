@@ -569,31 +569,40 @@ factor {fc3, tau3} (11.0, 1.95) color=black
 ### 16. Tracking Message-Passing Panels
 
 These four panels reconstruct a multitarget-tracking factor-graph decomposition and
-exercise the new annotation statements for dashed separators, free text, and outline
-boxes.
+exercise the newer fgz features used for this family of figures: labeled square
+factors, free text, outline boxes, and a plate for repeated structure. The panel
+lettering is kept close to the paper figure; the descriptions are listed below
+instead of under each panel.
 
 <table>
   <tr>
     <td align="center">
       <img src="./guide-tracking-temporal-chain.svg" alt="Temporal chain panel" width="320"><br>
-      <strong>(a)</strong> Temporal chain.
+      <strong>(a)</strong>
     </td>
     <td align="center">
       <img src="./guide-tracking-association-star.svg" alt="Association star panel" width="320"><br>
-      <strong>(b)</strong> Association star.
+      <strong>(b)</strong>
     </td>
   </tr>
   <tr>
     <td align="center">
       <img src="./guide-tracking-bipartite-block.svg" alt="Bipartite block panel" width="320"><br>
-      <strong>(c)</strong> Bipartite block.
+      <strong>(c)</strong>
     </td>
     <td align="center">
       <img src="./guide-tracking-lifted-box.svg" alt="Lifted box panel" width="320"><br>
-      <strong>(d)</strong> Lifted box construction.
+      <strong>(d)</strong>
     </td>
   </tr>
 </table>
+
+Panels:
+
+- `(a)` temporal chain
+- `(b)` association star
+- `(c)` bipartite block
+- `(d)` lifted box construction
 
 Sources:
 

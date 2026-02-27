@@ -6,8 +6,8 @@ import type {
   Document,
   EdgeDecl,
   FactorDecl,
-  LineDecl,
   MacroDef,
+  PlateDecl,
   Point,
   StyleDecl,
   Statement,
@@ -197,7 +197,7 @@ function parseFactor(raw: string, line: number): FactorDecl | undefined {
   }
 
   const hasPoint = match[2] !== undefined && match[3] !== undefined;
-  const attrs = parseAttributes(match[4], line, ["shape", "color", "offset"]);
+  const attrs = parseAttributes(match[4], line, ["shape", "color", "offset", "label", "size", "font"]);
   const shape = attrs.shape as FactorDecl["shape"] | undefined;
   const offset = attrs.offset ? parseInlinePoint(attrs.offset, line, "factor offset") : undefined;
 
@@ -208,6 +208,9 @@ function parseFactor(raw: string, line: number): FactorDecl | undefined {
     ...(offset ? { offset } : {}),
     ...(shape ? { shape } : {}),
     ...(attrs.color ? { color: attrs.color } : {}),
+    ...(attrs.label ? { label: attrs.label } : {}),
+    ...(attrs.size ? { size: attrs.size } : {}),
+    ...(attrs.font ? { font: attrs.font } : {}),
     loc: { line }
   };
 }
@@ -292,30 +295,6 @@ function parseText(raw: string, line: number): TextDecl | undefined {
   };
 }
 
-function parseLine(raw: string, line: number): LineDecl | undefined {
-  const match = raw.match(new RegExp(`^line\\s+${POINT_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
-  if (!match) {
-    return undefined;
-  }
-
-  const attrs = parseAttributes(match[5], line, ["style", "color"]);
-  const statement: LineDecl = {
-    kind: "line",
-    from: parsePoint(line, capture(match, 1, line), capture(match, 2, line)),
-    to: parsePoint(line, capture(match, 3, line), capture(match, 4, line)),
-    loc: { line }
-  };
-
-  if (attrs.style) {
-    statement.style = attrs.style as NonNullable<LineDecl["style"]>;
-  }
-  if (attrs.color) {
-    statement.color = attrs.color;
-  }
-
-  return statement;
-}
-
 function parseBox(raw: string, line: number): BoxDecl | undefined {
   const match = raw.match(new RegExp(`^box\\s+${POINT_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
   if (!match) {
@@ -340,6 +319,33 @@ function parseBox(raw: string, line: number): BoxDecl | undefined {
   return statement;
 }
 
+function parsePlate(raw: string, line: number): PlateDecl | undefined {
+  const match = raw.match(new RegExp(`^plate\\s+${POINT_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
+  if (!match) {
+    return undefined;
+  }
+
+  const attrs = parseAttributes(match[5], line, ["color", "label", "font"]);
+  const statement: PlateDecl = {
+    kind: "plate",
+    from: parsePoint(line, capture(match, 1, line), capture(match, 2, line)),
+    to: parsePoint(line, capture(match, 3, line), capture(match, 4, line)),
+    loc: { line }
+  };
+
+  if (attrs.color) {
+    statement.color = attrs.color;
+  }
+  if (attrs.label) {
+    statement.label = attrs.label;
+  }
+  if (attrs.font) {
+    statement.font = attrs.font;
+  }
+
+  return statement;
+}
+
 function parseStatement(raw: string, line: number): Statement {
   return (
     parseTheme(raw, line) ??
@@ -350,8 +356,8 @@ function parseStatement(raw: string, line: number): Statement {
     parseCurve(raw, line) ??
     parseEdge(raw, line) ??
     parseText(raw, line) ??
-    parseLine(raw, line) ??
     parseBox(raw, line) ??
+    parsePlate(raw, line) ??
     parseMacro(raw, line) ??
     (() => {
       throw new FgzError("could not parse statement", line);

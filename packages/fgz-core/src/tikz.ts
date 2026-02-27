@@ -7,7 +7,7 @@ import type {
   Document,
   EdgeDecl,
   FactorDecl,
-  LineDecl,
+  PlateDecl,
   Point,
   Statement,
   TextDecl,
@@ -97,17 +97,6 @@ function linearOptionSuffix(style: "solid" | "dashed" | undefined, color: string
   return edgeOptionSuffix(options);
 }
 
-function lineDeclLine(statement: LineDecl): string {
-  const options = linearOptionSuffix(statement.style, statement.color);
-  return options === ""
-    ? `\\fgzLine{${formatCoordinate(statement.from.rawX)}}{${formatCoordinate(statement.from.rawY)}}{${formatCoordinate(
-        statement.to.rawX
-      )}}{${formatCoordinate(statement.to.rawY)}}`
-    : `\\fgzLineOpts{${formatCoordinate(statement.from.rawX)}}{${formatCoordinate(
-        statement.from.rawY
-      )}}{${formatCoordinate(statement.to.rawX)}}{${formatCoordinate(statement.to.rawY)}}{${options}}`;
-}
-
 function boxDeclLine(statement: BoxDecl): string {
   const options = linearOptionSuffix(statement.style, statement.color);
   return options === ""
@@ -115,6 +104,17 @@ function boxDeclLine(statement: BoxDecl): string {
         statement.to.rawX
       )}}{${formatCoordinate(statement.to.rawY)}}`
     : `\\fgzBoxOpts{${formatCoordinate(statement.from.rawX)}}{${formatCoordinate(
+        statement.from.rawY
+      )}}{${formatCoordinate(statement.to.rawX)}}{${formatCoordinate(statement.to.rawY)}}{${options}}`;
+}
+
+function plateDeclLine(statement: PlateDecl): string {
+  const options = statement.color ? edgeOptionSuffix([`draw=${statement.color}`]) : "";
+  return options === ""
+    ? `\\fgzPlate{${formatCoordinate(statement.from.rawX)}}{${formatCoordinate(statement.from.rawY)}}{${formatCoordinate(
+        statement.to.rawX
+      )}}{${formatCoordinate(statement.to.rawY)}}`
+    : `\\fgzPlateOpts{${formatCoordinate(statement.from.rawX)}}{${formatCoordinate(
         statement.from.rawY
       )}}{${formatCoordinate(statement.to.rawX)}}{${formatCoordinate(statement.to.rawY)}}{${options}}`;
 }
@@ -133,6 +133,10 @@ function factorCurveKey(a: string, b: string): string {
 
 function labelFor(name: string, doc: Document): string {
   return `$${doc.macros.get(name) ?? name}$`;
+}
+
+function inlineLatexLabel(value: string, doc: Document): string {
+  return `$${doc.macros.get(value) ?? value}$`;
 }
 
 function formatCoordinate(raw: string): string {
@@ -187,6 +191,34 @@ function styleLines(style: DocumentStyle): string[] {
     lines.push(`\\fgzsetlabelfont{${latexFont(style.labelFont)}}`);
   }
   return lines;
+}
+
+function plateLabelGeometry(statement: PlateDecl): { x: string; y: string; anchor: string } | undefined {
+  if (!statement.label) {
+    return undefined;
+  }
+
+  const insetX = 0.14;
+  const insetY = 0.08;
+  return { x: String(statement.to.x - insetX), y: String(statement.to.y - insetY), anchor: "north east" };
+}
+
+function plateLabelLine(statement: PlateDecl, doc: Document): string | undefined {
+  if (!statement.label) {
+    return undefined;
+  }
+
+  const geometry = plateLabelGeometry(statement);
+  if (!geometry) {
+    return undefined;
+  }
+
+  const options = [`anchor=${geometry.anchor}`];
+  if (statement.font) {
+    options.push(`font=${latexFont(statement.font)}`);
+  }
+
+  return `\\fgzTextOpts{${geometry.x}}{${geometry.y}}{${inlineLatexLabel(statement.label, doc)}}{, ${options.join(", ")}}`;
 }
 
 function collectFactorIds(statements: Statement[]): Map<FactorDecl, string> {
@@ -319,6 +351,10 @@ function nodeLine(statement: VarDecl | BNDecl, doc: Document): string {
   return statement.color ? `${base}{${statement.color}}` : base;
 }
 
+function factorLabel(statement: FactorDecl, doc: Document): string {
+  return statement.label ? inlineLatexLabel(statement.label, doc) : "";
+}
+
 function midpointRaw(left: number, right: number): string {
   const value = (left + right) / 2;
   return String(value);
@@ -379,14 +415,43 @@ function resolveFactorGeometry(statement: FactorDecl, positions: Map<string, Poi
   };
 }
 
-function factorLine(statement: FactorDecl, factorIds: Map<FactorDecl, string>, positions: Map<string, Point>): string {
-  const colored = statement.color ? "Color" : "";
-  const macro = statement.shape === "square" ? `\\fgzFactorSquare${colored}` : `\\fgzFactor${colored}`;
+function factorLine(
+  statement: FactorDecl,
+  factorIds: Map<FactorDecl, string>,
+  positions: Map<string, Point>,
+  doc: Document
+): string {
   const point = resolveFactorGeometry(statement, positions).point;
-  const base = `${macro}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${formatCoordinate(
+  const options: string[] = [];
+  if (statement.color) {
+    options.push(`draw=${statement.color}`, `fill=${statement.color}`);
+  }
+  if (statement.size) {
+    options.push(`minimum size=${statement.size}`);
+  }
+  if (statement.font) {
+    options.push(`font=${latexFont(statement.font)}`);
+  }
+
+  const label = factorLabel(statement, doc);
+  const macroBase =
+    statement.shape === "square"
+      ? options.length > 0 || label !== ""
+        ? "\\fgzFactorSquareOpts"
+        : "\\fgzFactorSquare"
+      : options.length > 0 || label !== ""
+        ? "\\fgzFactorOpts"
+        : "\\fgzFactor";
+
+  if (macroBase === "\\fgzFactorSquare" || macroBase === "\\fgzFactor") {
+    return `${macroBase}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${formatCoordinate(point.rawX)}}{${formatCoordinate(
+      point.rawY
+    )}}`;
+  }
+
+  return `${macroBase}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${formatCoordinate(
     point.rawX
-  )}}{${formatCoordinate(point.rawY)}}`;
-  return statement.color ? `${base}{${statement.color}}` : base;
+  )}}{${formatCoordinate(point.rawY)}}{${label}}{${edgeOptionSuffix(options)}}`;
 }
 
 function bridgeLine(statement: FactorDecl, spec: BridgeSpec): string {
@@ -479,11 +544,17 @@ export function toTikz(doc: Document): string {
       case "text":
         lines.push(textLine(statement, doc));
         break;
-      case "line":
-        lines.push(lineDeclLine(statement));
-        break;
       case "box":
         lines.push(boxDeclLine(statement));
+        break;
+      case "plate":
+        lines.push(plateDeclLine(statement));
+        {
+          const plateLabel = plateLabelLine(statement, doc);
+          if (plateLabel) {
+            lines.push(plateLabel);
+          }
+        }
         break;
       case "factor":
         factorGeometry.set(statement, resolveFactorGeometry(statement, positions));
@@ -509,20 +580,20 @@ export function toTikz(doc: Document): string {
         control: override.control,
         color: override.color ?? statement.color
       });
-      lines.push(factorLine(statement, factorIds, positions));
+      lines.push(factorLine(statement, factorIds, positions, doc));
       continue;
     }
 
     const pair = geometry?.bridgedPair;
     if (!pair) {
-      lines.push(factorLine(statement, factorIds, positions));
+      lines.push(factorLine(statement, factorIds, positions, doc));
       continue;
     }
 
     const left = positions.get(pair[0]);
     const right = positions.get(pair[1]);
     if (!left || !right || !geometry) {
-      lines.push(factorLine(statement, factorIds, positions));
+      lines.push(factorLine(statement, factorIds, positions, doc));
       continue;
     }
 
@@ -532,7 +603,7 @@ export function toTikz(doc: Document): string {
       control: controlFromFactorPoint(left, geometry.point, right),
       color: statement.color
     });
-    lines.push(factorLine(statement, factorIds, positions));
+    lines.push(factorLine(statement, factorIds, positions, doc));
   }
 
   for (const statement of doc.statements) {

@@ -6,7 +6,7 @@ import type {
   Document,
   EdgeDecl,
   FactorDecl,
-  LineDecl,
+  PlateDecl,
   Statement,
   ValidationIssue,
   ValidationResult,
@@ -241,13 +241,15 @@ function validateEdgeDecl(statement: EdgeDecl, statements: Statement[], errors: 
   }
 }
 
-function validateLinearStyle(
-  statement: LineDecl | BoxDecl,
-  noun: "line" | "box",
-  errors: ValidationIssue[]
-): void {
+function validateBoxStyle(statement: BoxDecl, errors: ValidationIssue[]): void {
   if (statement.style && statement.style !== "solid" && statement.style !== "dashed") {
-    addIssue(errors, statement.loc.line, `unknown ${noun} style "${statement.style}"`);
+    addIssue(errors, statement.loc.line, `unknown box style "${statement.style}"`);
+  }
+}
+
+function validatePlate(statement: PlateDecl, errors: ValidationIssue[]): void {
+  if (!statement.label) {
+    addIssue(errors, statement.loc.line, "plate requires a label");
   }
 }
 
@@ -279,11 +281,11 @@ export function validate(doc: Document): ValidationResult {
       case "edge":
         validateEdgeDecl(statement, doc.statements, errors);
         break;
-      case "line":
-        validateLinearStyle(statement, "line", errors);
-        break;
       case "box":
-        validateLinearStyle(statement, "box", errors);
+        validateBoxStyle(statement, errors);
+        break;
+      case "plate":
+        validatePlate(statement, errors);
         break;
       default:
         break;

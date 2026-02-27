@@ -1,11 +1,11 @@
 # fgz Reference Manual
 
-This document describes the fgz language as it is implemented in this repository today.
+This document describes the fgz language as implemented in this repository today.
 
 ## Overview
 
-An fgz file is a plain-text description of a factor graph, a Bayes net, or a mixed diagram.
-The file is converted into a readable TikZ snippet.
+An fgz file is a plain-text description of a factor graph, a Bayes net, or a
+mixed diagram with lightweight annotations.
 
 Every file starts with:
 
@@ -13,9 +13,12 @@ Every file starts with:
 fgz 1
 ```
 
-## File Structure
+The file can be converted into:
 
-Statements are line-oriented and remain ordered as written.
+- a readable TikZ snippet with `fgz2tex`
+- an SVG with `fgz2svg`
+
+Statements are line-oriented and remain ordered exactly as written.
 
 Supported statement kinds:
 
@@ -29,8 +32,11 @@ Supported statement kinds:
 - `known_node`
 - `curve`
 - `edge`
+- `text`
+- `box`
+- `plate`
 
-Comments start with `#` and continue to end of line.
+Comments start with `#` and continue to the end of the line.
 
 ## Names and Labels
 
@@ -45,7 +51,7 @@ Rendering rule:
 
 - if a macro exists for a name, the macro right-hand side is used as the label
 - otherwise the name itself is used as the label
-- labels are wrapped in `$...$` in TikZ output
+- labels are wrapped in `$...$` in generated output
 
 Example:
 
@@ -53,8 +59,6 @@ Example:
 x1 = x_1
 variable x1 (0, 0)
 ```
-
-renders the variable with label `$x_1$`.
 
 ## Theme
 
@@ -68,7 +72,7 @@ theme blog
 
 ## Style
 
-`style` adjusts rendering defaults for the current fgz file.
+`style` adjusts file-level rendering defaults.
 
 ```txt
 style node_size=9mm factor_size=3mm label_sep=0.2pt label_font=small
@@ -81,7 +85,7 @@ Supported keys:
 - `label_sep`
 - `label_font`
 
-These are document-level defaults, not per-node settings.
+These are document-level defaults, not per-node overrides.
 
 ## Macros
 
@@ -128,6 +132,7 @@ factor {x, y}
 factor {x, y} (1, 0)
 factor {x, y} offset=(0,-0.35)
 factor {x, y, z} shape=square color=red
+factor {x, y} shape=square color=red!20 label=g1 size=6.8mm font=scriptsize
 ```
 
 Supported attributes:
@@ -135,6 +140,9 @@ Supported attributes:
 - `offset=(dx,dy)`
 - `shape=circle|square`
 - `color=...`
+- `label=...`
+- `size=...`
+- `font=...`
 
 Rules:
 
@@ -143,6 +151,7 @@ Rules:
 - this midpoint rule applies even for higher-arity factors
 - `offset=(dx,dy)` starts from that midpoint and shifts the factor
 - `offset` cannot be combined with an explicit position
+- factor labels are rendered inside the factor node
 
 ## Bayes-Net Declarations
 
@@ -235,6 +244,64 @@ Rules:
 - the edge must already be implied by a `node` or `known_node` parent list
 - `label_pos` controls where the label sits along the edge
 
+## Annotation Statements
+
+These statements cover free text, separators, outlines, and repeated-model plates.
+
+### Text
+
+```txt
+phase = k-1
+text phase (0, 2) font=small
+```
+
+Optional attributes:
+
+- `color=...`
+- `font=...`
+
+`text` uses the same label resolution rule as node names:
+
+- if the name has a macro, the macro value is rendered
+- otherwise the name itself is rendered
+
+### Box
+
+```txt
+box (2, 0) (5, 3)
+box (2, 0) (5, 3) color=black!60
+box (1, 0) (1, 3) style=dashed color=black!50
+```
+
+Optional attributes:
+
+- `style=solid|dashed`
+- `color=...`
+
+`box` is a plain rectangular outline. A zero-width or zero-height box is a useful
+way to draw a straight separator without introducing a separate `line` statement.
+
+### Plate
+
+`plate` is a semantic rectangular outline for repeated substructure.
+
+```txt
+s = s=1..n_s
+plate (6.35, 0.72) (13.0, 3.12) color=black!60 label=s font=small
+```
+
+Optional attributes:
+
+- `color=...`
+- `label=...`
+- `font=...`
+
+Rules:
+
+- plates require a label
+- the label is placed near the top-right corner
+- the label is interpreted with the normal macro and LaTeX-style label rules
+
 ## Validation Rules
 
 The validator enforces:
@@ -245,46 +312,19 @@ The validator enforces:
 - a symbol cannot be both a factor-graph symbol and a Bayes-net symbol
 - factors may only reference `variable` or `known`
 - Bayes-net parents may reference BN symbols or factor-graph symbols
+- factors without explicit positions must reference at least two variables
+- `offset` cannot be combined with an explicit factor position
 - undirected `curve` overrides must match an implied factor connection
 - directed `curve` overrides must match an implied BN edge
 - directed `edge` overrides must match an implied BN edge
+- `edge label_pos` must be strictly between `0` and `1`
+- `box` styles must be `solid` or `dashed`
+- plates require labels
 
 ## Geometry Guidance
 
-fgz works best when files are authored on a simple grid.
-
-Practical guidance:
-
-- prefer a small set of repeated coordinates
-- omit factor positions when midpoint inference is good enough
-- use `offset` only when you need a bent binary factor edge
-- widen trees when leaf labels are long
-- use per-node `size=` and `font=` sparingly for exceptional labels
-
-## Minimal Examples
-
-Minimal factor graph:
-
-```txt
-fgz 1
-variable x (0, 0)
-variable y (2, 0)
-factor {x, y}
-```
-
-Small mixed example:
-
-```txt
-fgz 1
-variable x (0, 0)
-node l {x} (1, 1)
-```
-
-Directed edge styling:
-
-```txt
-fgz 1
-node x_1 {} (1, 0)
-node x_0 {x_1} (0, 0)
-edge x_1 -> x_0 style=dashed label=0 label_side=left label_pos=0.35
-```
+- start with a simple repeated grid
+- omit factor positions when midpoint placement is correct
+- use `offset` only when the default midpoint geometry is too stiff
+- prefer labeled square factors over fake known variables when the visual object is semantically a factor
+- use `text`, `box`, and `plate` sparingly, only where the graph primitives do not express the intended structure

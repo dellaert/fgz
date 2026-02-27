@@ -1,33 +1,32 @@
 \begin{tikzpicture}[x=1cm,y=1cm]
 \fgzsettheme{classic}
-\fgzsetnodesize{9mm}
-\fgzsetlabelsep{0.2pt}
-\fgzsetlabelfont{\scriptsize}
+\fgzsetnodesize{8.2mm}
+\fgzsetlabelsep{0.15pt}
+\fgzsetlabelfont{\tiny}
 \fgzText{1.5}{4.0}{$k-1$}
 \fgzText{6.8}{4.0}{$k$}
 \fgzText{1.3}{2.2}{$\vdots$}
 \fgzText{4.8}{2.2}{$\vdots$}
-\fgzText{7.0}{-0.2}{$(b)$}
-\fgzLineOpts{2.5}{0.8}{2.5}{4.1}{, dashed, draw=black!50}
-\fgzVarOpts{fgz_x1m}{1.0}{3.3}{$x^{1}_{-}$}{, fill=gray!15}
-\fgzKnownOpts{fgz_f1}{3.2}{3.3}{$f^{1}$}{, fill=green!20}
-\fgzVarOpts{fgz_x1}{4.4}{3.3}{$x^{1}$}{, fill=gray!15}
-\fgzKnownOpts{fgz_g1}{6.2}{2.8}{$g^{1}$}{, fill=red!20}
-\fgzVarOpts{fgz_xnm}{1.0}{1.2}{$x^{n_s}_{-}$}{, fill=gray!15}
-\fgzKnownOpts{fgz_fn}{3.2}{1.2}{$f^{n_s}$}{, fill=green!20}
-\fgzVarOpts{fgz_xn}{4.4}{1.2}{$x^{n_s}$}{, fill=gray!15}
-\fgzKnownOpts{fgz_gn}{6.2}{1.7}{$g^{n_s}$}{, fill=red!20}
-\fgzVarOpts{fgz_a0}{8.0}{2.3}{$a$}{, fill=gray!15}
-\fgzKnownOpts{fgz_psi0}{8.0}{1.35}{$\psi$}{, fill=red!20}
-\fgzLine{0.0}{3.3}{1.0}{3.3}
-\fgzLine{1.0}{3.3}{3.2}{3.3}
-\fgzLine{3.2}{3.3}{4.4}{3.3}
-\fgzLine{4.4}{3.3}{6.2}{2.8}
-\fgzLine{6.2}{2.8}{8.0}{2.3}
-\fgzLine{0.0}{1.2}{1.0}{1.2}
-\fgzLine{1.0}{1.2}{3.2}{1.2}
-\fgzLine{3.2}{1.2}{4.4}{1.2}
-\fgzLine{4.4}{1.2}{6.2}{1.7}
-\fgzLine{6.2}{1.7}{8.0}{2.3}
-\fgzLine{8.0}{2.3}{8.0}{1.35}
+\fgzBoxOpts{2.5}{0.8}{2.5}{4.1}{, dashed, draw=black!50}
+\fgzBoxOpts{0.0}{3.3}{1.0}{3.3}{, draw=fgzClassicStroke}
+\fgzBoxOpts{0.0}{1.2}{1.0}{1.2}{, draw=fgzClassicStroke}
+\fgzVarOpts{fgz_vx1m}{1.0}{3.3}{$vx1m$}{, fill=gray!15}
+\fgzVarOpts{fgz_vx1}{4.45}{3.3}{$vx1$}{, fill=gray!15}
+\fgzVarOpts{fgz_vxnm}{1.0}{1.2}{$vxnm$}{, fill=gray!15}
+\fgzVarOpts{fgz_vxn}{4.45}{1.2}{$vxn$}{, fill=gray!15}
+\fgzVarOpts{fgz_va}{8.35}{2.3}{$va$}{, fill=gray!15}
+\fgzFactorSquareOpts{fgz_f1}{3.2}{3.3}{$f^{1}$}{, draw=green!20, fill=green!20, minimum size=6.8mm, font=\scriptsize}
+\fgzFactorSquareOpts{fgz_f2}{6.35}{2.75}{$g^{1}$}{, draw=red!20, fill=red!20, minimum size=6.8mm, font=\scriptsize}
+\fgzFactorSquareOpts{fgz_f3}{3.2}{1.2}{$f^{n_s}$}{, draw=green!20, fill=green!20, minimum size=6.8mm, font=\scriptsize}
+\fgzFactorSquareOpts{fgz_f4}{6.35}{1.75}{$g^{n_s}$}{, draw=red!20, fill=red!20, minimum size=6.8mm, font=\scriptsize}
+\fgzFactorSquareOpts{fgz_f5}{8.35}{1.35}{$\psi$}{, draw=red!20, fill=red!20, minimum size=6.4mm, font=\scriptsize}
+\fgzEdgeUColor{fgz_f1}{fgz_vx1m}{green!20}
+\fgzEdgeUColor{fgz_f1}{fgz_vx1}{green!20}
+\fgzEdgeUColor{fgz_f2}{fgz_vx1}{red!20}
+\fgzEdgeUColor{fgz_f2}{fgz_va}{red!20}
+\fgzEdgeUColor{fgz_f3}{fgz_vxnm}{green!20}
+\fgzEdgeUColor{fgz_f3}{fgz_vxn}{green!20}
+\fgzEdgeUColor{fgz_f4}{fgz_vxn}{red!20}
+\fgzEdgeUColor{fgz_f4}{fgz_va}{red!20}
+\fgzEdgeUColor{fgz_f5}{fgz_va}{red!20}
 \end{tikzpicture}

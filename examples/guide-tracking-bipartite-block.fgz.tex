@@ -1,8 +1,8 @@
 \begin{tikzpicture}[x=1cm,y=1cm]
 \fgzsettheme{classic}
-\fgzsetnodesize{9mm}
-\fgzsetlabelsep{0.2pt}
-\fgzsetlabelfont{\scriptsize}
+\fgzsetnodesize{8.2mm}
+\fgzsetlabelsep{0.15pt}
+\fgzsetlabelfont{\tiny}
 \fgzText{1.1}{4.0}{$k-1$}
 \fgzText{4.7}{4.0}{$k$}
 \fgzText{0.9}{2.15}{$\vdots$}
@@ -15,44 +15,43 @@
 \fgzTextOpts{8.6}{2.25}{$\psi_{1,n_m}$}{, font=\tiny}
 \fgzTextOpts{8.55}{1.55}{$\psi_{n_m,1}$}{, font=\tiny}
 \fgzTextOpts{8.45}{0.9}{$\psi_{n_m,n_m}$}{, font=\tiny}
-\fgzText{5.0}{-0.2}{$(c)$}
-\fgzLineOpts{1.8}{0.6}{1.8}{4.1}{, dashed, draw=black!50}
-\fgzVarOpts{fgz_x1m}{1.0}{3.2}{$x^{1}_{-}$}{, fill=gray!15}
-\fgzKnownOpts{fgz_f1}{2.7}{3.2}{$f^{1}$}{, fill=green!20}
-\fgzVarOpts{fgz_x1}{3.9}{3.2}{$x^{1}$}{, fill=gray!15}
-\fgzKnownOpts{fgz_g1}{5.4}{2.55}{$g^{1}$}{, fill=red!20}
-\fgzVarOpts{fgz_xnm}{1.0}{1.0}{$x^{n_s}_{-}$}{, fill=gray!15}
-\fgzKnownOpts{fgz_fn}{2.7}{1.0}{$f^{n_s}$}{, fill=green!20}
-\fgzVarOpts{fgz_xn}{3.9}{1.0}{$x^{n_s}$}{, fill=gray!15}
-\fgzKnownOpts{fgz_gn}{5.4}{1.65}{$g^{n_s}$}{, fill=red!20}
-\fgzVarOpts{fgz_a1}{7.0}{2.45}{$a^{1}$}{, fill=gray!15}
-\fgzVarOpts{fgz_b1}{9.1}{2.45}{$b^{1}$}{, fill=gray!15}
-\fgzVarOpts{fgz_an}{7.0}{1.2}{$a^{n_m}$}{, fill=gray!15}
-\fgzVarOpts{fgz_bn}{9.1}{1.2}{$b^{n_m}$}{, fill=gray!15}
-\fgzKnownOpts{fgz_p11}{8.1}{2.75}{$p11$}{, fill=red!20, minimum size=3mm}
-\fgzKnownOpts{fgz_p1n}{8.1}{2.2}{$p1n$}{, fill=red!20, minimum size=3mm}
-\fgzKnownOpts{fgz_pn1}{8.1}{1.55}{$pn1$}{, fill=red!20, minimum size=3mm}
-\fgzKnownOpts{fgz_pnn}{8.1}{0.95}{$pnn$}{, fill=red!20, minimum size=3mm}
-\fgzKnownOpts{fgz_h1}{10.9}{2.45}{$h^{1}$}{, fill=red!20}
-\fgzKnownOpts{fgz_hn}{10.9}{1.2}{$h^{n_m}$}{, fill=red!20}
-\fgzLine{0.0}{3.2}{1.0}{3.2}
-\fgzLine{1.0}{3.2}{2.7}{3.2}
-\fgzLine{2.7}{3.2}{3.9}{3.2}
-\fgzLine{3.9}{3.2}{5.4}{2.55}
-\fgzLine{0.0}{1.0}{1.0}{1.0}
-\fgzLine{1.0}{1.0}{2.7}{1.0}
-\fgzLine{2.7}{1.0}{3.9}{1.0}
-\fgzLine{3.9}{1.0}{5.4}{1.65}
-\fgzLine{5.4}{2.55}{7.0}{2.45}
-\fgzLine{5.4}{1.65}{7.0}{1.2}
-\fgzLine{7.0}{2.45}{8.1}{2.75}
-\fgzLine{7.0}{2.45}{8.1}{2.2}
-\fgzLine{7.0}{1.2}{8.1}{1.55}
-\fgzLine{7.0}{1.2}{8.1}{0.95}
-\fgzLine{9.1}{2.45}{8.1}{2.75}
-\fgzLine{9.1}{2.45}{8.1}{1.55}
-\fgzLine{9.1}{1.2}{8.1}{2.2}
-\fgzLine{9.1}{1.2}{8.1}{0.95}
-\fgzLine{9.1}{2.45}{10.9}{2.45}
-\fgzLine{9.1}{1.2}{10.9}{1.2}
+\fgzBoxOpts{1.8}{0.6}{1.8}{4.1}{, dashed, draw=black!50}
+\fgzBoxOpts{0.0}{3.2}{1.0}{3.2}{, draw=fgzClassicStroke}
+\fgzBoxOpts{0.0}{1.0}{1.0}{1.0}{, draw=fgzClassicStroke}
+\fgzVarOpts{fgz_vx1m}{1.0}{3.2}{$vx1m$}{, fill=gray!15}
+\fgzVarOpts{fgz_vx1}{3.9}{3.2}{$vx1$}{, fill=gray!15}
+\fgzVarOpts{fgz_vxnm}{1.0}{1.0}{$vxnm$}{, fill=gray!15}
+\fgzVarOpts{fgz_vxn}{3.9}{1.0}{$vxn$}{, fill=gray!15}
+\fgzVarOpts{fgz_va1}{7.15}{2.45}{$va1$}{, fill=gray!15}
+\fgzVarOpts{fgz_vb1}{9.55}{2.45}{$vb1$}{, fill=gray!15}
+\fgzVarOpts{fgz_van}{7.15}{1.2}{$van$}{, fill=gray!15}
+\fgzVarOpts{fgz_vbn}{9.55}{1.2}{$vbn$}{, fill=gray!15}
+\fgzFactorSquareOpts{fgz_f1}{2.7}{3.2}{$f^{1}$}{, draw=green!20, fill=green!20, minimum size=6.8mm, font=\scriptsize}
+\fgzFactorSquareOpts{fgz_f2}{5.45}{2.55}{$g^{1}$}{, draw=red!20, fill=red!20, minimum size=6.8mm, font=\scriptsize}
+\fgzFactorSquareOpts{fgz_f3}{2.7}{1.0}{$f^{n_s}$}{, draw=green!20, fill=green!20, minimum size=6.8mm, font=\scriptsize}
+\fgzFactorSquareOpts{fgz_f4}{5.45}{1.65}{$g^{n_s}$}{, draw=red!20, fill=red!20, minimum size=6.8mm, font=\scriptsize}
+\fgzFactorSquareOpts{fgz_f5}{8.35}{2.75}{${}$}{, draw=red!20, fill=red!20, minimum size=2.6mm}
+\fgzFactorSquareOpts{fgz_f6}{8.35}{2.2}{${}$}{, draw=red!20, fill=red!20, minimum size=2.6mm}
+\fgzFactorSquareOpts{fgz_f7}{8.35}{1.55}{${}$}{, draw=red!20, fill=red!20, minimum size=2.6mm}
+\fgzFactorSquareOpts{fgz_f8}{8.35}{0.95}{${}$}{, draw=red!20, fill=red!20, minimum size=2.6mm}
+\fgzFactorSquareOpts{fgz_f9}{11.25}{2.45}{$h^{1}$}{, draw=red!20, fill=red!20, minimum size=6.8mm, font=\scriptsize}
+\fgzFactorSquareOpts{fgz_f10}{11.25}{1.2}{$h^{n_m}$}{, draw=red!20, fill=red!20, minimum size=6.8mm, font=\scriptsize}
+\fgzEdgeUColor{fgz_f1}{fgz_vx1m}{green!20}
+\fgzEdgeUColor{fgz_f1}{fgz_vx1}{green!20}
+\fgzEdgeUColor{fgz_f2}{fgz_vx1}{red!20}
+\fgzEdgeUColor{fgz_f2}{fgz_va1}{red!20}
+\fgzEdgeUColor{fgz_f3}{fgz_vxnm}{green!20}
+\fgzEdgeUColor{fgz_f3}{fgz_vxn}{green!20}
+\fgzEdgeUColor{fgz_f4}{fgz_vxn}{red!20}
+\fgzEdgeUColor{fgz_f4}{fgz_van}{red!20}
+\fgzEdgeUColor{fgz_f5}{fgz_va1}{red!20}
+\fgzEdgeUColor{fgz_f5}{fgz_vb1}{red!20}
+\fgzEdgeUColor{fgz_f6}{fgz_va1}{red!20}
+\fgzEdgeUColor{fgz_f6}{fgz_vbn}{red!20}
+\fgzEdgeUColor{fgz_f7}{fgz_van}{red!20}
+\fgzEdgeUColor{fgz_f7}{fgz_vb1}{red!20}
+\fgzEdgeUColor{fgz_f8}{fgz_van}{red!20}
+\fgzEdgeUColor{fgz_f8}{fgz_vbn}{red!20}
+\fgzEdgeUColor{fgz_f9}{fgz_vb1}{red!20}
+\fgzEdgeUColor{fgz_f10}{fgz_vbn}{red!20}
 \end{tikzpicture}

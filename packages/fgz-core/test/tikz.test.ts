@@ -51,7 +51,7 @@ factor {x_1, x_2} color=red
 
     expect(tikz).toContain("\\fgzVarOpts{fgz_x_1}{0}{0}{$x_1$}{, fill=gray!30}");
     expect(tikz).toContain("\\fgzVarOpts{fgz_l_1}{1}{1}{$l_1$}{, fill=gray!20}");
-    expect(tikz).toContain("\\fgzFactorColor{fgz_f1}{1}{0}{red}");
+    expect(tikz).toContain("\\fgzFactorOpts{fgz_f1}{1}{0}{}{, draw=red, fill=red}");
     expect(tikz).toContain("\\fgzEdgeUColor{fgz_f1}{fgz_x_1}{red}");
   });
 
@@ -64,7 +64,7 @@ factor {x_1, x_2} offset=(0,-0.4) color=red
 `)
     );
 
-    expect(tikz).toContain("\\fgzFactorColor{fgz_f1}{1}{-0.4}{red}");
+    expect(tikz).toContain("\\fgzFactorOpts{fgz_f1}{1}{-0.4}{}{, draw=red, fill=red}");
     expect(tikz).toContain("\\fgzBridgeUColor{fgz_x_1}{1}{-0.5333333333333333}{fgz_x_2}{red}");
     expect(tikz).not.toContain("\\fgzEdgeUColor{fgz_f1}{fgz_x_1}{red}");
     expect(tikz).not.toContain("\\fgzEdgeUColor{fgz_f1}{fgz_x_2}{red}");
@@ -118,18 +118,39 @@ node x {} (0, 0) size=16mm font=scriptsize
     expect(tikz).toContain("\\fgzVarOpts{fgz_x}{0}{0}{$x$}{, minimum size=16mm, font=\\scriptsize}");
   });
 
-  it("emits text, line, and box annotations", () => {
+  it("emits text and box annotations", () => {
     const tikz = toTikz(
       parseFgz(`fgz 1
 t = k-1
 text t (0, 1) font=small
-line (1, 0) (1, 2) style=dashed
 box (2, 0) (4, 3) color=black!50
 `)
     );
 
     expect(tikz).toContain("\\fgzTextOpts{0}{1}{$k-1$}{, font=\\small}");
-    expect(tikz).toContain("\\fgzLineOpts{1}{0}{1}{2}{, dashed}");
     expect(tikz).toContain("\\fgzBoxOpts{2}{0}{4}{3}{, draw=black!50}");
+  });
+
+  it("emits labeled square factors", () => {
+    const tikz = toTikz(
+      parseFgz(`fgz 1
+variable x (0, 0)
+variable y (2, 0)
+factor {x, y} shape=square color=red!20 label=g1 size=6mm font=scriptsize
+`)
+    );
+
+    expect(tikz).toContain("\\fgzFactorSquareOpts{fgz_f1}{1}{0}{$g1$}{, draw=red!20, fill=red!20, minimum size=6mm, font=\\scriptsize}");
+  });
+
+  it("emits plate annotations with labels", () => {
+    const tikz = toTikz(
+      parseFgz(`fgz 1
+plate (2, 0) (4, 3) color=black!50 label=s=n_s font=small
+`)
+    );
+
+    expect(tikz).toContain("\\fgzPlateOpts{2}{0}{4}{3}{, draw=black!50}");
+    expect(tikz).toContain("\\fgzTextOpts{3.86}{2.92}{$s=n_s$}{, anchor=north east, font=\\small}");
   });
 });

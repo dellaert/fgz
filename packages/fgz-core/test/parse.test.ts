@@ -117,19 +117,52 @@ node p {x} (0, 0) size=16mm font=scriptsize
     expect(formatFgz(doc)).toContain("node p {x} (0, 0) size=16mm font=scriptsize\n");
   });
 
-  it("parses text, line, and box annotations", () => {
+  it("parses text and box annotations", () => {
     const doc = parseFgz(`fgz 1
 t = k-1
 text t (0, 1) font=small
-line (1, 0) (1, 2) style=dashed
 box (2, 0) (4, 3) color=black!50
 `);
 
     expect(doc.statements[1]).toMatchObject({ kind: "text", name: "t", font: "small" });
-    expect(doc.statements[2]).toMatchObject({ kind: "line", style: "dashed" });
-    expect(doc.statements[3]).toMatchObject({ kind: "box", color: "black!50" });
+    expect(doc.statements[2]).toMatchObject({ kind: "box", color: "black!50" });
     expect(formatFgz(doc)).toContain("text t (0, 1) font=small\n");
-    expect(formatFgz(doc)).toContain("line (1, 0) (1, 2) style=dashed\n");
     expect(formatFgz(doc)).toContain("box (2, 0) (4, 3) color=black!50\n");
+  });
+
+  it("parses labeled factor attributes", () => {
+    const doc = parseFgz(`fgz 1
+variable x (0, 0)
+variable y (2, 0)
+factor {x, y} shape=square color=red!20 label=g1 size=6mm font=scriptsize
+`);
+
+    expect(doc.statements[0]).toMatchObject({
+      kind: "var",
+      name: "x"
+    });
+    expect(doc.statements[2]).toMatchObject({
+      kind: "factor",
+      shape: "square",
+      color: "red!20",
+      label: "g1",
+      size: "6mm",
+      font: "scriptsize"
+    });
+    expect(formatFgz(doc)).toContain("factor {x, y} shape=square color=red!20 label=g1 size=6mm font=scriptsize\n");
+  });
+
+  it("parses plate annotations with labels", () => {
+    const doc = parseFgz(`fgz 1
+plate (2, 0) (4, 3) color=black!50 label=s=n_s font=small
+`);
+
+    expect(doc.statements[0]).toMatchObject({
+      kind: "plate",
+      color: "black!50",
+      label: "s=n_s",
+      font: "small"
+    });
+    expect(formatFgz(doc)).toContain("plate (2, 0) (4, 3) color=black!50 label=s=n_s font=small\n");
   });
 });

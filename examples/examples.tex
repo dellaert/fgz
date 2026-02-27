@@ -390,24 +390,21 @@ variables are eliminated.
 This larger factor graph reconstructs the recursive-dynamics layout from the supplied
 TikZ example using \texttt{theme textbook}. It combines explicit factor placement,
 per-node size tuning for long mechanics labels, and a dense multi-row geometry without
-leaving the fgz DSL.
+leaving the fgz DSL. \textbf{Source: \texttt{guide-textbook-dynamics.fgz}}
 
 \vspace{0.5cm}
 \begin{samepage}
   \centering
   \scalebox{0.85}{\input{guide-textbook-dynamics.fgz.tex}}
-
-  \medskip
-  \noindent\textbf{Source: \texttt{guide-textbook-dynamics.fgz}}
-  \VerbatimInput[frame=single,fontsize=\tiny,baselinestretch=0.92]{guide-textbook-dynamics.fgz}
 \end{samepage}
 
 \clearpage
 \subsection{Tracking Message-Passing Panels}
 These four panels reconstruct a multitarget-tracking factor-graph decomposition and
-exercise the new annotation statements for dashed separators, free text, and outline
-boxes.
+exercise the newer fgz features used for this family of figures: labeled square
+factors, free text, outline boxes, and a plate for repeated structure.
 
+\vspace{0.5cm}
 \begin{samepage}
   \noindent
   \begin{minipage}[t]{0.48\textwidth}
@@ -415,14 +412,15 @@ boxes.
     \scalebox{0.68}{\input{guide-tracking-temporal-chain.fgz.tex}}
 
     \smallskip
-    \textbf{(a)} Temporal chain.
+    \textbf{(a)}
   \end{minipage}\hfill
+  \vspace{0.5cm}
   \begin{minipage}[t]{0.48\textwidth}
     \centering
     \scalebox{0.68}{\input{guide-tracking-association-star.fgz.tex}}
 
     \smallskip
-    \textbf{(b)} Association star.
+    \textbf{(b)}
   \end{minipage}
 \end{samepage}
 
@@ -435,22 +433,30 @@ boxes.
     \scalebox{0.68}{\input{guide-tracking-bipartite-block.fgz.tex}}
 
     \smallskip
-    \textbf{(c)} Bipartite block.
+    \textbf{(c)}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.48\textwidth}
     \centering
     \scalebox{0.68}{\input{guide-tracking-lifted-box.fgz.tex}}
 
     \smallskip
-    \textbf{(d)} Lifted box construction.
+    \textbf{(d)}
   \end{minipage}
 \end{samepage}
 
 \medskip
+\textbf{Panels:} (a) temporal chain; (b) association star; (c) bipartite block; (d)
+lifted box construction.
+
+\smallskip
 \textbf{Sources:}
-\texttt{guide-tracking-temporal-chain.fgz},
-\texttt{guide-tracking-association-star.fgz},
-\texttt{guide-tracking-bipartite-block.fgz},
-\texttt{guide-tracking-lifted-box.fgz}
+\begin{minipage}[t]{0.48\textwidth}
+  \texttt{guide-tracking-temporal-chain.fgz}\\
+  \texttt{guide-tracking-bipartite-block.fgz}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \texttt{guide-tracking-association-star.fgz}\\
+  \texttt{guide-tracking-lifted-box.fgz}
+\end{minipage}
 
 \end{document}

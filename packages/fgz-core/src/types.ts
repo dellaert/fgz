@@ -53,6 +53,9 @@ export interface FactorDecl {
   offset?: Point;
   shape?: "circle" | "square";
   color?: string;
+  label?: string;
+  size?: string;
+  font?: string;
   loc: SourceLocation;
 }
 
@@ -97,8 +100,8 @@ export interface TextDecl {
   loc: SourceLocation;
 }
 
-export interface LineDecl {
-  kind: "line";
+export interface BoxDecl {
+  kind: "box";
   from: Point;
   to: Point;
   style?: "solid" | "dashed";
@@ -106,12 +109,13 @@ export interface LineDecl {
   loc: SourceLocation;
 }
 
-export interface BoxDecl {
-  kind: "box";
+export interface PlateDecl {
+  kind: "plate";
   from: Point;
   to: Point;
-  style?: "solid" | "dashed";
   color?: string;
+  label?: string;
+  font?: string;
   loc: SourceLocation;
 }
 
@@ -125,8 +129,8 @@ export type Statement =
   | CurveDecl
   | EdgeDecl
   | TextDecl
-  | LineDecl
-  | BoxDecl;
+  | BoxDecl
+  | PlateDecl;
 
 /** Parsed fgz document. */
 export interface Document {

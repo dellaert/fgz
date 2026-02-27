@@ -1,70 +1,17 @@
 fgz 1
-style node_size=9mm label_sep=0.2pt label_font=scriptsize
+style node_size=8.2mm label_sep=0.15pt label_font=tiny
 
 km1 = k-1
 k0 = k
 vd = \vdots
-pd = (d)
-smax = s=n_s
-sone = s=1
+s = s=1..n_s
 psi11 = \psi_{1,1}
 psi1n = \psi_{1,n_m}
 psin1 = \psi_{n_m,1}
 psinn = \psi_{n_m,n_m}
-
-text km1 (1.3, 4.0)
-text k0 (6.8, 4.0)
-text vd (1.15, 2.15)
-text vd (4.8, 2.15)
-text vd (10.4, 2.15)
-text vd (13.6, 2.15)
-text vd (11.95, 1.3)
-text vd (11.95, 2.95)
-text smax (13.9, 3.0) font=small
-text sone (13.55, 2.6) font=small
-text psi11 (11.0, 2.95) font=tiny
-text psi1n (10.95, 2.25) font=tiny
-text psin1 (10.9, 1.55) font=tiny
-text psinn (10.8, 0.9) font=tiny
-text pd (7.1, -0.2)
-
-line (2.5, 0.6) (2.5, 4.1) style=dashed color=black!50
-
-variable x1m (1.2, 3.2) color=gray!15
-known f1 (3.6, 3.2) color=green!20
-variable x1 (4.9, 3.2) color=gray!15
-known g1l (6.0, 2.55) color=red!20
-known g1 (7.1, 2.45) color=red!20
-
-variable xnm (1.2, 1.0) color=gray!15
-known fn (3.6, 1.0) color=green!20
-variable xn (4.9, 1.0) color=gray!15
-known gnl (6.0, 1.65) color=red!20
-known gn (7.1, 1.2) color=red!20
-
-box (6.45, 0.65) (14.65, 3.15) color=black!60
-box (7.0, 0.35) (14.2, 2.85) color=black!60
-
-variable a1 (9.9, 2.45) color=gray!15
-variable b1 (12.0, 2.45) color=gray!15
-variable an (9.9, 1.2) color=gray!15
-variable bn (12.0, 1.2) color=gray!15
-
-known p11 (11.0, 2.75) color=red!20 size=3mm
-known p1n (11.0, 2.2) color=red!20 size=3mm
-known pn1 (11.0, 1.55) color=red!20 size=3mm
-known pnn (11.0, 0.95) color=red!20 size=3mm
-
-known h1 (13.8, 2.45) color=red!20
-known hn (13.8, 1.2) color=red!20
-
-x1m = x^{1}_{-}
 f1 = f^{1}
-x1 = x^{1}
-g1 = g^{1}
-xnm = x^{n_s}_{-}
 fn = f^{n_s}
-xn = x^{n_s}
+g1 = g^{1}
 gn = g^{n_s}
 a1 = a^{1}
 b1 = b^{1}
@@ -72,32 +19,49 @@ an = a^{n_m}
 bn = b^{n_m}
 h1 = h^{1}
 hn = h^{n_m}
+x1m = x^{1}_{-}
+x1 = x^{1}
+xnm = x^{n_s}_{-}
+xn = x^{n_s}
+p = {}
 
-line (0.0, 3.2) (1.2, 3.2)
-line (1.2, 3.2) (3.6, 3.2)
-line (3.6, 3.2) (4.9, 3.2)
-line (4.9, 3.2) (6.0, 2.55)
-line (6.0, 2.55) (7.1, 2.45)
-line (0.0, 1.0) (1.2, 1.0)
-line (1.2, 1.0) (3.6, 1.0)
-line (3.6, 1.0) (4.9, 1.0)
-line (4.9, 1.0) (6.0, 1.65)
-line (6.0, 1.65) (7.1, 1.2)
+text km1 (1.3, 4.0)
+text k0 (6.8, 4.0)
+text vd (1.15, 2.15)
+text vd (4.8, 2.15)
+text vd (10.7, 2.15)
+text vd (12.95, 2.15)
+text vd (10.55, 1.3)
+text vd (10.55, 2.95)
+text psi11 (9.7, 2.95) font=tiny
+text psi1n (9.65, 2.25) font=tiny
+text psin1 (9.6, 1.55) font=tiny
+text psinn (9.55, 0.9) font=tiny
 
-line (4.9, 3.2) (7.0, 2.9)
-line (4.9, 3.2) (7.0, 2.55)
-line (4.9, 1.0) (7.0, 1.55)
-line (4.9, 1.0) (7.0, 0.7)
+box (2.5, 0.6) (2.5, 4.1) style=dashed color=black!50
+box (0.0, 3.2) (1.2, 3.2) color=fgzClassicStroke
+box (0.0, 1.0) (1.2, 1.0) color=fgzClassicStroke
 
-line (7.1, 2.45) (9.9, 2.45)
-line (7.1, 1.2) (9.9, 1.2)
-line (9.9, 2.45) (11.0, 2.75)
-line (9.9, 2.45) (11.0, 2.2)
-line (9.9, 1.2) (11.0, 1.55)
-line (9.9, 1.2) (11.0, 0.95)
-line (12.0, 2.45) (11.0, 2.75)
-line (12.0, 2.45) (11.0, 1.55)
-line (12.0, 1.2) (11.0, 2.2)
-line (12.0, 1.2) (11.0, 0.95)
-line (12.0, 2.45) (13.8, 2.45)
-line (12.0, 1.2) (13.8, 1.2)
+variable vx1m (1.2, 3.2) color=gray!15
+variable vx1 (4.9, 3.2) color=gray!15
+variable vxnm (1.2, 1.0) color=gray!15
+variable vxn (4.9, 1.0) color=gray!15
+variable va1 (8.6, 2.45) color=gray!15
+variable vb1 (10.75, 2.45) color=gray!15
+variable van (8.6, 1.2) color=gray!15
+variable vbn (10.75, 1.2) color=gray!15
+
+factor {vx1m, vx1} (3.6, 3.2) shape=square color=green!20 label=f1 size=6.8mm font=scriptsize
+factor {vx1, va1} (6.9, 2.45) shape=square color=red!20 label=g1 size=6.8mm font=scriptsize
+factor {vxnm, vxn} (3.6, 1.0) shape=square color=green!20 label=fn size=6.8mm font=scriptsize
+factor {vxn, van} (6.9, 1.2) shape=square color=red!20 label=gn size=6.8mm font=scriptsize
+
+factor {va1, vb1} (9.65, 2.75) shape=square color=red!20 label=p size=2.2mm
+factor {va1, vbn} (9.65, 2.2) shape=square color=red!20 label=p size=2.2mm
+factor {van, vb1} (9.65, 1.55) shape=square color=red!20 label=p size=2.2mm
+factor {van, vbn} (9.65, 0.95) shape=square color=red!20 label=p size=2.2mm
+
+factor {vb1} (12.15, 2.45) shape=square color=red!20 label=h1 size=6.8mm font=scriptsize
+factor {vbn} (12.15, 1.2) shape=square color=red!20 label=hn size=6.8mm font=scriptsize
+
+plate (6.35, 0.72) (13.0, 3.12) color=black!60 label=s font=small
