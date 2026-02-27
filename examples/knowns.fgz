@@ -1,0 +1,12 @@
+fgz 1
+theme textbook
+
+x = x
+y = y
+
+known x (0, 0)
+variable y (3, 0)
+factor {x, y} (1.5, 1.5) shape=square
+
+known_node o {} (0, 4)
+node h {o} (3, 4)

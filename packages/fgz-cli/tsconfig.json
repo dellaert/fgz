@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "references": [
+    {
+      "path": "../fgz-core"
+    }
+  ],
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*.ts"]
+}

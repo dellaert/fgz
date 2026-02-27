@@ -9,6 +9,7 @@ lerna-debug.log*
 # Build outputs
 dist/
 build/
+packages/*/dist/
 *.tsbuildinfo
 
 # Testing

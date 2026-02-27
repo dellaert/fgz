@@ -1,0 +1,21 @@
+{
+  "name": "fgz",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "fgz2tex": "./packages/fgz-cli/bin/fgz2tex"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.57",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

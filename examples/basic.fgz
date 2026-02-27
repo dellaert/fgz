@@ -1,0 +1,20 @@
+fgz 1
+theme classic
+
+# Aliases/macros for readable references and LaTeX labels
+x1 = x_1
+x2 = x_2
+z1 = z_1
+z2 = z_2
+
+# Factor graph
+known x1 (12.0, 8.0)
+variable x2 (24.0, 8.0)
+factor {x1, x2} (18.0, 14.0)
+
+# Bayes net
+known_node z1 {} (12.0, 24.0)
+node z2 {z1} (24.0, 24.0)
+
+# Optional curve (single control point)
+curve z1 -> z2 via (18.0, 22.0)
