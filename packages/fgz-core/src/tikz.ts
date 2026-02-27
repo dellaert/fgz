@@ -1,6 +1,6 @@
 import { assertValid } from "./validate.js";
 import { FgzError } from "./error.js";
-import type { BNDecl, CurveDecl, Document, FactorDecl, Point, Statement, Theme, VarDecl } from "./types.js";
+import type { BNDecl, CurveDecl, Document, FactorDecl, Point, Statement, StyleDecl, Theme, VarDecl } from "./types.js";
 
 interface FactorBinding {
   factor: FactorDecl;
@@ -17,6 +17,12 @@ interface BridgeSpec {
   right: string;
   control: Point;
   color: string | undefined;
+}
+
+interface DocumentStyle {
+  nodeSize?: string;
+  labelSep?: string;
+  labelFont?: string;
 }
 
 function nodeMacro(statement: VarDecl | BNDecl): string {
@@ -57,6 +63,46 @@ function formatCoordinate(raw: string): string {
 
 function themeFor(doc: Document): Theme {
   return doc.theme ?? "classic";
+}
+
+function collectDocumentStyle(statements: Statement[]): DocumentStyle {
+  const style: DocumentStyle = {};
+
+  for (const statement of statements) {
+    if (statement.kind !== "style") {
+      continue;
+    }
+
+    if (statement.nodeSize) {
+      style.nodeSize = statement.nodeSize;
+    }
+    if (statement.labelSep) {
+      style.labelSep = statement.labelSep;
+    }
+    if (statement.labelFont) {
+      style.labelFont = statement.labelFont;
+    }
+  }
+
+  return style;
+}
+
+function latexFont(value: string): string {
+  return value.startsWith("\\") ? value : `\\${value}`;
+}
+
+function styleLines(style: DocumentStyle): string[] {
+  const lines: string[] = [];
+  if (style.nodeSize) {
+    lines.push(`\\fgzsetnodesize{${style.nodeSize}}`);
+  }
+  if (style.labelSep) {
+    lines.push(`\\fgzsetlabelsep{${style.labelSep}}`);
+  }
+  if (style.labelFont) {
+    lines.push(`\\fgzsetlabelfont{${latexFont(style.labelFont)}}`);
+  }
+  return lines;
 }
 
 function collectFactorIds(statements: Statement[]): Map<FactorDecl, string> {
@@ -243,6 +289,7 @@ export function toTikz(doc: Document): string {
   assertValid(doc);
 
   const lines = ["\\begin{tikzpicture}[x=1cm,y=1cm]", `\\fgzsettheme{${themeFor(doc)}}`];
+  lines.push(...styleLines(collectDocumentStyle(doc.statements)));
   const factorIds = collectFactorIds(doc.statements);
   const factorBindings = collectFactorCurveBindings(doc.statements, factorIds);
   const curves = collectCurveOverrides(doc.statements);

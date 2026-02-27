@@ -55,4 +55,32 @@ curve x_1 -> l_1 via (0.5, 1.2) color=blue
     expect(doc.statements[2]).toMatchObject({ kind: "factor", color: "red", offset: { x: 0, y: -0.4 } });
     expect(doc.statements[3]).toMatchObject({ kind: "curve", color: "blue" });
   });
+
+  it("accepts direct LaTeX-style labels without macros", () => {
+    const doc = parseFgz(`fgz 1
+variable x_{t+1} (0, 0)
+known b_{t+1} (1, -1)
+factor {x_{t+1}, b_{t+1}}
+`);
+
+    expect(doc.statements[0]).toMatchObject({ kind: "var", name: "x_{t+1}" });
+    expect(doc.statements[1]).toMatchObject({ kind: "known", name: "b_{t+1}" });
+    expect(doc.statements[2]).toMatchObject({ kind: "factor", vars: ["x_{t+1}", "b_{t+1}"] });
+    expect(formatFgz(doc)).toContain("variable x_{t+1} (0, 0)\n");
+  });
+
+  it("parses per-document style directives", () => {
+    const doc = parseFgz(`fgz 1
+style node_size=9mm label_sep=0.4pt label_font=footnotesize
+variable x (0, 0)
+`);
+
+    expect(doc.statements[0]).toMatchObject({
+      kind: "style",
+      nodeSize: "9mm",
+      labelSep: "0.4pt",
+      labelFont: "footnotesize"
+    });
+    expect(formatFgz(doc)).toContain("style node_size=9mm label_sep=0.4pt label_font=footnotesize\n");
+  });
 });

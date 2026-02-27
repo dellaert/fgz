@@ -5,6 +5,7 @@ import type {
   FactorDecl,
   MacroDef,
   Point,
+  StyleDecl,
   Statement,
   VarDecl
 } from "./types.js";
@@ -20,6 +21,14 @@ function formatAttributes(entries: Array<[string, string | undefined]>): string 
 
 function formatMacro(statement: MacroDef): string {
   return `${statement.lhs} = ${statement.rhsLatex}`;
+}
+
+function formatStyle(statement: StyleDecl): string {
+  return `style${formatAttributes([
+    ["node_size", statement.nodeSize],
+    ["label_sep", statement.labelSep],
+    ["label_font", statement.labelFont]
+  ])}`;
 }
 
 function formatVar(statement: VarDecl): string {
@@ -54,6 +63,8 @@ function formatStatement(statement: Statement): string {
   switch (statement.kind) {
     case "theme":
       return `theme ${statement.theme}`;
+    case "style":
+      return formatStyle(statement);
     case "macro":
       return formatMacro(statement);
     case "var":

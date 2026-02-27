@@ -14,17 +14,24 @@
 
 \colorlet{fgz@stroke}{fgzClassicStroke}
 \colorlet{fgz@factor}{fgzClassicFactor}
+\def\fgz@node@size{8mm}
+\def\fgz@label@sep{0pt}
+\let\fgz@label@font\relax
 
 \newcommand{\fgz@applystyles}{%
   \tikzset{
-    fgz var/.style={draw=fgz@stroke, fill=white, circle, minimum size=8mm, inner sep=0pt, line width=0.9pt},
-    fgz known/.style={draw=fgz@stroke, fill=white, rectangle, minimum size=8mm, inner sep=0pt, line width=0.9pt},
+    fgz var/.style={draw=fgz@stroke, fill=white, circle, minimum size=\fgz@node@size, inner sep=\fgz@label@sep, line width=0.9pt, font=\fgz@label@font},
+    fgz known/.style={draw=fgz@stroke, fill=white, rectangle, minimum size=\fgz@node@size, inner sep=\fgz@label@sep, line width=0.9pt, font=\fgz@label@font},
     fgz factor/.style={draw=fgz@factor, fill=fgz@factor, circle, minimum size=3.2mm, inner sep=0pt},
     fgz factor square/.style={draw=fgz@factor, fill=fgz@factor, rectangle, minimum size=3.2mm, inner sep=0pt},
     fgz edge/.style={draw=fgz@stroke, line width=0.9pt},
     fgz edge directed/.style={fgz edge, -{Stealth[length=2.2mm,width=1.8mm]}}
   }%
 }
+
+\newcommand{\fgzsetnodesize}[1]{\def\fgz@node@size{#1}\fgz@applystyles}
+\newcommand{\fgzsetlabelsep}[1]{\def\fgz@label@sep{#1}\fgz@applystyles}
+\newcommand{\fgzsetlabelfont}[1]{\def\fgz@label@font{#1}\fgz@applystyles}
 
 \newcommand{\fgzsettheme}[1]{%
   \ifcsname fgz@theme@#1\endcsname

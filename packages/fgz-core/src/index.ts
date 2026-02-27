@@ -10,6 +10,7 @@ export type {
   MacroDef,
   Point,
   SourceLocation,
+  StyleDecl,
   Statement,
   Theme,
   ThemeDecl,

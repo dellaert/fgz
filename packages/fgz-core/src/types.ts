@@ -20,6 +20,14 @@ export interface ThemeDecl {
   loc: SourceLocation;
 }
 
+export interface StyleDecl {
+  kind: "style";
+  nodeSize?: string;
+  labelSep?: string;
+  labelFont?: string;
+  loc: SourceLocation;
+}
+
 export interface MacroDef {
   kind: "macro";
   lhs: string;
@@ -66,6 +74,7 @@ export interface CurveDecl {
 
 export type Statement =
   | ThemeDecl
+  | StyleDecl
   | MacroDef
   | VarDecl
   | FactorDecl

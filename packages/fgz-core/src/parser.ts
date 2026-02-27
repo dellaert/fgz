@@ -6,6 +6,7 @@ import type {
   FactorDecl,
   MacroDef,
   Point,
+  StyleDecl,
   Statement,
   Theme,
   ThemeDecl,
@@ -13,7 +14,7 @@ import type {
 } from "./types.js";
 
 const THEMES = new Set<Theme>(["classic", "textbook", "blog"]);
-const NAME_PATTERN = String.raw`([^\s{}(),=#]+)`;
+const NAME_PATTERN = String.raw`([^\s(),=#]+)`;
 const NUMBER_PATTERN = String.raw`([-+]?(?:\d+(?:\.\d+)?|\.\d+))`;
 const POINT_PATTERN = String.raw`\(\s*${NUMBER_PATTERN}\s*,\s*${NUMBER_PATTERN}\s*\)`;
 
@@ -82,7 +83,34 @@ function parseNameList(body: string, line: number, label: string, allowEmpty: bo
     throw new FgzError(`${label} must contain at least one name`, line);
   }
 
-  const names = trimmed.split(",").map((part) => part.trim());
+  const names: string[] = [];
+  let depth = 0;
+  let start = 0;
+
+  for (let index = 0; index < trimmed.length; index += 1) {
+    const char = trimmed[index];
+    if (char === "{") {
+      depth += 1;
+      continue;
+    }
+    if (char === "}") {
+      depth -= 1;
+      if (depth < 0) {
+        throw new FgzError(`invalid ${label}`, line);
+      }
+      continue;
+    }
+    if (char === "," && depth === 0) {
+      names.push(trimmed.slice(start, index).trim());
+      start = index + 1;
+    }
+  }
+
+  if (depth !== 0) {
+    throw new FgzError(`invalid ${label}`, line);
+  }
+
+  names.push(trimmed.slice(start).trim());
   if (names.some((name) => name.length === 0)) {
     throw new FgzError(`invalid ${label}`, line);
   }
@@ -101,6 +129,26 @@ function parseTheme(raw: string, line: number): ThemeDecl | undefined {
   }
 
   return { kind: "theme", theme, loc: { line } };
+}
+
+function parseStyle(raw: string, line: number): StyleDecl | undefined {
+  const match = raw.match(/^style(?:\s+(.*?))?\s*$/);
+  if (!match) {
+    return undefined;
+  }
+
+  const attrs = parseAttributes(match[1], line, ["node_size", "label_sep", "label_font"]);
+  if (Object.keys(attrs).length === 0) {
+    throw new FgzError("style must include at least one attribute", line);
+  }
+
+  return {
+    kind: "style",
+    ...(attrs.node_size ? { nodeSize: attrs.node_size } : {}),
+    ...(attrs.label_sep ? { labelSep: attrs.label_sep } : {}),
+    ...(attrs.label_font ? { labelFont: attrs.label_font } : {}),
+    loc: { line }
+  };
 }
 
 function parseMacro(raw: string, line: number): MacroDef | undefined {
@@ -135,7 +183,7 @@ function parseVarLike(raw: string, line: number): VarDecl | undefined {
 
 function parseFactor(raw: string, line: number): FactorDecl | undefined {
   const match = raw.match(
-    new RegExp(`^factor\\s+\\{([^}]*)\\}(?:\\s+${POINT_PATTERN})?(?:\\s+(.*?))?\\s*$`)
+    new RegExp(`^factor\\s+\\{(.*)\\}(?:\\s+${POINT_PATTERN})?(?:\\s+(.*?))?\\s*$`)
   );
   if (!match) {
     return undefined;
@@ -159,7 +207,7 @@ function parseFactor(raw: string, line: number): FactorDecl | undefined {
 
 function parseBn(raw: string, line: number): BNDecl | undefined {
   const match = raw.match(
-    new RegExp(`^(node|known_node)\\s+${NAME_PATTERN}\\s+\\{([^}]*)\\}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`)
+    new RegExp(`^(node|known_node)\\s+${NAME_PATTERN}\\s+\\{(.*)\\}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`)
   );
   if (!match) {
     return undefined;
@@ -199,6 +247,7 @@ function parseCurve(raw: string, line: number): CurveDecl | undefined {
 function parseStatement(raw: string, line: number): Statement {
   return (
     parseTheme(raw, line) ??
+    parseStyle(raw, line) ??
     parseVarLike(raw, line) ??
     parseFactor(raw, line) ??
     parseBn(raw, line) ??
