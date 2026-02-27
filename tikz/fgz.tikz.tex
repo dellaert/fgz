@@ -48,12 +48,20 @@
 }
 
 \newcommand{\fgzVar}[4]{\node[fgz var] (#1) at (#2,#3) {#4};}
+\newcommand{\fgzVarFill}[5]{\node[fgz var, fill=#5] (#1) at (#2,#3) {#4};}
 \newcommand{\fgzKnown}[4]{\node[fgz known] (#1) at (#2,#3) {#4};}
+\newcommand{\fgzKnownFill}[5]{\node[fgz known, fill=#5] (#1) at (#2,#3) {#4};}
 \newcommand{\fgzFactor}[3]{\node[fgz factor] (#1) at (#2,#3) {};}
+\newcommand{\fgzFactorColor}[4]{\node[fgz factor, draw=#4, fill=#4] (#1) at (#2,#3) {};}
 \newcommand{\fgzFactorSquare}[3]{\node[fgz factor square] (#1) at (#2,#3) {};}
+\newcommand{\fgzFactorSquareColor}[4]{\node[fgz factor square, draw=#4, fill=#4] (#1) at (#2,#3) {};}
 \newcommand{\fgzEdgeU}[2]{\draw[fgz edge] (#1) -- (#2);}
+\newcommand{\fgzEdgeUColor}[3]{\draw[fgz edge, draw=#3] (#1) -- (#2);}
 \newcommand{\fgzEdgeD}[2]{\draw[fgz edge directed] (#1) -- (#2);}
+\newcommand{\fgzEdgeDColor}[3]{\draw[fgz edge directed, draw=#3] (#1) -- (#2);}
 \newcommand{\fgzCurveU}[4]{\draw[fgz edge] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}
+\newcommand{\fgzCurveUColor}[5]{\draw[fgz edge, draw=#5] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}
 \newcommand{\fgzCurveD}[4]{\draw[fgz edge directed] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}
+\newcommand{\fgzCurveDColor}[5]{\draw[fgz edge directed, draw=#5] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}
 
 \makeatother

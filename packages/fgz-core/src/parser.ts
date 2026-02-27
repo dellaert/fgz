@@ -17,6 +17,30 @@ const NAME_PATTERN = String.raw`([^\s{}(),=#]+)`;
 const NUMBER_PATTERN = String.raw`([-+]?(?:\d+(?:\.\d+)?|\.\d+))`;
 const POINT_PATTERN = String.raw`\(\s*${NUMBER_PATTERN}\s*,\s*${NUMBER_PATTERN}\s*\)`;
 
+function parseAttributes(raw: string | undefined, line: number, allowed: readonly string[]): Record<string, string> {
+  const attrs: Record<string, string> = {};
+  const trimmed = raw?.trim() ?? "";
+  if (trimmed === "") {
+    return attrs;
+  }
+
+  for (const token of trimmed.split(/\s+/)) {
+    const equalsIndex = token.indexOf("=");
+    if (equalsIndex <= 0 || equalsIndex === token.length - 1) {
+      throw new FgzError(`invalid attribute "${token}"`, line);
+    }
+
+    const key = token.slice(0, equalsIndex);
+    const value = token.slice(equalsIndex + 1);
+    if (!allowed.includes(key)) {
+      throw new FgzError(`unknown attribute "${key}"`, line);
+    }
+    attrs[key] = value;
+  }
+
+  return attrs;
+}
+
 function capture(match: RegExpMatchArray, index: number, line: number): string {
   const value = match[index];
   if (value === undefined) {
@@ -86,70 +110,78 @@ function parseMacro(raw: string, line: number): MacroDef | undefined {
 }
 
 function parseVarLike(raw: string, line: number): VarDecl | undefined {
-  const match = raw.match(new RegExp(`^(variable|known)\\s+${NAME_PATTERN}\\s+${POINT_PATTERN}\\s*$`));
+  const match = raw.match(new RegExp(`^(variable|known)\\s+${NAME_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
   if (!match) {
     return undefined;
   }
 
+  const attrs = parseAttributes(match[5], line, ["color"]);
   return {
     kind: capture(match, 1, line) === "variable" ? "var" : "known",
     name: capture(match, 2, line),
     pos: parsePoint(line, capture(match, 3, line), capture(match, 4, line)),
+    ...(attrs.color ? { color: attrs.color } : {}),
     loc: { line }
   };
 }
 
 function parseFactor(raw: string, line: number): FactorDecl | undefined {
   const match = raw.match(
-    new RegExp(`^factor\\s+\\{([^}]*)\\}(?:\\s+${POINT_PATTERN})?(?:\\s+shape=(circle|square))?\\s*$`)
+    new RegExp(`^factor\\s+\\{([^}]*)\\}(?:\\s+${POINT_PATTERN})?(?:\\s+(.*?))?\\s*$`)
   );
   if (!match) {
     return undefined;
   }
 
   const hasPoint = match[2] !== undefined && match[3] !== undefined;
-  const shape = match[4] as FactorDecl["shape"] | undefined;
+  const attrs = parseAttributes(match[4], line, ["shape", "color"]);
+  const shape = attrs.shape as FactorDecl["shape"] | undefined;
 
   return {
     kind: "factor",
     vars: parseNameList(capture(match, 1, line), line, "factor variable list", false),
     ...(hasPoint ? { pos: parsePoint(line, capture(match, 2, line), capture(match, 3, line)) } : {}),
     ...(shape ? { shape } : {}),
+    ...(attrs.color ? { color: attrs.color } : {}),
     loc: { line }
   };
 }
 
 function parseBn(raw: string, line: number): BNDecl | undefined {
   const match = raw.match(
-    new RegExp(`^(node|known_node)\\s+${NAME_PATTERN}\\s+\\{([^}]*)\\}\\s+${POINT_PATTERN}\\s*$`)
+    new RegExp(`^(node|known_node)\\s+${NAME_PATTERN}\\s+\\{([^}]*)\\}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`)
   );
   if (!match) {
     return undefined;
   }
 
+  const attrs = parseAttributes(match[6], line, ["color"]);
   return {
     kind: capture(match, 1, line) as BNDecl["kind"],
     name: capture(match, 2, line),
     parents: parseNameList(capture(match, 3, line), line, "parent list", true),
     pos: parsePoint(line, capture(match, 4, line), capture(match, 5, line)),
+    ...(attrs.color ? { color: attrs.color } : {}),
     loc: { line }
   };
 }
 
 function parseCurve(raw: string, line: number): CurveDecl | undefined {
   const match = raw.match(
-    new RegExp(`^curve\\s+${NAME_PATTERN}\\s+(--|->)\\s+${NAME_PATTERN}\\s+via\\s+${POINT_PATTERN}\\s*$`)
+    new RegExp(`^curve\\s+${NAME_PATTERN}\\s+(--|->)\\s+${NAME_PATTERN}\\s+via\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`)
   );
   if (!match) {
     return undefined;
   }
 
+  const attrs = parseAttributes(match[6], line, ["color"]);
   return {
     kind: "curve",
     a: capture(match, 1, line),
     directed: capture(match, 2, line) === "->",
     b: capture(match, 3, line),
     control: parsePoint(line, capture(match, 4, line), capture(match, 5, line)),
+    ...(attrs.color ? { color: attrs.color } : {}),
     loc: { line }
   };
 }

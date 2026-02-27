@@ -13,28 +13,40 @@ function formatPoint(point: Point): string {
   return `(${point.rawX}, ${point.rawY})`;
 }
 
+function formatAttributes(entries: Array<[string, string | undefined]>): string {
+  const parts = entries.flatMap(([key, value]) => (value ? [`${key}=${value}`] : []));
+  return parts.length === 0 ? "" : ` ${parts.join(" ")}`;
+}
+
 function formatMacro(statement: MacroDef): string {
   return `${statement.lhs} = ${statement.rhsLatex}`;
 }
 
 function formatVar(statement: VarDecl): string {
   const head = statement.kind === "var" ? "variable" : "known";
-  return `${head} ${statement.name} ${formatPoint(statement.pos)}`;
+  return `${head} ${statement.name} ${formatPoint(statement.pos)}${formatAttributes([["color", statement.color]])}`;
 }
 
 function formatFactor(statement: FactorDecl): string {
   const point = statement.pos ? ` ${formatPoint(statement.pos)}` : "";
   const base = `factor {${statement.vars.join(", ")}}${point}`;
-  return statement.shape ? `${base} shape=${statement.shape}` : base;
+  return `${base}${formatAttributes([
+    ["shape", statement.shape],
+    ["color", statement.color]
+  ])}`;
 }
 
 function formatBn(statement: BNDecl): string {
-  return `${statement.kind} ${statement.name} {${statement.parents.join(", ")}} ${formatPoint(statement.pos)}`;
+  return `${statement.kind} ${statement.name} {${statement.parents.join(", ")}} ${formatPoint(statement.pos)}${formatAttributes([
+    ["color", statement.color]
+  ])}`;
 }
 
 function formatCurve(statement: CurveDecl): string {
   const operator = statement.directed ? "->" : "--";
-  return `curve ${statement.a} ${operator} ${statement.b} via ${formatPoint(statement.control)}`;
+  return `curve ${statement.a} ${operator} ${statement.b} via ${formatPoint(statement.control)}${formatAttributes([
+    ["color", statement.color]
+  ])}`;
 }
 
 function formatStatement(statement: Statement): string {

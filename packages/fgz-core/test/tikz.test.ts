@@ -38,4 +38,20 @@ factor {a, b, c}
     expect(tikz).toContain("\\fgzEdgeU{fgz_f1}{fgz_b}");
     expect(tikz).toContain("\\fgzEdgeU{fgz_f1}{fgz_c}");
   });
+
+  it("emits color-aware TikZ macros when colors are provided", () => {
+    const tikz = toTikz(
+      parseFgz(`fgz 1
+variable x_1 (0, 0) color=gray!30
+variable x_2 (2, 0)
+node l_1 {x_1} (1, 1) color=gray!20
+factor {x_1, x_2} color=red
+`)
+    );
+
+    expect(tikz).toContain("\\fgzVarFill{fgz_x_1}{0}{0}{$x_1$}{gray!30}");
+    expect(tikz).toContain("\\fgzVarFill{fgz_l_1}{1}{1}{$l_1$}{gray!20}");
+    expect(tikz).toContain("\\fgzFactorColor{fgz_f1}{1}{0}{red}");
+    expect(tikz).toContain("\\fgzEdgeUColor{fgz_f1}{fgz_x_1}{red}");
+  });
 });

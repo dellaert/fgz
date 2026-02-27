@@ -31,6 +31,7 @@ export interface VarDecl {
   kind: "var" | "known";
   name: string;
   pos: Point;
+  color?: string;
   loc: SourceLocation;
 }
 
@@ -39,6 +40,7 @@ export interface FactorDecl {
   vars: string[];
   pos?: Point;
   shape?: "circle" | "square";
+  color?: string;
   loc: SourceLocation;
 }
 
@@ -47,6 +49,7 @@ export interface BNDecl {
   name: string;
   parents: string[];
   pos: Point;
+  color?: string;
   loc: SourceLocation;
 }
 
@@ -56,6 +59,7 @@ export interface CurveDecl {
   b: string;
   directed: boolean;
   control: Point;
+  color?: string;
   loc: SourceLocation;
 }
 

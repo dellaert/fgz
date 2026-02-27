@@ -7,6 +7,20 @@ interface FactorBinding {
   factorId: string;
 }
 
+function nodeMacro(statement: VarDecl | BNDecl): string {
+  const colored = statement.color ? "Fill" : "";
+  return statement.kind === "known" || statement.kind === "known_node"
+    ? `\\fgzKnown${colored}`
+    : `\\fgzVar${colored}`;
+}
+
+function edgeMacro(directed: boolean, color: string | undefined, curved: boolean): string {
+  const head = curved ? "Curve" : "Edge";
+  const direction = directed ? "D" : "U";
+  const colored = color ? "Color" : "";
+  return `\\fgz${head}${direction}${colored}`;
+}
+
 function symbolId(name: string): string {
   return `fgz_${name.replace(/[^A-Za-z0-9_]/g, "_")}`;
 }
@@ -91,10 +105,11 @@ function collectCurveOverrides(statements: Statement[]) {
 }
 
 function nodeLine(statement: VarDecl | BNDecl, doc: Document): string {
-  const macro = statement.kind === "known" || statement.kind === "known_node" ? "\\fgzKnown" : "\\fgzVar";
-  return `${macro}{${symbolId(statement.name)}}{${formatCoordinate(statement.pos.rawX)}}{${formatCoordinate(
+  const macro = nodeMacro(statement);
+  const base = `${macro}{${symbolId(statement.name)}}{${formatCoordinate(statement.pos.rawX)}}{${formatCoordinate(
     statement.pos.rawY
   )}}{${labelFor(statement.name, doc)}}`;
+  return statement.color ? `${base}{${statement.color}}` : base;
 }
 
 function midpointRaw(left: number, right: number): string {
@@ -110,13 +125,13 @@ function resolveFactorPoint(statement: FactorDecl, positions: Map<string, Point>
   const first = statement.vars[0];
   const second = statement.vars[1];
   if (!first || !second) {
-    throw new FgzError("binary factor position inference requires two variables", statement.loc.line);
+    throw new FgzError("factor position inference requires at least two variables", statement.loc.line);
   }
 
   const left = positions.get(first);
   const right = positions.get(second);
   if (!left || !right) {
-    throw new FgzError("binary factor position inference requires declared variable positions", statement.loc.line);
+    throw new FgzError("factor position inference requires declared variable positions", statement.loc.line);
   }
 
   const rawX = midpointRaw(left.x, right.x);
@@ -130,11 +145,13 @@ function resolveFactorPoint(statement: FactorDecl, positions: Map<string, Point>
 }
 
 function factorLine(statement: FactorDecl, factorIds: Map<FactorDecl, string>, positions: Map<string, Point>): string {
-  const macro = statement.shape === "square" ? "\\fgzFactorSquare" : "\\fgzFactor";
+  const colored = statement.color ? "Color" : "";
+  const macro = statement.shape === "square" ? `\\fgzFactorSquare${colored}` : `\\fgzFactor${colored}`;
   const point = resolveFactorPoint(statement, positions);
-  return `${macro}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${formatCoordinate(
+  const base = `${macro}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${formatCoordinate(
     point.rawX
   )}}{${formatCoordinate(point.rawY)}}`;
+  return statement.color ? `${base}{${statement.color}}` : base;
 }
 
 /**
@@ -181,7 +198,9 @@ export function toTikz(doc: Document): string {
         if (curvedFactorEdges.has(edgeKey)) {
           continue;
         }
-        edgeLines.push(`\\fgzEdgeU{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${symbolId(name)}}`);
+        const macro = edgeMacro(false, statement.color, false);
+        const base = `${macro}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${symbolId(name)}}`;
+        edgeLines.push(statement.color ? `${base}{${statement.color}}` : base);
       }
       continue;
     }
@@ -198,11 +217,12 @@ export function toTikz(doc: Document): string {
         }
         const edgeKey = `${binding.factorId}\u0000${name}`;
         curvedFactorEdges.add(edgeKey);
-        edgeLines.push(
-          `\\fgzCurveU{${binding.factorId}}{${symbolId(name)}}{${formatCoordinate(
-            statement.control.rawX
-          )}}{${formatCoordinate(statement.control.rawY)}}`
-        );
+        const color = statement.color ?? binding.factor.color;
+        const macro = edgeMacro(false, color, true);
+        const base = `${macro}{${binding.factorId}}{${symbolId(name)}}{${formatCoordinate(
+          statement.control.rawX
+        )}}{${formatCoordinate(statement.control.rawY)}}`;
+        edgeLines.push(color ? `${base}{${color}}` : base);
       }
       continue;
     }
@@ -211,11 +231,11 @@ export function toTikz(doc: Document): string {
       for (const parent of statement.parents) {
         const override = curves.directed.get(`${parent}\u0000${statement.name}`);
         if (override) {
-          edgeLines.push(
-            `\\fgzCurveD{${symbolId(parent)}}{${symbolId(statement.name)}}{${formatCoordinate(
-              override.control.rawX
-            )}}{${formatCoordinate(override.control.rawY)}}`
-          );
+          const macro = edgeMacro(true, override.color, true);
+          const base = `${macro}{${symbolId(parent)}}{${symbolId(statement.name)}}{${formatCoordinate(
+            override.control.rawX
+          )}}{${formatCoordinate(override.control.rawY)}}`;
+          edgeLines.push(override.color ? `${base}{${override.color}}` : base);
         } else {
           edgeLines.push(`\\fgzEdgeD{${symbolId(parent)}}{${symbolId(statement.name)}}`);
         }
