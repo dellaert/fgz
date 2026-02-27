@@ -71,10 +71,14 @@
 \newcommand{\fgzEdgeU}[2]{\fgz@bgdraw{\draw[fgz edge] (#1) -- (#2);}}
 \newcommand{\fgzEdgeUColor}[3]{\fgz@bgdraw{\draw[fgz edge, draw=#3] (#1) -- (#2);}}
 \newcommand{\fgzEdgeD}[2]{\fgz@bgdraw{\draw[fgz edge directed] (#1) -- (#2);}}
+\newcommand{\fgzEdgeDOpts}[3]{\fgz@bgdraw{\draw[fgz edge directed#3] (#1) -- (#2);}}
+\newcommand{\fgzEdgeDOptsLabel}[5]{\fgz@bgdraw{\draw[fgz edge directed#3] (#1) -- node[midway,#5,fill=white,inner sep=1pt] {#4} (#2);}}
 \newcommand{\fgzEdgeDColor}[3]{\fgz@bgdraw{\draw[fgz edge directed, draw=#3] (#1) -- (#2);}}
 \newcommand{\fgzCurveU}[4]{\fgz@bgdraw{\draw[fgz edge] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}}
 \newcommand{\fgzCurveUColor}[5]{\fgz@bgdraw{\draw[fgz edge, draw=#5] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}}
 \newcommand{\fgzCurveD}[4]{\fgz@bgdraw{\draw[fgz edge directed] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}}
+\newcommand{\fgzCurveDOpts}[5]{\fgz@bgdraw{\draw[fgz edge directed#5] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}}
+\newcommand{\fgzCurveDOptsLabel}[7]{\fgz@bgdraw{\draw[fgz edge directed#5] (#1) .. controls (#3,#4) and (#3,#4) .. node[midway,#7,fill=white,inner sep=1pt] {#6} (#2);}}
 \newcommand{\fgzCurveDColor}[5]{\fgz@bgdraw{\draw[fgz edge directed, draw=#5] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}}
 \newcommand{\fgzBridgeU}[4]{\fgz@bgdraw{\draw[fgz edge] (#1.center) .. controls (#2,#3) and (#2,#3) .. (#4.center);}}
 \newcommand{\fgzBridgeUColor}[5]{\fgz@bgdraw{\draw[fgz edge, draw=#5] (#1.center) .. controls (#2,#3) and (#2,#3) .. (#4.center);}}

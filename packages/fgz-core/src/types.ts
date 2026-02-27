@@ -73,6 +73,16 @@ export interface CurveDecl {
   loc: SourceLocation;
 }
 
+export interface EdgeDecl {
+  kind: "edge";
+  a: string;
+  b: string;
+  style?: "solid" | "dashed";
+  label?: string;
+  labelSide?: "left" | "right";
+  loc: SourceLocation;
+}
+
 export type Statement =
   | ThemeDecl
   | StyleDecl
@@ -80,7 +90,8 @@ export type Statement =
   | VarDecl
   | FactorDecl
   | BNDecl
-  | CurveDecl;
+  | CurveDecl
+  | EdgeDecl;
 
 /** Parsed fgz document. */
 export interface Document {

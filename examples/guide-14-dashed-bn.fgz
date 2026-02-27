@@ -1,0 +1,26 @@
+fgz 1
+style node_size=9mm label_sep=0.2pt label_font=small
+
+m_root = m_0
+m_left = m_1
+m_right = m_1
+p_l0 = p(X_i|M_i)
+p_l1 = p(X_i|M_i)
+p_r0 = p(X_i|M_i)
+p_r1 = p(X_i|M_i)
+
+known_node m_root {} (1.5, 3)
+known_node m_left {m_root} (0, 1.5)
+known_node m_right {m_root} (3, 1.5)
+
+node p_l0 {m_left} (-0.75, 0)
+node p_l1 {m_left} (0.75, 0)
+node p_r0 {m_right} (2.25, 0)
+node p_r1 {m_right} (3.75, 0)
+
+edge m_root -> m_left style=dashed label=0 label_side=left
+edge m_root -> m_right label=1 label_side=right
+edge m_left -> p_l0 style=dashed label=0 label_side=left
+edge m_left -> p_l1 label=1 label_side=right
+edge m_right -> p_r0 style=dashed label=0 label_side=left
+edge m_right -> p_r1 label=1 label_side=right

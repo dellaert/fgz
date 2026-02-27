@@ -80,4 +80,20 @@ factor {x, y} (1, 0) offset=(0,-0.3)
       message: "factor offset cannot be combined with an explicit position"
     });
   });
+
+  it("rejects directed edge overrides that do not match an implied Bayes-net edge", () => {
+    const doc = parseFgz(`fgz 1
+node x_1 {} (0, 0)
+node x_0 {} (1, 0)
+edge x_1 -> x_0 style=dashed label=0
+`);
+
+    const result = validate(doc);
+
+    expect(result.ok).toBe(false);
+    expect(result.errors[0]).toMatchObject({
+      line: 4,
+      message: 'edge override "x_1 -> x_0" does not match any implied Bayes-net edge'
+    });
+  });
 });

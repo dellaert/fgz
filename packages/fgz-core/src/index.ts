@@ -6,6 +6,7 @@ export type {
   BNDecl,
   CurveDecl,
   Document,
+  EdgeDecl,
   FactorDecl,
   MacroDef,
   Point,

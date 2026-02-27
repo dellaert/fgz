@@ -1,0 +1,19 @@
+\begin{tikzpicture}[x=1cm,y=1cm]
+\fgzsettheme{classic}
+\fgzsetnodesize{9mm}
+\fgzsetlabelsep{0.2pt}
+\fgzsetlabelfont{\small}
+\fgzKnown{fgz_m_root}{1.5}{3}{$m_0$}
+\fgzKnown{fgz_m_left}{0}{1.5}{$m_1$}
+\fgzKnown{fgz_m_right}{3}{1.5}{$m_1$}
+\fgzVar{fgz_p_l0}{-0.75}{0}{$p(X_i|M_i)$}
+\fgzVar{fgz_p_l1}{0.75}{0}{$p(X_i|M_i)$}
+\fgzVar{fgz_p_r0}{2.25}{0}{$p(X_i|M_i)$}
+\fgzVar{fgz_p_r1}{3.75}{0}{$p(X_i|M_i)$}
+\fgzEdgeDOptsLabel{fgz_m_root}{fgz_m_left}{, dashed}{0}{left}
+\fgzEdgeDOptsLabel{fgz_m_root}{fgz_m_right}{}{1}{right}
+\fgzEdgeDOptsLabel{fgz_m_left}{fgz_p_l0}{, dashed}{0}{left}
+\fgzEdgeDOptsLabel{fgz_m_left}{fgz_p_l1}{}{1}{right}
+\fgzEdgeDOptsLabel{fgz_m_right}{fgz_p_r0}{, dashed}{0}{left}
+\fgzEdgeDOptsLabel{fgz_m_right}{fgz_p_r1}{}{1}{right}
+\end{tikzpicture}

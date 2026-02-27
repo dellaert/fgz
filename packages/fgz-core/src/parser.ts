@@ -3,6 +3,7 @@ import type {
   BNDecl,
   CurveDecl,
   Document,
+  EdgeDecl,
   FactorDecl,
   MacroDef,
   Point,
@@ -245,6 +246,27 @@ function parseCurve(raw: string, line: number): CurveDecl | undefined {
   };
 }
 
+function parseEdge(raw: string, line: number): EdgeDecl | undefined {
+  const match = raw.match(new RegExp(`^edge\\s+${NAME_PATTERN}\\s+->\\s+${NAME_PATTERN}(?:\\s+(.*?))?\\s*$`));
+  if (!match) {
+    return undefined;
+  }
+
+  const attrs = parseAttributes(match[3], line, ["style", "label", "label_side"]);
+  const style = attrs.style as EdgeDecl["style"] | undefined;
+  const labelSide = attrs.label_side as EdgeDecl["labelSide"] | undefined;
+
+  return {
+    kind: "edge",
+    a: capture(match, 1, line),
+    b: capture(match, 2, line),
+    ...(style ? { style } : {}),
+    ...(attrs.label ? { label: attrs.label } : {}),
+    ...(labelSide ? { labelSide } : {}),
+    loc: { line }
+  };
+}
+
 function parseStatement(raw: string, line: number): Statement {
   return (
     parseTheme(raw, line) ??
@@ -253,6 +275,7 @@ function parseStatement(raw: string, line: number): Statement {
     parseFactor(raw, line) ??
     parseBn(raw, line) ??
     parseCurve(raw, line) ??
+    parseEdge(raw, line) ??
     parseMacro(raw, line) ??
     (() => {
       throw new FgzError("could not parse statement", line);

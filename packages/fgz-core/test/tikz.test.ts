@@ -95,4 +95,16 @@ variable x (0, 0)
 
     expect(tikz).toContain("\\fgzsettheme{classic}\n\\fgzsetnodesize{9mm}\n\\fgzsetfactorsize{4mm}\n\\fgzsetlabelsep{0.4pt}\n\\fgzsetlabelfont{\\footnotesize}");
   });
+
+  it("emits labeled dashed overrides for implied Bayes-net edges", () => {
+    const tikz = toTikz(
+      parseFgz(`fgz 1
+node x_1 {} (1, 0)
+node x_0 {x_1} (0, 0)
+edge x_1 -> x_0 style=dashed label=0 label_side=left
+`)
+    );
+
+    expect(tikz).toContain("\\fgzEdgeDOptsLabel{fgz_x_1}{fgz_x_0}{, dashed}{0}{left}");
+  });
 });

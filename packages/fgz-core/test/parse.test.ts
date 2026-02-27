@@ -84,4 +84,22 @@ variable x (0, 0)
     });
     expect(formatFgz(doc)).toContain("style node_size=9mm factor_size=4mm label_sep=0.4pt label_font=footnotesize\n");
   });
+
+  it("parses directed edge overrides with labels", () => {
+    const doc = parseFgz(`fgz 1
+node x_1 {} (0, 0)
+node x_0 {x_1} (1, 0)
+edge x_1 -> x_0 style=dashed label=0 label_side=left
+`);
+
+    expect(doc.statements[2]).toMatchObject({
+      kind: "edge",
+      a: "x_1",
+      b: "x_0",
+      style: "dashed",
+      label: "0",
+      labelSide: "left"
+    });
+    expect(formatFgz(doc)).toContain("edge x_1 -> x_0 style=dashed label=0 label_side=left\n");
+  });
 });

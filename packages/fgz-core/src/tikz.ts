@@ -1,6 +1,6 @@
 import { assertValid } from "./validate.js";
 import { FgzError } from "./error.js";
-import type { BNDecl, CurveDecl, Document, FactorDecl, Point, Statement, StyleDecl, Theme, VarDecl } from "./types.js";
+import type { BNDecl, CurveDecl, Document, EdgeDecl, FactorDecl, Point, Statement, StyleDecl, Theme, VarDecl } from "./types.js";
 
 interface FactorBinding {
   factor: FactorDecl;
@@ -26,6 +26,12 @@ interface DocumentStyle {
   labelFont?: string;
 }
 
+interface DirectedEdgeStyle {
+  style?: "solid" | "dashed";
+  label?: string;
+  labelSide?: "left" | "right";
+}
+
 function nodeMacro(statement: VarDecl | BNDecl): string {
   const colored = statement.color ? "Fill" : "";
   return statement.kind === "known" || statement.kind === "known_node"
@@ -44,6 +50,10 @@ function bridgeMacro(color: string | undefined): string {
   const head = "BridgeU";
   const colored = color ? "Color" : "";
   return `\\fgz${head}${colored}`;
+}
+
+function edgeOptionSuffix(options: string[]): string {
+  return options.length === 0 ? "" : `, ${options.join(", ")}`;
 }
 
 function symbolId(name: string): string {
@@ -175,6 +185,20 @@ function collectCurveOverrides(statements: Statement[]) {
   return { directed, undirected };
 }
 
+function collectDirectedEdgeOverrides(statements: Statement[]): Map<string, EdgeDecl> {
+  const directed = new Map<string, EdgeDecl>();
+
+  for (const statement of statements) {
+    if (statement.kind !== "edge") {
+      continue;
+    }
+
+    directed.set(`${statement.a}\u0000${statement.b}`, statement);
+  }
+
+  return directed;
+}
+
 function collectUndirectedOverridesByFactor(
   statements: Statement[],
   factorBindings: Map<string, FactorBinding>
@@ -289,6 +313,49 @@ function bridgeLine(statement: FactorDecl, spec: BridgeSpec): string {
   return color ? `${base}{${color}}` : base;
 }
 
+function directedEdgeLine(
+  parent: string,
+  child: string,
+  curve: CurveDecl | undefined,
+  edge: EdgeDecl | undefined
+): string {
+  const options: string[] = [];
+  if (curve?.color) {
+    options.push(`draw=${curve.color}`);
+  }
+  if (edge?.style === "dashed") {
+    options.push("dashed");
+  }
+
+  const optionSuffix = edgeOptionSuffix(options);
+  const label = edge?.label;
+  const labelSide = edge?.labelSide ?? "left";
+
+  if (curve) {
+    if (label) {
+      return `\\fgzCurveDOptsLabel{${symbolId(parent)}}{${symbolId(child)}}{${formatCoordinate(
+        curve.control.rawX
+      )}}{${formatCoordinate(curve.control.rawY)}}{${optionSuffix}}{${label}}{${labelSide}}`;
+    }
+    if (optionSuffix !== "") {
+      return `\\fgzCurveDOpts{${symbolId(parent)}}{${symbolId(child)}}{${formatCoordinate(
+        curve.control.rawX
+      )}}{${formatCoordinate(curve.control.rawY)}}{${optionSuffix}}`;
+    }
+    return `\\fgzCurveD{${symbolId(parent)}}{${symbolId(child)}}{${formatCoordinate(curve.control.rawX)}}{${formatCoordinate(
+      curve.control.rawY
+    )}}`;
+  }
+
+  if (label) {
+    return `\\fgzEdgeDOptsLabel{${symbolId(parent)}}{${symbolId(child)}}{${optionSuffix}}{${label}}{${labelSide}}`;
+  }
+  if (optionSuffix !== "") {
+    return `\\fgzEdgeDOpts{${symbolId(parent)}}{${symbolId(child)}}{${optionSuffix}}`;
+  }
+  return `\\fgzEdgeD{${symbolId(parent)}}{${symbolId(child)}}`;
+}
+
 /**
  * Convert a validated fgz document into a readable TikZ snippet.
  */
@@ -300,6 +367,7 @@ export function toTikz(doc: Document): string {
   const factorIds = collectFactorIds(doc.statements);
   const factorBindings = collectFactorCurveBindings(doc.statements, factorIds);
   const curves = collectCurveOverrides(doc.statements);
+  const directedEdges = collectDirectedEdgeOverrides(doc.statements);
   const undirectedOverridesByFactor = collectUndirectedOverridesByFactor(doc.statements, factorBindings);
   const consumedFactorEdges = new Set<string>();
   const edgeLines: string[] = [];
@@ -400,16 +468,9 @@ export function toTikz(doc: Document): string {
 
     if (statement.kind === "node" || statement.kind === "known_node") {
       for (const parent of statement.parents) {
-        const override = curves.directed.get(`${parent}\u0000${statement.name}`);
-        if (override) {
-          const macro = edgeMacro(true, override.color, true);
-          const base = `${macro}{${symbolId(parent)}}{${symbolId(statement.name)}}{${formatCoordinate(
-            override.control.rawX
-          )}}{${formatCoordinate(override.control.rawY)}}`;
-          edgeLines.push(override.color ? `${base}{${override.color}}` : base);
-        } else {
-          edgeLines.push(`\\fgzEdgeD{${symbolId(parent)}}{${symbolId(statement.name)}}`);
-        }
+        const curveOverride = curves.directed.get(`${parent}\u0000${statement.name}`);
+        const edgeOverride = directedEdges.get(`${parent}\u0000${statement.name}`);
+        edgeLines.push(directedEdgeLine(parent, statement.name, curveOverride, edgeOverride));
       }
     }
   }

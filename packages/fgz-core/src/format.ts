@@ -2,6 +2,7 @@ import type {
   BNDecl,
   CurveDecl,
   Document,
+  EdgeDecl,
   FactorDecl,
   MacroDef,
   Point,
@@ -60,6 +61,14 @@ function formatCurve(statement: CurveDecl): string {
   ])}`;
 }
 
+function formatEdge(statement: EdgeDecl): string {
+  return `edge ${statement.a} -> ${statement.b}${formatAttributes([
+    ["style", statement.style],
+    ["label", statement.label],
+    ["label_side", statement.labelSide]
+  ])}`;
+}
+
 function formatStatement(statement: Statement): string {
   switch (statement.kind) {
     case "theme":
@@ -78,6 +87,8 @@ function formatStatement(statement: Statement): string {
       return formatBn(statement);
     case "curve":
       return formatCurve(statement);
+    case "edge":
+      return formatEdge(statement);
   }
 }
 

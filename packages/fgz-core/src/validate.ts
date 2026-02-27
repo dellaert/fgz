@@ -3,6 +3,7 @@ import type {
   BNDecl,
   CurveDecl,
   Document,
+  EdgeDecl,
   FactorDecl,
   Statement,
   ValidationIssue,
@@ -212,6 +213,25 @@ function validateCurveDecl(
   }
 }
 
+function validateEdgeDecl(statement: EdgeDecl, statements: Statement[], errors: ValidationIssue[]): void {
+  if (statement.style && statement.style !== "solid" && statement.style !== "dashed") {
+    addIssue(errors, statement.loc.line, `unknown edge style "${statement.style}"`);
+  }
+
+  if (statement.labelSide && statement.labelSide !== "left" && statement.labelSide !== "right") {
+    addIssue(errors, statement.loc.line, `unknown edge label side "${statement.labelSide}"`);
+  }
+
+  const child = statements.find(
+    (candidate): candidate is BNDecl =>
+      (candidate.kind === "node" || candidate.kind === "known_node") && candidate.name === statement.b
+  );
+
+  if (!child || !child.parents.includes(statement.a)) {
+    addIssue(errors, statement.loc.line, `edge override "${statement.a} -> ${statement.b}" does not match any implied Bayes-net edge`);
+  }
+}
+
 /**
  * Validate a parsed document.
  */
@@ -236,6 +256,9 @@ export function validate(doc: Document): ValidationResult {
         break;
       case "curve":
         validateCurveDecl(statement, doc.statements, factorPairs, errors);
+        break;
+      case "edge":
+        validateEdgeDecl(statement, doc.statements, errors);
         break;
       default:
         break;
