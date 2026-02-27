@@ -89,7 +89,7 @@ variable x (0, 0)
     const doc = parseFgz(`fgz 1
 node x_1 {} (0, 0)
 node x_0 {x_1} (1, 0)
-edge x_1 -> x_0 style=dashed label=0 label_side=left
+edge x_1 -> x_0 style=dashed label=0 label_side=left label_pos=0.3
 `);
 
     expect(doc.statements[2]).toMatchObject({
@@ -98,8 +98,22 @@ edge x_1 -> x_0 style=dashed label=0 label_side=left
       b: "x_0",
       style: "dashed",
       label: "0",
-      labelSide: "left"
+      labelSide: "left",
+      labelPos: "0.3"
     });
-    expect(formatFgz(doc)).toContain("edge x_1 -> x_0 style=dashed label=0 label_side=left\n");
+    expect(formatFgz(doc)).toContain("edge x_1 -> x_0 style=dashed label=0 label_side=left label_pos=0.3\n");
+  });
+
+  it("parses per-node size and font overrides", () => {
+    const doc = parseFgz(`fgz 1
+node p {x} (0, 0) size=16mm font=scriptsize
+`);
+
+    expect(doc.statements[0]).toMatchObject({
+      kind: "node",
+      size: "16mm",
+      font: "scriptsize"
+    });
+    expect(formatFgz(doc)).toContain("node p {x} (0, 0) size=16mm font=scriptsize\n");
   });
 });

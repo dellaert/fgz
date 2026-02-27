@@ -30,6 +30,7 @@ interface DirectedEdgeStyle {
   style?: "solid" | "dashed";
   label?: string;
   labelSide?: "left" | "right";
+  labelPos?: string;
 }
 
 function nodeMacro(statement: VarDecl | BNDecl): string {
@@ -227,6 +228,24 @@ function collectUndirectedOverridesByFactor(
 }
 
 function nodeLine(statement: VarDecl | BNDecl, doc: Document): string {
+  const options: string[] = [];
+  if (statement.color) {
+    options.push(`fill=${statement.color}`);
+  }
+  if (statement.size) {
+    options.push(`minimum size=${statement.size}`);
+  }
+  if (statement.font) {
+    options.push(`font=${latexFont(statement.font)}`);
+  }
+
+  if (options.length > 0) {
+    const macro = statement.kind === "known" || statement.kind === "known_node" ? "\\fgzKnownOpts" : "\\fgzVarOpts";
+    return `${macro}{${symbolId(statement.name)}}{${formatCoordinate(statement.pos.rawX)}}{${formatCoordinate(
+      statement.pos.rawY
+    )}}{${labelFor(statement.name, doc)}}{, ${options.join(", ")}}`;
+  }
+
   const macro = nodeMacro(statement);
   const base = `${macro}{${symbolId(statement.name)}}{${formatCoordinate(statement.pos.rawX)}}{${formatCoordinate(
     statement.pos.rawY
@@ -330,12 +349,13 @@ function directedEdgeLine(
   const optionSuffix = edgeOptionSuffix(options);
   const label = edge?.label;
   const labelSide = edge?.labelSide ?? "left";
+  const labelPos = edge?.labelPos ?? "0.5";
 
   if (curve) {
     if (label) {
       return `\\fgzCurveDOptsLabel{${symbolId(parent)}}{${symbolId(child)}}{${formatCoordinate(
         curve.control.rawX
-      )}}{${formatCoordinate(curve.control.rawY)}}{${optionSuffix}}{${label}}{${labelSide}}`;
+      )}}{${formatCoordinate(curve.control.rawY)}}{${optionSuffix}}{${label}}{${labelSide}}{${labelPos}}`;
     }
     if (optionSuffix !== "") {
       return `\\fgzCurveDOpts{${symbolId(parent)}}{${symbolId(child)}}{${formatCoordinate(
@@ -348,7 +368,7 @@ function directedEdgeLine(
   }
 
   if (label) {
-    return `\\fgzEdgeDOptsLabel{${symbolId(parent)}}{${symbolId(child)}}{${optionSuffix}}{${label}}{${labelSide}}`;
+    return `\\fgzEdgeDOptsLabel{${symbolId(parent)}}{${symbolId(child)}}{${optionSuffix}}{${label}}{${labelSide}}{${labelPos}}`;
   }
   if (optionSuffix !== "") {
     return `\\fgzEdgeDOpts{${symbolId(parent)}}{${symbolId(child)}}{${optionSuffix}}`;

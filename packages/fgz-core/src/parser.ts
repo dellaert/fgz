@@ -173,12 +173,14 @@ function parseVarLike(raw: string, line: number): VarDecl | undefined {
     return undefined;
   }
 
-  const attrs = parseAttributes(match[5], line, ["color"]);
+  const attrs = parseAttributes(match[5], line, ["color", "size", "font"]);
   return {
     kind: capture(match, 1, line) === "variable" ? "var" : "known",
     name: capture(match, 2, line),
     pos: parsePoint(line, capture(match, 3, line), capture(match, 4, line)),
     ...(attrs.color ? { color: attrs.color } : {}),
+    ...(attrs.size ? { size: attrs.size } : {}),
+    ...(attrs.font ? { font: attrs.font } : {}),
     loc: { line }
   };
 }
@@ -215,13 +217,15 @@ function parseBn(raw: string, line: number): BNDecl | undefined {
     return undefined;
   }
 
-  const attrs = parseAttributes(match[6], line, ["color"]);
+  const attrs = parseAttributes(match[6], line, ["color", "size", "font"]);
   return {
     kind: capture(match, 1, line) as BNDecl["kind"],
     name: capture(match, 2, line),
     parents: parseNameList(capture(match, 3, line), line, "parent list", true),
     pos: parsePoint(line, capture(match, 4, line), capture(match, 5, line)),
     ...(attrs.color ? { color: attrs.color } : {}),
+    ...(attrs.size ? { size: attrs.size } : {}),
+    ...(attrs.font ? { font: attrs.font } : {}),
     loc: { line }
   };
 }
@@ -252,7 +256,7 @@ function parseEdge(raw: string, line: number): EdgeDecl | undefined {
     return undefined;
   }
 
-  const attrs = parseAttributes(match[3], line, ["style", "label", "label_side"]);
+  const attrs = parseAttributes(match[3], line, ["style", "label", "label_side", "label_pos"]);
   const style = attrs.style as EdgeDecl["style"] | undefined;
   const labelSide = attrs.label_side as EdgeDecl["labelSide"] | undefined;
 
@@ -263,6 +267,7 @@ function parseEdge(raw: string, line: number): EdgeDecl | undefined {
     ...(style ? { style } : {}),
     ...(attrs.label ? { label: attrs.label } : {}),
     ...(labelSide ? { labelSide } : {}),
+    ...(attrs.label_pos ? { labelPos: attrs.label_pos } : {}),
     loc: { line }
   };
 }

@@ -49,8 +49,8 @@ factor {x_1, x_2} color=red
 `)
     );
 
-    expect(tikz).toContain("\\fgzVarFill{fgz_x_1}{0}{0}{$x_1$}{gray!30}");
-    expect(tikz).toContain("\\fgzVarFill{fgz_l_1}{1}{1}{$l_1$}{gray!20}");
+    expect(tikz).toContain("\\fgzVarOpts{fgz_x_1}{0}{0}{$x_1$}{, fill=gray!30}");
+    expect(tikz).toContain("\\fgzVarOpts{fgz_l_1}{1}{1}{$l_1$}{, fill=gray!20}");
     expect(tikz).toContain("\\fgzFactorColor{fgz_f1}{1}{0}{red}");
     expect(tikz).toContain("\\fgzEdgeUColor{fgz_f1}{fgz_x_1}{red}");
   });
@@ -101,10 +101,20 @@ variable x (0, 0)
       parseFgz(`fgz 1
 node x_1 {} (1, 0)
 node x_0 {x_1} (0, 0)
-edge x_1 -> x_0 style=dashed label=0 label_side=left
+edge x_1 -> x_0 style=dashed label=0 label_side=left label_pos=0.3
 `)
     );
 
-    expect(tikz).toContain("\\fgzEdgeDOptsLabel{fgz_x_1}{fgz_x_0}{, dashed}{0}{left}");
+    expect(tikz).toContain("\\fgzEdgeDOptsLabel{fgz_x_1}{fgz_x_0}{, dashed}{0}{left}{0.3}");
+  });
+
+  it("emits node option overrides for per-node size and font", () => {
+    const tikz = toTikz(
+      parseFgz(`fgz 1
+node x {} (0, 0) size=16mm font=scriptsize
+`)
+    );
+
+    expect(tikz).toContain("\\fgzVarOpts{fgz_x}{0}{0}{$x$}{, minimum size=16mm, font=\\scriptsize}");
   });
 });

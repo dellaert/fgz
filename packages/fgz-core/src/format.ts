@@ -35,7 +35,11 @@ function formatStyle(statement: StyleDecl): string {
 
 function formatVar(statement: VarDecl): string {
   const head = statement.kind === "var" ? "variable" : "known";
-  return `${head} ${statement.name} ${formatPoint(statement.pos)}${formatAttributes([["color", statement.color]])}`;
+  return `${head} ${statement.name} ${formatPoint(statement.pos)}${formatAttributes([
+    ["color", statement.color],
+    ["size", statement.size],
+    ["font", statement.font]
+  ])}`;
 }
 
 function formatFactor(statement: FactorDecl): string {
@@ -50,7 +54,9 @@ function formatFactor(statement: FactorDecl): string {
 
 function formatBn(statement: BNDecl): string {
   return `${statement.kind} ${statement.name} {${statement.parents.join(", ")}} ${formatPoint(statement.pos)}${formatAttributes([
-    ["color", statement.color]
+    ["color", statement.color],
+    ["size", statement.size],
+    ["font", statement.font]
   ])}`;
 }
 
@@ -65,7 +71,8 @@ function formatEdge(statement: EdgeDecl): string {
   return `edge ${statement.a} -> ${statement.b}${formatAttributes([
     ["style", statement.style],
     ["label", statement.label],
-    ["label_side", statement.labelSide]
+    ["label_side", statement.labelSide],
+    ["label_pos", statement.labelPos]
   ])}`;
 }
 

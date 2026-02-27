@@ -41,6 +41,8 @@ export interface VarDecl {
   name: string;
   pos: Point;
   color?: string;
+  size?: string;
+  font?: string;
   loc: SourceLocation;
 }
 
@@ -60,6 +62,8 @@ export interface BNDecl {
   parents: string[];
   pos: Point;
   color?: string;
+  size?: string;
+  font?: string;
   loc: SourceLocation;
 }
 
@@ -80,6 +84,7 @@ export interface EdgeDecl {
   style?: "solid" | "dashed";
   label?: string;
   labelSide?: "left" | "right";
+  labelPos?: string;
   loc: SourceLocation;
 }
 

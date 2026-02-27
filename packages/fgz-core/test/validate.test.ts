@@ -96,4 +96,20 @@ edge x_1 -> x_0 style=dashed label=0
       message: 'edge override "x_1 -> x_0" does not match any implied Bayes-net edge'
     });
   });
+
+  it("rejects invalid edge label positions", () => {
+    const doc = parseFgz(`fgz 1
+node x_1 {} (0, 0)
+node x_0 {x_1} (1, 0)
+edge x_1 -> x_0 label=0 label_pos=1.2
+`);
+
+    const result = validate(doc);
+
+    expect(result.ok).toBe(false);
+    expect(result.errors[0]).toMatchObject({
+      line: 4,
+      message: 'edge label_pos must be between 0 and 1, got "1.2"'
+    });
+  });
 });

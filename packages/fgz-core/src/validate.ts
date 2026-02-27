@@ -222,6 +222,13 @@ function validateEdgeDecl(statement: EdgeDecl, statements: Statement[], errors: 
     addIssue(errors, statement.loc.line, `unknown edge label side "${statement.labelSide}"`);
   }
 
+  if (statement.labelPos) {
+    const value = Number(statement.labelPos);
+    if (!Number.isFinite(value) || value <= 0 || value >= 1) {
+      addIssue(errors, statement.loc.line, `edge label_pos must be between 0 and 1, got "${statement.labelPos}"`);
+    }
+  }
+
   const child = statements.find(
     (candidate): candidate is BNDecl =>
       (candidate.kind === "node" || candidate.kind === "known_node") && candidate.name === statement.b
