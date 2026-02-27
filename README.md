@@ -43,42 +43,34 @@ That writes `examples/basic.svg` by default.
 
 ## How To Use This In Your Own Project
 
-There are two good starting points.
+The recommended setup is a pinned dev dependency, then short `npx` commands.
 
-### Option 1: `npx`
-
-This repository is not published to npm yet, so the lightest setup is to run the CLI directly
-from the git repo.
-
-```bash
-npx --yes --package=git+https://github.com/<you>/fgz.git fgz2tex figures/example.fgz
-npx --yes --package=git+https://github.com/<you>/fgz.git fgz2svg figures/example.fgz
-```
-
-Those write `figures/example.fgz.tex` and `figures/example.svg` by default.
-
-Use this when:
-
-- you want zero package setup
-- you are experimenting
-- you do not yet need strict version pinning
-
-If your npm version does not support that form cleanly, the equivalent command is:
-
-```bash
-npm exec --yes --package=git+https://github.com/<you>/fgz.git -- fgz2tex figures/example.fgz
-npm exec --yes --package=git+https://github.com/<you>/fgz.git -- fgz2svg figures/example.fgz
-```
-
-### Option 2: Pinned Dev Dependency
-
-For a paper repo or any shared project, a pinned dev dependency is usually the better long-term choice.
+### Install Once
 
 ```bash
 npm install --save-dev git+https://github.com/<you>/fgz.git#main
 ```
 
-Then add a script such as:
+You can pin a specific branch, tag, or commit instead of `#main`.
+
+You can also install from a local checkout:
+
+```bash
+npm install --save-dev ../fgz
+```
+
+### Then Use `npx`
+
+After that, run:
+
+```bash
+npx fgz2tex figures/example.fgz
+npx fgz2svg figures/example.fgz
+```
+
+Those write `figures/example.fgz.tex` and `figures/example.svg` by default.
+
+If you prefer package scripts, add:
 
 ```json
 {
@@ -89,30 +81,13 @@ Then add a script such as:
 }
 ```
 
-Use this when:
-
-- multiple people work in the repo
-- you want reproducible builds
-- you may run fgz in CI
-
-You can pin a specific branch, tag, or commit instead of `#main`.
-
-You can also install from a local checkout:
-
-```bash
-npm install --save-dev ../fgz
-```
-
 In both cases, the generated `.fgz.tex` file assumes your LaTeX preamble already includes:
 
 ```tex
 \input{fgz.tikz.tex}
 ```
 
-For now, the simplest approach is to copy [tikz/fgz.tikz.tex](/Users/dellaert/git/fgz/tikz/fgz.tikz.tex)
-into your own project and keep it alongside your paper sources. SVG export does not
-need that file on your LaTeX side, but the CLI still uses the shared support macros
-from this repository to keep SVG and TikZ output aligned.
+For now, the simplest approach is to copy [tikz/fgz.tikz.tex](/Users/dellaert/git/fgz/tikz/fgz.tikz.tex) into your own project and keep it alongside your paper sources. SVG export does not need that file on your LaTeX side, but the CLI still uses the shared support macros from this repository to keep SVG and TikZ output aligned.
 
 ## Example Document
 

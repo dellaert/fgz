@@ -1,5 +1,19 @@
 # fgz User Guide
 
+To use fgz in your own project, first install it once:
+
+```bash
+npm install --save-dev git+https://github.com/<you>/fgz.git#main
+```
+
+After that, generate SVG output with:
+
+```bash
+npx fgz2svg figures/example.fgz
+```
+
+That writes `figures/example.svg` by default.
+
 Every fgz file starts with `fgz 1`. Positions are given in TikZ units, and the
 generated snippets assume the LaTeX preamble already includes `\input{fgz.tikz.tex}`.
 

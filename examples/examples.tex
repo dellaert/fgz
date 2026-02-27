@@ -19,6 +19,21 @@
 \begin{document}
 \maketitle
 
+To use fgz in your own project, first install it once:
+
+\begin{verbatim}
+npm install --save-dev git+https://github.com/<you>/fgz.git#main
+\end{verbatim}
+
+After that, generate TikZ snippets with:
+
+\begin{verbatim}
+npx fgz2tex figures/example.fgz
+\end{verbatim}
+
+That writes \texttt{figures/example.fgz.tex} by default. The snippets in this guide
+assume the paper preamble already includes \verb|\input{fgz.tikz.tex}|.
+
 \section*{Progressive Examples}
 
 Every fgz file starts with \texttt{fgz 1}. Positions are given in TikZ units, and the
