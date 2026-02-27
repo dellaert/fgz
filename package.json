@@ -11,7 +11,8 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "test": "vitest run"
+    "test": "vitest run",
+    "examples:pdf": "npm run build && node scripts/build-examples.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.17.57",

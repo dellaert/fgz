@@ -1,5 +1,7 @@
 \usetikzlibrary{arrows.meta}
 
+\makeatletter
+
 \definecolor{fgzClassicStroke}{HTML}{1F2933}
 \definecolor{fgzClassicFactor}{HTML}{111827}
 \definecolor{fgzTextbookStroke}{HTML}{0F172A}
@@ -53,3 +55,5 @@
 \newcommand{\fgzEdgeD}[2]{\draw[fgz edge directed] (#1) -- (#2);}
 \newcommand{\fgzCurveU}[4]{\draw[fgz edge] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}
 \newcommand{\fgzCurveD}[4]{\draw[fgz edge directed] (#1) .. controls (#3,#4) and (#3,#4) .. (#2);}
+
+\makeatother

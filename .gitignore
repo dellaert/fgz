@@ -54,6 +54,19 @@ Desktop.ini
 *.seed
 *.pid.lock
 
+# LaTeX intermediates
+*.aux
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.nav
+*.out
+examples/*.pdf
+*.snm
+*.synctex.gz
+*.toc
+
 # Optional npm cache directory
 .npm
 
