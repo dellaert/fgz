@@ -1,0 +1,5 @@
+fgz 1
+style node_size=9mm factor_size=3mm label_sep=0.2pt label_font=small
+known_node m_1 {} (1.5, 1.5)
+node x_1 {m_1} (3, 0)
+node x_0 {m_1, x_1} (0, 0)

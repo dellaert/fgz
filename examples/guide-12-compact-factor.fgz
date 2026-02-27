@@ -1,0 +1,11 @@
+fgz 1
+style node_size=9mm factor_size=2mm label_sep=0.2pt label_font=small
+variable x_0 (0, 0)
+variable x_1 (3, 0)
+known m_1 (1.5, 1.5)
+
+factor {m_1} (0, 1.5) shape=square
+factor {x_0} (-1.5, 0) shape=square
+factor {x_0} (0, -1.5) shape=square
+factor {x_0, x_1, m_1} shape=square
+factor {x_1} (3, -1.5) shape=square

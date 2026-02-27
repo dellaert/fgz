@@ -1,0 +1,8 @@
+fgz 1
+style node_size=9mm factor_size=3mm label_sep=0.2pt label_font=small
+node q_0 {m_1} (0, 2) color=gray!30
+known_node m_1 {} (2, 2)
+node x_0 {} (0, 0)
+node x_1 {x_0, m_1} (2, 0)
+node z_0 {x_0} (0, -2) color=gray!30
+node z_1 {x_1} (2, -2) color=gray!30

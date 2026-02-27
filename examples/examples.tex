@@ -205,6 +205,62 @@ this one figure without changing the shared TikZ support file.
   \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-08-chain.fgz}
 \end{samepage}
 
+\Needspace{20\baselineskip}
+\subsection*{11. A Small Gray Bayes Net}
+This example uses the same spacing scale as the chain model, but with only directed edges.
+Filled circular nodes highlight selected variables, while \texttt{known\_node} gives a square
+parent at the top right.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.4cm}
+    \input{guide-11-gray-dag.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-11-gray-dag.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-11-gray-dag.fgz}
+  \end{minipage}
+\end{samepage}
+
+\Needspace{20\baselineskip}
+\subsection*{12. A Compact Factor Graph}
+This one returns to pure factor-graph structure on the same grid. A known variable sits
+above the midpoint factor, while square unary factors anchor the left and bottom edges.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.4cm}
+    \input{guide-12-compact-factor.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-12-compact-factor.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-12-compact-factor.fgz}
+  \end{minipage}
+\end{samepage}
+
+\Needspace{18\baselineskip}
+\subsection*{13. A Small Directed Triangle}
+This final compact example uses the same grid again, but only Bayes-net edges: the square
+node at the top is a known parent of both variables, and the right variable also parents the
+left one.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.4cm}
+    \input{guide-13-v-structure.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-13-v-structure.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-13-v-structure.fgz}
+  \end{minipage}
+\end{samepage}
+
 \clearpage
 \section*{Advanced Example}
 
