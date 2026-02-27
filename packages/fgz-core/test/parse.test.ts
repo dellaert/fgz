@@ -46,13 +46,13 @@ factor {x, y}
     const doc = parseFgz(`fgz 1
 variable x_1 (0, 0) color=gray!30
 node l_1 {x_1} (1, 1) color=gray!20
-factor {x_1} color=red
+factor {x_1, x_2} offset=(0,-0.4) color=red
 curve x_1 -> l_1 via (0.5, 1.2) color=blue
 `);
 
     expect(doc.statements[0]).toMatchObject({ kind: "var", name: "x_1", color: "gray!30" });
     expect(doc.statements[1]).toMatchObject({ kind: "node", name: "l_1", color: "gray!20" });
-    expect(doc.statements[2]).toMatchObject({ kind: "factor", color: "red" });
+    expect(doc.statements[2]).toMatchObject({ kind: "factor", color: "red", offset: { x: 0, y: -0.4 } });
     expect(doc.statements[3]).toMatchObject({ kind: "curve", color: "blue" });
   });
 });

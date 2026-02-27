@@ -54,4 +54,18 @@ factor {x_1, x_2} color=red
     expect(tikz).toContain("\\fgzFactorColor{fgz_f1}{1}{0}{red}");
     expect(tikz).toContain("\\fgzEdgeUColor{fgz_f1}{fgz_x_1}{red}");
   });
+
+  it("curves the first two factor edges when an offset is provided", () => {
+    const tikz = toTikz(
+      parseFgz(`fgz 1
+variable x_1 (0, 0)
+variable x_2 (2, 0)
+factor {x_1, x_2} offset=(0,-0.4) color=red
+`)
+    );
+
+    expect(tikz).toContain("\\fgzFactorColor{fgz_f1}{1}{-0.4}{red}");
+    expect(tikz).toContain("\\fgzCurveUColor{fgz_f1}{fgz_x_1}{1}{-0.8}{red}");
+    expect(tikz).toContain("\\fgzCurveUColor{fgz_f1}{fgz_x_2}{1}{-0.8}{red}");
+  });
 });

@@ -39,6 +39,21 @@ node l {x} (1, 1)
     expect(validate(doc)).toEqual({ ok: true, errors: [] });
   });
 
+  it("rejects symbols declared as both variables and nodes", () => {
+    const doc = parseFgz(`fgz 1
+variable x (0, 0)
+node x {} (0, 0)
+`);
+
+    const result = validate(doc);
+
+    expect(result.ok).toBe(false);
+    expect(result.errors[0]).toMatchObject({
+      line: 3,
+      message: 'symbol "x" cannot be declared as both variable and node'
+    });
+  });
+
   it("accepts missing factor positions for higher-arity factors", () => {
     const doc = parseFgz(`fgz 1
 variable x (0, 0)
@@ -48,5 +63,21 @@ factor {x, y, z}
 `);
 
     expect(validate(doc)).toEqual({ ok: true, errors: [] });
+  });
+
+  it("rejects combining factor offsets with explicit positions", () => {
+    const doc = parseFgz(`fgz 1
+variable x (0, 0)
+variable y (2, 0)
+factor {x, y} (1, 0) offset=(0,-0.3)
+`);
+
+    const result = validate(doc);
+
+    expect(result.ok).toBe(false);
+    expect(result.errors[0]).toMatchObject({
+      line: 4,
+      message: "factor offset cannot be combined with an explicit position"
+    });
   });
 });

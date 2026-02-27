@@ -65,6 +65,14 @@ function parsePoint(line: number, rawX: string, rawY: string): Point {
   return { x, y, rawX, rawY };
 }
 
+function parseInlinePoint(raw: string, line: number, label: string): Point {
+  const match = raw.match(new RegExp(`^${POINT_PATTERN}$`));
+  if (!match) {
+    throw new FgzError(`invalid ${label}`, line);
+  }
+  return parsePoint(line, capture(match, 1, line), capture(match, 2, line));
+}
+
 function parseNameList(body: string, line: number, label: string, allowEmpty: boolean): string[] {
   const trimmed = body.trim();
   if (trimmed === "") {
@@ -134,13 +142,15 @@ function parseFactor(raw: string, line: number): FactorDecl | undefined {
   }
 
   const hasPoint = match[2] !== undefined && match[3] !== undefined;
-  const attrs = parseAttributes(match[4], line, ["shape", "color"]);
+  const attrs = parseAttributes(match[4], line, ["shape", "color", "offset"]);
   const shape = attrs.shape as FactorDecl["shape"] | undefined;
+  const offset = attrs.offset ? parseInlinePoint(attrs.offset, line, "factor offset") : undefined;
 
   return {
     kind: "factor",
     vars: parseNameList(capture(match, 1, line), line, "factor variable list", false),
     ...(hasPoint ? { pos: parsePoint(line, capture(match, 2, line), capture(match, 3, line)) } : {}),
+    ...(offset ? { offset } : {}),
     ...(shape ? { shape } : {}),
     ...(attrs.color ? { color: attrs.color } : {}),
     loc: { line }

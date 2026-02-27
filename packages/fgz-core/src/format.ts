@@ -31,6 +31,7 @@ function formatFactor(statement: FactorDecl): string {
   const point = statement.pos ? ` ${formatPoint(statement.pos)}` : "";
   const base = `factor {${statement.vars.join(", ")}}${point}`;
   return `${base}${formatAttributes([
+    ["offset", statement.offset ? formatPoint(statement.offset) : undefined],
     ["shape", statement.shape],
     ["color", statement.color]
   ])}`;

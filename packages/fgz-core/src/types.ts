@@ -39,6 +39,7 @@ export interface FactorDecl {
   kind: "factor";
   vars: string[];
   pos?: Point;
+  offset?: Point;
   shape?: "circle" | "square";
   color?: string;
   loc: SourceLocation;

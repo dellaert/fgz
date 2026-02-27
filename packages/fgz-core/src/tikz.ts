@@ -7,6 +7,12 @@ interface FactorBinding {
   factorId: string;
 }
 
+interface FactorGeometry {
+  point: Point;
+  curveControl?: Point;
+  curvedVars: Set<string>;
+}
+
 function nodeMacro(statement: VarDecl | BNDecl): string {
   const colored = statement.color ? "Fill" : "";
   return statement.kind === "known" || statement.kind === "known_node"
@@ -117,9 +123,27 @@ function midpointRaw(left: number, right: number): string {
   return String(value);
 }
 
-function resolveFactorPoint(statement: FactorDecl, positions: Map<string, Point>): Point {
+function midpointPoint(left: Point, right: Point): Point {
+  return {
+    x: (left.x + right.x) / 2,
+    y: (left.y + right.y) / 2,
+    rawX: midpointRaw(left.x, right.x),
+    rawY: midpointRaw(left.y, right.y)
+  };
+}
+
+function offsetPoint(base: Point, offset: Point): Point {
+  return {
+    x: base.x + offset.x,
+    y: base.y + offset.y,
+    rawX: String(base.x + offset.x),
+    rawY: String(base.y + offset.y)
+  };
+}
+
+function resolveFactorGeometry(statement: FactorDecl, positions: Map<string, Point>): FactorGeometry {
   if (statement.pos) {
-    return statement.pos;
+    return { point: statement.pos, curvedVars: new Set<string>() };
   }
 
   const first = statement.vars[0];
@@ -134,20 +158,27 @@ function resolveFactorPoint(statement: FactorDecl, positions: Map<string, Point>
     throw new FgzError("factor position inference requires declared variable positions", statement.loc.line);
   }
 
-  const rawX = midpointRaw(left.x, right.x);
-  const rawY = midpointRaw(left.y, right.y);
+  const midpoint = midpointPoint(left, right);
+  if (!statement.offset) {
+    return { point: midpoint, curvedVars: new Set<string>() };
+  }
+
   return {
-    x: (left.x + right.x) / 2,
-    y: (left.y + right.y) / 2,
-    rawX,
-    rawY
+    point: offsetPoint(midpoint, statement.offset),
+    curveControl: offsetPoint(midpoint, {
+      x: statement.offset.x * 2,
+      y: statement.offset.y * 2,
+      rawX: String(statement.offset.x * 2),
+      rawY: String(statement.offset.y * 2)
+    }),
+    curvedVars: new Set<string>([first, second])
   };
 }
 
 function factorLine(statement: FactorDecl, factorIds: Map<FactorDecl, string>, positions: Map<string, Point>): string {
   const colored = statement.color ? "Color" : "";
   const macro = statement.shape === "square" ? `\\fgzFactorSquare${colored}` : `\\fgzFactor${colored}`;
-  const point = resolveFactorPoint(statement, positions);
+  const point = resolveFactorGeometry(statement, positions).point;
   const base = `${macro}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${formatCoordinate(
     point.rawX
   )}}{${formatCoordinate(point.rawY)}}`;
@@ -168,6 +199,7 @@ export function toTikz(doc: Document): string {
   const edgeLines: string[] = [];
   const positions = new Map<string, Point>();
   const renderedSymbols = new Set<string>();
+  const factorGeometry = new Map<FactorDecl, FactorGeometry>();
 
   for (const statement of doc.statements) {
     switch (statement.kind) {
@@ -184,6 +216,7 @@ export function toTikz(doc: Document): string {
         }
         break;
       case "factor":
+        factorGeometry.set(statement, resolveFactorGeometry(statement, positions));
         lines.push(factorLine(statement, factorIds, positions));
         break;
       default:
@@ -193,9 +226,19 @@ export function toTikz(doc: Document): string {
 
   for (const statement of doc.statements) {
     if (statement.kind === "factor") {
+      const geometry = factorGeometry.get(statement);
       for (const name of statement.vars) {
         const edgeKey = `${factorIds.get(statement) ?? "fgz_factor_missing"}\u0000${name}`;
         if (curvedFactorEdges.has(edgeKey)) {
+          continue;
+        }
+        if (geometry?.curveControl && geometry.curvedVars.has(name)) {
+          curvedFactorEdges.add(edgeKey);
+          const macro = edgeMacro(false, statement.color, true);
+          const base = `${macro}{${factorIds.get(statement) ?? "fgz_factor_missing"}}{${symbolId(name)}}{${formatCoordinate(
+            geometry.curveControl.rawX
+          )}}{${formatCoordinate(geometry.curveControl.rawY)}}`;
+          edgeLines.push(statement.color ? `${base}{${statement.color}}` : base);
           continue;
         }
         const macro = edgeMacro(false, statement.color, false);

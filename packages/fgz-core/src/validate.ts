@@ -61,21 +61,11 @@ function ensureCompatibleBinding(name: string, binding: SymbolBinding, errors: V
     return;
   }
 
-  if (!samePosition(binding.fg.pos, binding.bn.pos)) {
-    addIssue(
-      errors,
-      binding.bn.loc.line,
-      `mixed symbol "${name}" must reuse the same position in factor-graph and Bayes-net declarations`
-    );
-  }
-
-  if (isObserved(binding.fg.kind) !== isObserved(binding.bn.kind)) {
-    addIssue(
-      errors,
-      binding.bn.loc.line,
-      `mixed symbol "${name}" must agree on observed status across variable/node declarations`
-    );
-  }
+  addIssue(
+    errors,
+    binding.bn.loc.line,
+    `symbol "${name}" cannot be declared as both ${symbolLabel(binding.fg.kind)} and ${symbolLabel(binding.bn.kind)}`
+  );
 }
 
 function collectSymbols(statements: Statement[], errors: ValidationIssue[]): Map<string, SymbolBinding> {
@@ -163,6 +153,14 @@ function validateFactorDecl(
       addIssue(errors, statement.loc.line, `factor references unknown symbol "${name}"`);
       continue;
     }
+  }
+
+  if (!statement.pos && statement.vars.length < 2) {
+    addIssue(errors, statement.loc.line, "factor without a position must reference at least two variables");
+  }
+
+  if (statement.pos && statement.offset) {
+    addIssue(errors, statement.loc.line, "factor offset cannot be combined with an explicit position");
   }
 }
 

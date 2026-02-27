@@ -2,7 +2,7 @@ fgz 1
 theme classic
 
 node x_1 {x_2} (0, 0)
-node x_2 {x_3} (2.1, 0)
-node x_3 {} (4.7, 0) color=gray!25
-node l_1 {x_2} (2.1, 2.05)
-node l_2 {x_3} (4.7, 2.05)
+node x_2 {x_3} (2.8, 0)
+node x_3 {} (5.6, 0) color=gray!25
+node l_1 {x_2} (2.8, 2.8)
+node l_2 {x_3} (5.6, 2.8)
