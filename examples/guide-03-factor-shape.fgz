@@ -1,0 +1,4 @@
+fgz 1
+variable x (0, 0)
+known y (3, 0)
+factor {x, y} shape=square

@@ -43,9 +43,9 @@ position, fgz places it halfway between the first two variables.
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{2. Themes, Known Variables, and Square Factors}
+\subsection*{2. Themes and Known Variables}
 Observed factor-graph variables use \texttt{known}. Factors can be positioned explicitly,
-switched to \texttt{shape=square}, and styled through a file-level \texttt{theme}.
+and the overall look can be changed with a file-level \texttt{theme}.
 
 \begin{samepage}
   \noindent
@@ -61,7 +61,43 @@ switched to \texttt{shape=square}, and styled through a file-level \texttt{theme
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{3. Curved Binary Factors}
+\subsection*{3. Factor Shape}
+Factors are circles by default. Add \texttt{shape=square} when you want a square factor
+node instead.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.5cm}
+    \input{guide-03-factor-shape.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-03-factor-shape.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-03-factor-shape.fgz}
+  \end{minipage}
+\end{samepage}
+
+\Needspace{18\baselineskip}
+\subsection*{4. Per-File Node and Factor Size}
+The \texttt{style} line tunes sizing for one fgz file at a time. Here it makes the
+variables slightly larger and the factor slightly bolder, while also relaxing the label fit.
+
+\begin{samepage}
+  \noindent
+  \begin{minipage}[t]{0.41\textwidth}
+    \centering
+    \vspace{0.5cm}
+    \input{guide-04-style-size.fgz.tex}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.55\textwidth}
+    \textbf{Source: \texttt{guide-04-style-size.fgz}}
+    \VerbatimInput[frame=single,fontsize=\scriptsize]{guide-04-style-size.fgz}
+  \end{minipage}
+\end{samepage}
+
+\Needspace{18\baselineskip}
+\subsection*{5. Curved Binary Factors}
 For binary factors, a small \texttt{offset=(dx,dy)} moves the factor away from the
 midpoint and bends the single factor-graph edge through that new factor position.
 
@@ -79,7 +115,7 @@ midpoint and bends the single factor-graph edge through that new factor position
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{4. Factor-Graph Parents for Nodes}
+\subsection*{6. Factor-Graph Parents for Nodes}
 Mixed diagrams are allowed when factor-graph variables or knowns act as parents of
 Bayes-net nodes. Nodes themselves do not participate in factors.
 
@@ -97,7 +133,7 @@ Bayes-net nodes. Nodes themselves do not participate in factors.
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{5. Known Nodes and Directed Curve Overrides}
+\subsection*{7. Known Nodes and Directed Curve Overrides}
 Bayes-net declarations support both latent nodes and observed nodes. A directed
 \texttt{curve} statement overrides one implied parent-to-child edge.
 
@@ -115,7 +151,7 @@ Bayes-net declarations support both latent nodes and observed nodes. A directed
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{6. Color Accents}
+\subsection*{8. Color Accents}
 Colors apply to declarations and to their generated edges. This is useful for marking
 active variables, measurements, or elimination steps.
 
@@ -133,7 +169,7 @@ active variables, measurements, or elimination steps.
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{7. Macros for LaTeX Labels}
+\subsection*{9. Macros for LaTeX Labels}
 Once the structure is clear, macros keep the source readable while emitting richer math
 labels. References stay short in the graph definition, while the rendered labels come
 from the macro table.
@@ -152,13 +188,14 @@ from the macro table.
 \end{samepage}
 
 \Needspace{22\baselineskip}
-\subsection*{8. A Colored Chain Model}
+\subsection*{10. A Colored Chain Model}
 This example combines direct LaTeX-style labels, square factors, colors, and higher-arity
 factors in a temporal chain. The red factors are positioned explicitly, while the blue and
 green ternary factors rely on midpoint placement along their first two variables. The
-document-level style line nudges the node size, label padding, and label font for this one
-figure without changing the shared TikZ support file.
+document-level style line nudges node size, factor size, label padding, and label font for
+this one figure without changing the shared TikZ support file.
 
+\vspace{0.5cm}
 \begin{samepage}
   \centering
   \scalebox{0.82}{\input{guide-08-chain.fgz.tex}}

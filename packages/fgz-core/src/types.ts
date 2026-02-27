@@ -23,6 +23,7 @@ export interface ThemeDecl {
 export interface StyleDecl {
   kind: "style";
   nodeSize?: string;
+  factorSize?: string;
   labelSep?: string;
   labelFont?: string;
   loc: SourceLocation;

@@ -21,6 +21,7 @@ interface BridgeSpec {
 
 interface DocumentStyle {
   nodeSize?: string;
+  factorSize?: string;
   labelSep?: string;
   labelFont?: string;
 }
@@ -76,6 +77,9 @@ function collectDocumentStyle(statements: Statement[]): DocumentStyle {
     if (statement.nodeSize) {
       style.nodeSize = statement.nodeSize;
     }
+    if (statement.factorSize) {
+      style.factorSize = statement.factorSize;
+    }
     if (statement.labelSep) {
       style.labelSep = statement.labelSep;
     }
@@ -95,6 +99,9 @@ function styleLines(style: DocumentStyle): string[] {
   const lines: string[] = [];
   if (style.nodeSize) {
     lines.push(`\\fgzsetnodesize{${style.nodeSize}}`);
+  }
+  if (style.factorSize) {
+    lines.push(`\\fgzsetfactorsize{${style.factorSize}}`);
   }
   if (style.labelSep) {
     lines.push(`\\fgzsetlabelsep{${style.labelSep}}`);

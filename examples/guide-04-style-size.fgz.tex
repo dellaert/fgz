@@ -1,0 +1,12 @@
+\begin{tikzpicture}[x=1cm,y=1cm]
+\fgzsettheme{classic}
+\fgzsetnodesize{9mm}
+\fgzsetfactorsize{4mm}
+\fgzsetlabelsep{0.3pt}
+\fgzsetlabelfont{\small}
+\fgzVar{fgz_x_t}{0}{0}{$x_t$}
+\fgzVar{fgz_x__t_1_}{3}{0}{$x_{t+1}$}
+\fgzFactor{fgz_f1}{1.5}{0}
+\fgzEdgeU{fgz_f1}{fgz_x_t}
+\fgzEdgeU{fgz_f1}{fgz_x__t_1_}
+\end{tikzpicture}

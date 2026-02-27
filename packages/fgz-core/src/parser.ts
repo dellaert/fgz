@@ -137,7 +137,7 @@ function parseStyle(raw: string, line: number): StyleDecl | undefined {
     return undefined;
   }
 
-  const attrs = parseAttributes(match[1], line, ["node_size", "label_sep", "label_font"]);
+  const attrs = parseAttributes(match[1], line, ["node_size", "factor_size", "label_sep", "label_font"]);
   if (Object.keys(attrs).length === 0) {
     throw new FgzError("style must include at least one attribute", line);
   }
@@ -145,6 +145,7 @@ function parseStyle(raw: string, line: number): StyleDecl | undefined {
   return {
     kind: "style",
     ...(attrs.node_size ? { nodeSize: attrs.node_size } : {}),
+    ...(attrs.factor_size ? { factorSize: attrs.factor_size } : {}),
     ...(attrs.label_sep ? { labelSep: attrs.label_sep } : {}),
     ...(attrs.label_font ? { labelFont: attrs.label_font } : {}),
     loc: { line }

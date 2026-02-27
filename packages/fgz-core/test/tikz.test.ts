@@ -88,11 +88,11 @@ curve x_1 -- x_2 via (1, 1)
   it("emits per-document style setup macros", () => {
     const tikz = toTikz(
       parseFgz(`fgz 1
-style node_size=9mm label_sep=0.4pt label_font=footnotesize
+style node_size=9mm factor_size=4mm label_sep=0.4pt label_font=footnotesize
 variable x (0, 0)
 `)
     );
 
-    expect(tikz).toContain("\\fgzsettheme{classic}\n\\fgzsetnodesize{9mm}\n\\fgzsetlabelsep{0.4pt}\n\\fgzsetlabelfont{\\footnotesize}");
+    expect(tikz).toContain("\\fgzsettheme{classic}\n\\fgzsetnodesize{9mm}\n\\fgzsetfactorsize{4mm}\n\\fgzsetlabelsep{0.4pt}\n\\fgzsetlabelfont{\\footnotesize}");
   });
 });

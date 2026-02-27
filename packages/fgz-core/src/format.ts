@@ -26,6 +26,7 @@ function formatMacro(statement: MacroDef): string {
 function formatStyle(statement: StyleDecl): string {
   return `style${formatAttributes([
     ["node_size", statement.nodeSize],
+    ["factor_size", statement.factorSize],
     ["label_sep", statement.labelSep],
     ["label_font", statement.labelFont]
   ])}`;

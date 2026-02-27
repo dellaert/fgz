@@ -71,16 +71,17 @@ factor {x_{t+1}, b_{t+1}}
 
   it("parses per-document style directives", () => {
     const doc = parseFgz(`fgz 1
-style node_size=9mm label_sep=0.4pt label_font=footnotesize
+style node_size=9mm factor_size=4mm label_sep=0.4pt label_font=footnotesize
 variable x (0, 0)
 `);
 
     expect(doc.statements[0]).toMatchObject({
       kind: "style",
       nodeSize: "9mm",
+      factorSize: "4mm",
       labelSep: "0.4pt",
       labelFont: "footnotesize"
     });
-    expect(formatFgz(doc)).toContain("style node_size=9mm label_sep=0.4pt label_font=footnotesize\n");
+    expect(formatFgz(doc)).toContain("style node_size=9mm factor_size=4mm label_sep=0.4pt label_font=footnotesize\n");
   });
 });
