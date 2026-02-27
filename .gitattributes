@@ -12,7 +12,6 @@
 *.yaml text
 
 # Documentation
-*.md text
 *.txt text
 README text
 

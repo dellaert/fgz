@@ -38,7 +38,6 @@ coverage/
 Thumbs.db
 
 # OS
-.DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
