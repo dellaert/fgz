@@ -7,12 +7,17 @@
     "node": ">=20"
   },
   "bin": {
-    "fgz2tex": "./packages/fgz-cli/bin/fgz2tex"
+    "fgz2tex": "./packages/fgz-cli/bin/fgz2tex",
+    "fgz2svg": "./packages/fgz-cli/bin/fgz2svg"
   },
   "scripts": {
     "build": "tsc -b",
     "test": "vitest run",
-    "examples:pdf": "npm run build && node scripts/build-examples.mjs"
+    "examples:pdf": "npm run build && node scripts/build-examples.mjs",
+    "examples:svg": "npm run build && node scripts/build-examples.mjs --svg-only"
+  },
+  "dependencies": {
+    "node-tikzjax": "^1.0.5"
   },
   "devDependencies": {
     "@types/node": "^20.17.57",

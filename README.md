@@ -28,6 +28,14 @@ node packages/fgz-cli/dist/fgz2tex.js examples/basic.fgz
 
 That writes `examples/basic.fgz.tex` by default.
 
+Convert an `.fgz` file to SVG through the same TikZ pipeline:
+
+```bash
+node packages/fgz-cli/dist/fgz2svg.js examples/basic.fgz
+```
+
+That writes `examples/basic.svg` by default.
+
 ## Documentation
 
 - Human reference manual: [docs/REFERENCE.md](/Users/dellaert/git/fgz/docs/REFERENCE.md)
@@ -44,9 +52,10 @@ from the git repo.
 
 ```bash
 npx --yes --package=git+https://github.com/<you>/fgz.git fgz2tex figures/example.fgz
+npx --yes --package=git+https://github.com/<you>/fgz.git fgz2svg figures/example.fgz
 ```
 
-That writes `figures/example.fgz.tex` by default.
+Those write `figures/example.fgz.tex` and `figures/example.svg` by default.
 
 Use this when:
 
@@ -58,6 +67,7 @@ If your npm version does not support that form cleanly, the equivalent command i
 
 ```bash
 npm exec --yes --package=git+https://github.com/<you>/fgz.git -- fgz2tex figures/example.fgz
+npm exec --yes --package=git+https://github.com/<you>/fgz.git -- fgz2svg figures/example.fgz
 ```
 
 ### Option 2: Pinned Dev Dependency
@@ -73,7 +83,8 @@ Then add a script such as:
 ```json
 {
   "scripts": {
-    "figures": "fgz2tex figures/example.fgz"
+    "figures:tex": "fgz2tex figures/example.fgz",
+    "figures:svg": "fgz2svg figures/example.fgz"
   }
 }
 ```
@@ -99,13 +110,20 @@ In both cases, the generated `.fgz.tex` file assumes your LaTeX preamble already
 ```
 
 For now, the simplest approach is to copy [tikz/fgz.tikz.tex](/Users/dellaert/git/fgz/tikz/fgz.tikz.tex)
-into your own project and keep it alongside your paper sources.
+into your own project and keep it alongside your paper sources. SVG export does not
+need that file on your LaTeX side, but the CLI still uses the shared support macros
+from this repository to keep SVG and TikZ output aligned.
 
 ## Example Document
 
-The repository includes a LaTeX demo at [examples/examples.tex](/Users/dellaert/git/fgz/examples/examples.tex) that renders every example in [examples/](/Users/dellaert/git/fgz/examples).
+The repository includes:
 
-Build all generated example snippets and compile the PDF in one step:
+- a LaTeX user guide at [examples/examples.tex](/Users/dellaert/git/fgz/examples/examples.tex)
+- a Markdown user guide at [examples/examples.md](/Users/dellaert/git/fgz/examples/examples.md)
+
+Both guides render examples from [examples/](/Users/dellaert/git/fgz/examples).
+
+Build all generated example snippets, regenerate SVG previews, and compile the PDF in one step:
 
 ```bash
 npm run examples:pdf
@@ -115,7 +133,14 @@ That command:
 
 - builds the TypeScript packages
 - regenerates every `examples/*.fgz.tex`
+- regenerates every `examples/*.svg`
 - runs `pdflatex` on `examples/examples.tex`
+
+If you only want the SVG outputs, run:
+
+```bash
+npm run examples:svg
+```
 
 The document inputs [tikz/fgz.tikz.tex](/Users/dellaert/git/fgz/tikz/fgz.tikz.tex), so no extra package setup is needed beyond a working LaTeX install with TikZ.
 
