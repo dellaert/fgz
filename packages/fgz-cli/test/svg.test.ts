@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseFgz, toTikz } from "../../fgz-core/src/index.js";
-import { renderTikzToSvg } from "../src/svg.js";
+import { loadMacroSource, renderTikzToSvg } from "../src/svg.js";
 
 describe.sequential("renderTikzToSvg", () => {
   it(
@@ -23,4 +23,29 @@ factor {x_0, x_1}
       expect(svg).not.toContain("\\begin{tikzpicture}");
     }
   );
+
+  it(
+    "renders with macro.tex-style preamble macros when provided",
+    { timeout: 60_000 },
+    async () => {
+      const tikz = toTikz(
+        parseFgz(`fgz 1
+t = \\twist
+variable t (0, 0)
+`)
+      );
+
+      const svg = await renderTikzToSvg(tikz, {
+        macroSource: "\\newcommand{\\twist}{\\mathcal{V}}"
+      });
+
+      expect(svg).toContain("<svg");
+      expect(svg).toContain("viewBox=");
+    }
+  );
+
+  it("loads macro.tex from the fgz directory when present", () => {
+    const macros = loadMacroSource(new URL("../../../examples", import.meta.url).pathname);
+    expect(macros).toContain("\\newcommand{\\twist}{\\mathcal{V}}");
+  });
 });

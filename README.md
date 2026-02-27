@@ -6,10 +6,10 @@
 
 The repository includes:
 
-- a LaTeX user guide at [examples/examples.tex](/Users/dellaert/git/fgz/examples/examples.tex)
-- a Markdown user guide at [examples/examples.md](/Users/dellaert/git/fgz/examples/examples.md)
+- a LaTeX user guide at [examples/examples.tex](examples/examples.tex)
+- a Markdown user guide at [examples/examples.md](examples/examples.md)
 
-Both guides render examples from [examples/](/Users/dellaert/git/fgz/examples).
+Both guides render examples from [examples/](examples/).
 
 If you clone this repo, you can build all generated example snippets, regenerate SVG previews, and compile the PDF in one step:
 
@@ -30,12 +30,12 @@ If you only want the SVG outputs, run:
 npm run examples:svg
 ```
 
-The document inputs [tikz/fgz.tikz.tex](/Users/dellaert/git/fgz/tikz/fgz.tikz.tex), so no extra package setup is needed beyond a working LaTeX install with TikZ.
+The document inputs [tikz/fgz.tikz.tex](tikz/fgz.tikz.tex), so no extra package setup is needed beyond a working LaTeX install with TikZ.
 
 ## Documentation
 
-- Human reference manual: [docs/REFERENCE.md](/Users/dellaert/git/fgz/docs/REFERENCE.md)
-- Agent authoring guidance: [AGENTS.md](/Users/dellaert/git/fgz/AGENTS.md)
+- Human reference manual: [docs/REFERENCE.md](docs/REFERENCE.md)
+- Agent authoring guidance: [AGENTS.md](AGENTS.md)
 
 ## How To Use This In Your Own Project
 
@@ -83,7 +83,7 @@ In both cases, the generated `.fgz.tex` file assumes your LaTeX preamble already
 \input{fgz.tikz.tex}
 ```
 
-For now, the simplest approach is to copy [tikz/fgz.tikz.tex](/Users/dellaert/git/fgz/tikz/fgz.tikz.tex) into your own project and keep it alongside your paper sources. SVG export does not need that file on your LaTeX side, but the CLI still uses the shared support macros from this repository to keep SVG and TikZ output aligned.
+For now, the simplest approach is to copy [tikz/fgz.tikz.tex](tikz/fgz.tikz.tex) into your own project and keep it alongside your paper sources. SVG export does not need that file on your LaTeX side, but the CLI still uses the shared support macros from this repository to keep SVG and TikZ output aligned.
 
 ## Roadmap
 

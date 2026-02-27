@@ -1,17 +1,25 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { toTikz } from "../../fgz-core/dist/index.js";
 import type { Document } from "../../fgz-core/dist/index.js";
 
 const supportSource = readFileSync(new URL("../../../tikz/fgz.tikz.tex", import.meta.url), "utf8").trim();
 
-function buildTexDocument(tikz: string): string {
+export interface SvgRenderOptions {
+  macroSource?: string;
+}
+
+function buildTexDocument(tikz: string, options: SvgRenderOptions = {}): string {
   return [
     "\\usepackage{tikz}",
+    options.macroSource?.trim(),
     supportSource,
     "\\begin{document}",
     tikz.trimEnd(),
     "\\end{document}"
-  ].join("\n");
+  ]
+    .filter((line): line is string => Boolean(line))
+    .join("\n");
 }
 
 function normalizeSvg(svg: string): string {
@@ -33,14 +41,20 @@ function resolveTex2Svg(module: unknown): (input: string) => Promise<string> {
 }
 
 /** Render a TikZ snippet into SVG via node-tikzjax. */
-export async function renderTikzToSvg(tikz: string): Promise<string> {
+export async function renderTikzToSvg(tikz: string, options: SvgRenderOptions = {}): Promise<string> {
   const module = await import("node-tikzjax");
   const tex2svg = resolveTex2Svg(module);
-  const svg = await tex2svg(buildTexDocument(tikz));
+  const svg = await tex2svg(buildTexDocument(tikz, options));
   return normalizeSvg(svg);
 }
 
+/** Load `macro.tex` from the fgz file directory when present. */
+export function loadMacroSource(inputDir: string): string | undefined {
+  const macroPath = join(inputDir, "macro.tex");
+  return existsSync(macroPath) ? readFileSync(macroPath, "utf8") : undefined;
+}
+
 /** Render a validated fgz document into SVG via the shared TikZ pipeline. */
-export async function renderDocumentToSvg(doc: Document): Promise<string> {
-  return renderTikzToSvg(toTikz(doc));
+export async function renderDocumentToSvg(doc: Document, options: SvgRenderOptions = {}): Promise<string> {
+  return renderTikzToSvg(toTikz(doc), options);
 }

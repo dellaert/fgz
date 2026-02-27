@@ -7,25 +7,36 @@
 
 \definecolor{fgzClassicStroke}{HTML}{1F2933}
 \definecolor{fgzClassicFactor}{HTML}{111827}
-\definecolor{fgzTextbookStroke}{HTML}{0F172A}
-\definecolor{fgzTextbookFactor}{HTML}{334155}
+\definecolor{fgzTextbookStroke}{HTML}{262626}
+\definecolor{fgzTextbookVarDraw}{HTML}{8C1D18}
+\definecolor{fgzTextbookVarFill}{HTML}{FEE2E2}
+\definecolor{fgzTextbookFactorDraw}{HTML}{1D4ED8}
+\definecolor{fgzTextbookFactorFill}{HTML}{DBEAFE}
 \definecolor{fgzBlogStroke}{HTML}{7C2D12}
 \definecolor{fgzBlogFactor}{HTML}{C2410C}
 
 \colorlet{fgz@stroke}{fgzClassicStroke}
+\colorlet{fgz@var@draw}{fgzClassicStroke}
+\colorlet{fgz@var@fill}{white}
+\colorlet{fgz@known@draw}{fgzClassicStroke}
+\colorlet{fgz@known@fill}{white}
+\colorlet{fgz@factor@draw}{fgzClassicFactor}
+\colorlet{fgz@factor@fill}{fgzClassicFactor}
 \colorlet{fgz@factor}{fgzClassicFactor}
 \def\fgz@node@size{8mm}
 \def\fgz@factor@size{3.2mm}
 \def\fgz@label@sep{0pt}
+\def\fgz@node@line@width{0.9pt}
+\def\fgz@edge@line@width{0.9pt}
 \let\fgz@label@font\relax
 
 \newcommand{\fgz@applystyles}{%
   \tikzset{
-    fgz var/.style={draw=fgz@stroke, fill=white, circle, minimum size=\fgz@node@size, inner sep=\fgz@label@sep, line width=0.9pt, font=\fgz@label@font},
-    fgz known/.style={draw=fgz@stroke, fill=white, rectangle, minimum size=\fgz@node@size, inner sep=\fgz@label@sep, line width=0.9pt, font=\fgz@label@font},
-    fgz factor/.style={draw=fgz@factor, fill=fgz@factor, circle, minimum size=\fgz@factor@size, inner sep=0pt},
-    fgz factor square/.style={draw=fgz@factor, fill=fgz@factor, rectangle, minimum size=\fgz@factor@size, inner sep=0pt},
-    fgz edge/.style={draw=fgz@stroke, line width=0.9pt},
+    fgz var/.style={draw=fgz@var@draw, fill=fgz@var@fill, circle, minimum size=\fgz@node@size, inner sep=\fgz@label@sep, line width=\fgz@node@line@width, font=\fgz@label@font},
+    fgz known/.style={draw=fgz@known@draw, fill=fgz@known@fill, rectangle, minimum size=\fgz@node@size, inner sep=\fgz@label@sep, line width=\fgz@node@line@width, font=\fgz@label@font},
+    fgz factor/.style={draw=fgz@factor@draw, fill=fgz@factor@fill, circle, minimum size=\fgz@factor@size, inner sep=0pt},
+    fgz factor square/.style={draw=fgz@factor@draw, fill=fgz@factor@fill, rectangle, minimum size=\fgz@factor@size, inner sep=0pt},
+    fgz edge/.style={draw=fgz@stroke, line width=\fgz@edge@line@width},
     fgz edge directed/.style={fgz edge, -{Stealth[length=2.2mm,width=1.8mm]}}
   }%
 }
@@ -46,17 +57,41 @@
 
 \newcommand{\fgz@theme@classic}{%
   \colorlet{fgz@stroke}{fgzClassicStroke}%
+  \colorlet{fgz@var@draw}{fgzClassicStroke}%
+  \colorlet{fgz@var@fill}{white}%
+  \colorlet{fgz@known@draw}{fgzClassicStroke}%
+  \colorlet{fgz@known@fill}{white}%
+  \colorlet{fgz@factor@draw}{fgzClassicFactor}%
+  \colorlet{fgz@factor@fill}{fgzClassicFactor}%
   \colorlet{fgz@factor}{fgzClassicFactor}%
+  \def\fgz@node@line@width{0.9pt}%
+  \def\fgz@edge@line@width{0.9pt}%
 }
 
 \newcommand{\fgz@theme@textbook}{%
   \colorlet{fgz@stroke}{fgzTextbookStroke}%
-  \colorlet{fgz@factor}{fgzTextbookFactor}%
+  \colorlet{fgz@var@draw}{fgzTextbookVarDraw}%
+  \colorlet{fgz@var@fill}{fgzTextbookVarFill}%
+  \colorlet{fgz@known@draw}{fgzTextbookVarDraw}%
+  \colorlet{fgz@known@fill}{fgzTextbookVarFill}%
+  \colorlet{fgz@factor@draw}{fgzTextbookFactorDraw}%
+  \colorlet{fgz@factor@fill}{fgzTextbookFactorFill}%
+  \colorlet{fgz@factor}{fgzTextbookFactorDraw}%
+  \def\fgz@node@line@width{0.8pt}%
+  \def\fgz@edge@line@width{0.8pt}%
 }
 
 \newcommand{\fgz@theme@blog}{%
   \colorlet{fgz@stroke}{fgzBlogStroke}%
+  \colorlet{fgz@var@draw}{fgzBlogStroke}%
+  \colorlet{fgz@var@fill}{white}%
+  \colorlet{fgz@known@draw}{fgzBlogStroke}%
+  \colorlet{fgz@known@fill}{white}%
+  \colorlet{fgz@factor@draw}{fgzBlogFactor}%
+  \colorlet{fgz@factor@fill}{fgzBlogFactor}%
   \colorlet{fgz@factor}{fgzBlogFactor}%
+  \def\fgz@node@line@width{0.9pt}%
+  \def\fgz@edge@line@width{0.9pt}%
 }
 
 \newcommand{\fgzVar}[4]{\node[fgz var] (#1) at (#2,#3) {#4};}

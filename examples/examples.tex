@@ -5,6 +5,7 @@
 \usepackage{graphicx}
 \usepackage{needspace}
 
+\input{macro.tex}
 \input{../tikz/fgz.tikz.tex}
 
 \title{fgz User Guide}
@@ -34,13 +35,13 @@ npx fgz2tex figures/example.fgz
 That writes \texttt{figures/example.fgz.tex} by default. The snippets in this guide
 assume the paper preamble already includes \verb|\input{fgz.tikz.tex}|.
 
-\section*{Progressive Examples}
+\section{Progressive Examples}
 
 Every fgz file starts with \texttt{fgz 1}. Positions are given in TikZ units, and the
 generated snippets assume the paper preamble already includes \verb|\input{fgz.tikz.tex}|.
 
 \Needspace{18\baselineskip}
-\subsection*{1. Minimal Factor Graph}
+\subsection{Minimal Factor Graph}
 Start with two variables and a binary factor. Because the factor has no explicit
 position, fgz places it halfway between the first two variables.
 
@@ -58,7 +59,7 @@ position, fgz places it halfway between the first two variables.
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{2. Themes and Known Variables}
+\subsection{Themes and Known Variables}
 Observed factor-graph variables use \texttt{known}. Factors can be positioned explicitly,
 and the overall look can be changed with a file-level \texttt{theme}.
 
@@ -76,7 +77,7 @@ and the overall look can be changed with a file-level \texttt{theme}.
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{3. Factor Shape}
+\subsection{Factor Shape}
 Factors are circles by default. Add \texttt{shape=square} when you want a square factor
 node instead.
 
@@ -94,7 +95,7 @@ node instead.
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{4. Per-File Node and Factor Size}
+\subsection{Per-File Node and Factor Size}
 The \texttt{style} line tunes sizing for one fgz file at a time. Here it makes the
 variables slightly larger and the factor slightly bolder, while also relaxing the label fit.
 
@@ -112,7 +113,7 @@ variables slightly larger and the factor slightly bolder, while also relaxing th
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{5. Curved Binary Factors}
+\subsection{Curved Binary Factors}
 For binary factors, a small \texttt{offset=(dx,dy)} moves the factor away from the
 midpoint and bends the single factor-graph edge through that new factor position.
 
@@ -130,7 +131,7 @@ midpoint and bends the single factor-graph edge through that new factor position
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{6. Factor-Graph Parents for Nodes}
+\subsection{Factor-Graph Parents for Nodes}
 Mixed diagrams are allowed when factor-graph variables or knowns act as parents of
 Bayes-net nodes. Nodes themselves do not participate in factors.
 
@@ -148,7 +149,7 @@ Bayes-net nodes. Nodes themselves do not participate in factors.
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{7. Known Nodes and Directed Curve Overrides}
+\subsection{Known Nodes and Directed Curve Overrides}
 Bayes-net declarations support both latent nodes and observed nodes. A directed
 \texttt{curve} statement overrides one implied parent-to-child edge.
 
@@ -166,7 +167,7 @@ Bayes-net declarations support both latent nodes and observed nodes. A directed
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{8. Color Accents}
+\subsection{Color Accents}
 Colors apply to declarations and to their generated edges. This is useful for marking
 active variables, measurements, or elimination steps.
 
@@ -184,7 +185,7 @@ active variables, measurements, or elimination steps.
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{9. Macros for LaTeX Labels}
+\subsection{Macros for LaTeX Labels}
 Once the structure is clear, macros keep the source readable while emitting richer math
 labels. References stay short in the graph definition, while the rendered labels come
 from the macro table.
@@ -205,7 +206,7 @@ from the macro table.
 \Needspace{22\baselineskip}
 
 \newpage
-\subsection*{10. A Colored Chain Model}
+\subsection{A Colored Chain Model}
 This example combines direct LaTeX-style labels, square factors, colors, and higher-arity
 factors in a temporal chain. The red factors are positioned explicitly, while the blue and
 green ternary factors rely on midpoint placement along their first two variables. The
@@ -223,7 +224,7 @@ this one figure without changing the shared TikZ support file.
 \end{samepage}
 
 \Needspace{20\baselineskip}
-\subsection*{11. A Small Gray Bayes Net}
+\subsection{A Small Gray Bayes Net}
 This example uses the same spacing scale as the chain model, but with only directed edges.
 Filled circular nodes highlight selected variables, while \texttt{known\_node} gives a square
 parent at the top right.
@@ -242,7 +243,7 @@ parent at the top right.
 \end{samepage}
 
 \Needspace{20\baselineskip}
-\subsection*{12. A Compact Factor Graph}
+\subsection{A Compact Factor Graph}
 This one returns to pure factor-graph structure on the same grid. A known variable sits
 above the midpoint factor, while square unary factors anchor the left and bottom edges.
 
@@ -260,7 +261,7 @@ above the midpoint factor, while square unary factors anchor the left and bottom
 \end{samepage}
 
 \Needspace{18\baselineskip}
-\subsection*{13. A Small Directed Triangle}
+\subsection{A Small Directed Triangle}
 This final compact example uses the same grid again, but only Bayes-net edges: the square
 node at the top is a known parent of both variables, and the right variable also parents the
 left one.
@@ -280,7 +281,7 @@ left one.
 
 \Needspace{24\baselineskip}
 \newpage
-\subsection*{14. Dashed and Labeled Bayes-Net Edges}
+\subsection{Dashed and Labeled Bayes-Net Edges}
 The \texttt{edge} statement overrides one implied directed Bayes-net edge to add a dashed
 style and a small label beside the arrow. Solid unlabeled edges still come directly from the
 \texttt{node} and \texttt{known\_node} parent lists.
@@ -296,9 +297,9 @@ style and a small label beside the arrow. Solid unlabeled edges still come direc
 \end{samepage}
 
 \clearpage
-\section*{Advanced Example}
+\section{Advanced Example}
 
-\subsection*{Toy SLAM Elimination Sequence}
+\subsection{Toy SLAM Elimination Sequence}
 This reconstruction starts from the original SLAM factor graph and then uses five more
 fgz files to show the elimination sequence: unary and binary factors, color accents,
 factor offsets, and the transition from factor-graph structure toward a Bayes net as
@@ -382,6 +383,23 @@ variables are eliminated.
     \textbf{Source: \texttt{slam-eliminate-x3.fgz}}
     \VerbatimInput[frame=single,fontsize=\tiny,baselinestretch=0.9]{slam-eliminate-x3.fgz}
   \end{minipage}
+\end{samepage}
+
+\clearpage
+\subsection{Textbook Recursive Dynamics Graph}
+This larger factor graph reconstructs the recursive-dynamics layout from the supplied
+TikZ example using \texttt{theme textbook}. It combines explicit factor placement,
+per-node size tuning for long mechanics labels, and a dense multi-row geometry without
+leaving the fgz DSL.
+
+\vspace{0.5cm}
+\begin{samepage}
+  \centering
+  \scalebox{0.66}{\input{guide-textbook-dynamics.fgz.tex}}
+
+  \medskip
+  \noindent\textbf{Source: \texttt{guide-textbook-dynamics.fgz}}
+  \VerbatimInput[frame=single,fontsize=\tiny,baselinestretch=0.92]{guide-textbook-dynamics.fgz}
 \end{samepage}
 
 \end{document}

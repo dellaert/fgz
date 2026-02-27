@@ -462,3 +462,106 @@ node x_3 {} (7, 0) color=gray!25
 node l_1 {x_1, x_2} (3.5, 3.5)
 node l_2 {x_3} (7, 3.5)
 ```
+
+### 15. Textbook Recursive Dynamics Graph
+
+This larger factor graph reconstructs the recursive-dynamics layout from the supplied
+TikZ example using `theme textbook`. It combines explicit factor placement, per-node
+size tuning for long mechanics labels, and a dense multi-row geometry without leaving
+the fgz DSL.
+
+![Textbook recursive dynamics graph](./guide-textbook-dynamics.svg)
+
+Source: [`guide-textbook-dynamics.fgz`](./guide-textbook-dynamics.fgz)
+
+```fgz
+fgz 1
+theme textbook
+style node_size=9mm factor_size=3.6mm label_sep=0.4pt label_font=scriptsize
+
+v0 = \twist_0
+va = \twist_a
+vb = \twist_b
+vc = \twist_c
+
+dv0 = \dot{\twist}_0
+dva = \dot{\twist}_a
+dvb = \dot{\twist}_b
+dvc = \dot{\twist}_c
+
+qd1 = \dot{q}_1
+qd2 = \dot{q}_2
+qd3 = \dot{q}_3
+qdd1 = \ddot{q}_1
+qdd2 = \ddot{q}_2
+qdd3 = \ddot{q}_3
+
+f01 = \mathcal{F}_{0,1}
+fa1 = \mathcal{F}_{a,1}
+fa2 = \mathcal{F}_{a,2}
+fb2 = \mathcal{F}_{b,2}
+fb3 = \mathcal{F}_{b,3}
+fc3 = \mathcal{F}_{c,3}
+fct = \mathcal{F}_{c,t}
+
+tau1 = \tau_1
+tau2 = \tau_2
+tau3 = \tau_3
+ga = m_a\gs
+gb = m_b\gs
+gc = m_c\gs
+
+variable v0 (1.0, 5.9)
+variable va (4.0, 5.9)
+variable vb (8.0, 5.9)
+variable vc (12.0, 5.9)
+
+known qd1 (2.42, 6.95) size=10mm
+known qd2 (6.42, 6.95) size=10mm
+known qd3 (10.42, 6.95) size=10mm
+
+variable dv0 (1.0, 4.1)
+variable dva (5.2, 4.1)
+variable dvb (9.2, 4.1)
+variable dvc (13.2, 4.1)
+
+known qdd1 (2.42, 5.0) size=11mm
+known qdd2 (6.42, 5.0) size=11mm
+known qdd3 (10.42, 5.0) size=11mm
+
+variable f01 (1.8, 2.6) size=13mm
+variable fa1 (4.2, 2.6) size=13mm
+variable fa2 (5.8, 2.6) size=13mm
+variable fb2 (8.2, 2.6) size=13mm
+variable fb3 (9.8, 2.6) size=13mm
+variable fc3 (12.2, 2.6) size=13mm
+known fct (14.6, 2.6) size=13mm
+
+known tau1 (3.0, 1.35)
+known tau2 (7.0, 1.35)
+known tau3 (11.0, 1.35)
+
+known ga (5.0, 0.75) size=11mm
+known gb (9.0, 0.75) size=11mm
+known gc (13.0, 0.75) size=11mm
+
+factor {v0, qd1, va} (3.0, 5.9) color=black
+factor {va, qd2, vb} (7.0, 5.9) color=black
+factor {vb, qd3, vc} (11.0, 5.9) color=black
+
+factor {dv0, dva, va, qd1, qdd1} (3.0, 4.1) color=black
+factor {dva, dvb, vb, qd2, qdd2} (7.0, 4.1) color=black
+factor {dvb, dvc, vc, qd3, qdd3} (11.0, 4.1) color=black
+
+factor {f01, fa1} (3.0, 2.6) color=black
+factor {fa2, fb2} (7.0, 2.6) color=black
+factor {fb3, fc3} (11.0, 2.6) color=black
+
+factor {fa1, fa2, va, dva, ga} (5.0, 2.6) color=black
+factor {fb2, fb3, vb, dvb, gb} (9.0, 2.6) color=black
+factor {fc3, fct, vc, dvc, gc} (13.0, 2.6) color=black
+
+factor {fa1, tau1} (3.0, 1.95) color=black
+factor {fb2, tau2} (7.0, 1.95) color=black
+factor {fc3, tau3} (11.0, 1.95) color=black
+```

@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import { extname, resolve } from "node:path";
+import { dirname, extname, resolve } from "node:path";
 import { FgzError, parseFgz } from "../../fgz-core/dist/index.js";
 import type { Document } from "../../fgz-core/dist/index.js";
 
@@ -8,7 +8,13 @@ export interface CliOptions {
   outputPath: string;
 }
 
-type Renderer = (doc: Document) => Promise<string> | string;
+export interface CliRenderContext {
+  inputPath: string;
+  inputDir: string;
+  outputPath: string;
+}
+
+type Renderer = (doc: Document, context: CliRenderContext) => Promise<string> | string;
 
 export function usage(command: string, extension: string): string {
   return `usage: ${command} <input.fgz> [-o <output.${extension}>]`;
@@ -73,7 +79,11 @@ export async function runCli(
   const outputPath = resolve(options.outputPath);
   const source = readFileSync(inputPath, "utf8");
   const doc = parseFgz(source);
-  const rendered = await render(doc);
+  const rendered = await render(doc, {
+    inputPath,
+    inputDir: dirname(inputPath),
+    outputPath
+  });
   writeFileSync(outputPath, rendered, "utf8");
 }
 

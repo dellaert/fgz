@@ -1,0 +1,100 @@
+\begin{tikzpicture}[x=1cm,y=1cm]
+\fgzsettheme{textbook}
+\fgzsetnodesize{9mm}
+\fgzsetfactorsize{3.6mm}
+\fgzsetlabelsep{0.4pt}
+\fgzsetlabelfont{\scriptsize}
+\fgzVar{fgz_v0}{1.0}{5.9}{$\twist_0$}
+\fgzVar{fgz_va}{4.0}{5.9}{$\twist_a$}
+\fgzVar{fgz_vb}{8.0}{5.9}{$\twist_b$}
+\fgzVar{fgz_vc}{12.0}{5.9}{$\twist_c$}
+\fgzKnownOpts{fgz_qd1}{2.42}{6.95}{$\dot{q}_1$}{, minimum size=10mm}
+\fgzKnownOpts{fgz_qd2}{6.42}{6.95}{$\dot{q}_2$}{, minimum size=10mm}
+\fgzKnownOpts{fgz_qd3}{10.42}{6.95}{$\dot{q}_3$}{, minimum size=10mm}
+\fgzVar{fgz_dv0}{1.0}{4.1}{$\dot{\twist}_0$}
+\fgzVar{fgz_dva}{5.2}{4.1}{$\dot{\twist}_a$}
+\fgzVar{fgz_dvb}{9.2}{4.1}{$\dot{\twist}_b$}
+\fgzVar{fgz_dvc}{13.2}{4.1}{$\dot{\twist}_c$}
+\fgzKnownOpts{fgz_qdd1}{2.42}{5.0}{$\ddot{q}_1$}{, minimum size=11mm}
+\fgzKnownOpts{fgz_qdd2}{6.42}{5.0}{$\ddot{q}_2$}{, minimum size=11mm}
+\fgzKnownOpts{fgz_qdd3}{10.42}{5.0}{$\ddot{q}_3$}{, minimum size=11mm}
+\fgzVarOpts{fgz_f01}{1.8}{2.6}{$\mathcal{F}_{0,1}$}{, minimum size=13mm}
+\fgzVarOpts{fgz_fa1}{4.2}{2.6}{$\mathcal{F}_{a,1}$}{, minimum size=13mm}
+\fgzVarOpts{fgz_fa2}{5.8}{2.6}{$\mathcal{F}_{a,2}$}{, minimum size=13mm}
+\fgzVarOpts{fgz_fb2}{8.2}{2.6}{$\mathcal{F}_{b,2}$}{, minimum size=13mm}
+\fgzVarOpts{fgz_fb3}{9.8}{2.6}{$\mathcal{F}_{b,3}$}{, minimum size=13mm}
+\fgzVarOpts{fgz_fc3}{12.2}{2.6}{$\mathcal{F}_{c,3}$}{, minimum size=13mm}
+\fgzKnownOpts{fgz_fct}{14.6}{2.6}{$\mathcal{F}_{c,t}$}{, minimum size=13mm}
+\fgzKnown{fgz_tau1}{3.0}{1.35}{$\tau_1$}
+\fgzKnown{fgz_tau2}{7.0}{1.35}{$\tau_2$}
+\fgzKnown{fgz_tau3}{11.0}{1.35}{$\tau_3$}
+\fgzKnownOpts{fgz_ga}{5.0}{0.75}{$m_a\gs$}{, minimum size=11mm}
+\fgzKnownOpts{fgz_gb}{9.0}{0.75}{$m_b\gs$}{, minimum size=11mm}
+\fgzKnownOpts{fgz_gc}{13.0}{0.75}{$m_c\gs$}{, minimum size=11mm}
+\fgzFactorColor{fgz_f1}{3.0}{5.9}{black}
+\fgzFactorColor{fgz_f2}{7.0}{5.9}{black}
+\fgzFactorColor{fgz_f3}{11.0}{5.9}{black}
+\fgzFactorColor{fgz_f4}{3.0}{4.1}{black}
+\fgzFactorColor{fgz_f5}{7.0}{4.1}{black}
+\fgzFactorColor{fgz_f6}{11.0}{4.1}{black}
+\fgzFactorColor{fgz_f7}{3.0}{2.6}{black}
+\fgzFactorColor{fgz_f8}{7.0}{2.6}{black}
+\fgzFactorColor{fgz_f9}{11.0}{2.6}{black}
+\fgzFactorColor{fgz_f10}{5.0}{2.6}{black}
+\fgzFactorColor{fgz_f11}{9.0}{2.6}{black}
+\fgzFactorColor{fgz_f12}{13.0}{2.6}{black}
+\fgzFactorColor{fgz_f13}{3.0}{1.95}{black}
+\fgzFactorColor{fgz_f14}{7.0}{1.95}{black}
+\fgzFactorColor{fgz_f15}{11.0}{1.95}{black}
+\fgzEdgeUColor{fgz_f1}{fgz_v0}{black}
+\fgzEdgeUColor{fgz_f1}{fgz_qd1}{black}
+\fgzEdgeUColor{fgz_f1}{fgz_va}{black}
+\fgzEdgeUColor{fgz_f2}{fgz_va}{black}
+\fgzEdgeUColor{fgz_f2}{fgz_qd2}{black}
+\fgzEdgeUColor{fgz_f2}{fgz_vb}{black}
+\fgzEdgeUColor{fgz_f3}{fgz_vb}{black}
+\fgzEdgeUColor{fgz_f3}{fgz_qd3}{black}
+\fgzEdgeUColor{fgz_f3}{fgz_vc}{black}
+\fgzEdgeUColor{fgz_f4}{fgz_dv0}{black}
+\fgzEdgeUColor{fgz_f4}{fgz_dva}{black}
+\fgzEdgeUColor{fgz_f4}{fgz_va}{black}
+\fgzEdgeUColor{fgz_f4}{fgz_qd1}{black}
+\fgzEdgeUColor{fgz_f4}{fgz_qdd1}{black}
+\fgzEdgeUColor{fgz_f5}{fgz_dva}{black}
+\fgzEdgeUColor{fgz_f5}{fgz_dvb}{black}
+\fgzEdgeUColor{fgz_f5}{fgz_vb}{black}
+\fgzEdgeUColor{fgz_f5}{fgz_qd2}{black}
+\fgzEdgeUColor{fgz_f5}{fgz_qdd2}{black}
+\fgzEdgeUColor{fgz_f6}{fgz_dvb}{black}
+\fgzEdgeUColor{fgz_f6}{fgz_dvc}{black}
+\fgzEdgeUColor{fgz_f6}{fgz_vc}{black}
+\fgzEdgeUColor{fgz_f6}{fgz_qd3}{black}
+\fgzEdgeUColor{fgz_f6}{fgz_qdd3}{black}
+\fgzEdgeUColor{fgz_f7}{fgz_f01}{black}
+\fgzEdgeUColor{fgz_f7}{fgz_fa1}{black}
+\fgzEdgeUColor{fgz_f8}{fgz_fa2}{black}
+\fgzEdgeUColor{fgz_f8}{fgz_fb2}{black}
+\fgzEdgeUColor{fgz_f9}{fgz_fb3}{black}
+\fgzEdgeUColor{fgz_f9}{fgz_fc3}{black}
+\fgzEdgeUColor{fgz_f10}{fgz_fa1}{black}
+\fgzEdgeUColor{fgz_f10}{fgz_fa2}{black}
+\fgzEdgeUColor{fgz_f10}{fgz_va}{black}
+\fgzEdgeUColor{fgz_f10}{fgz_dva}{black}
+\fgzEdgeUColor{fgz_f10}{fgz_ga}{black}
+\fgzEdgeUColor{fgz_f11}{fgz_fb2}{black}
+\fgzEdgeUColor{fgz_f11}{fgz_fb3}{black}
+\fgzEdgeUColor{fgz_f11}{fgz_vb}{black}
+\fgzEdgeUColor{fgz_f11}{fgz_dvb}{black}
+\fgzEdgeUColor{fgz_f11}{fgz_gb}{black}
+\fgzEdgeUColor{fgz_f12}{fgz_fc3}{black}
+\fgzEdgeUColor{fgz_f12}{fgz_fct}{black}
+\fgzEdgeUColor{fgz_f12}{fgz_vc}{black}
+\fgzEdgeUColor{fgz_f12}{fgz_dvc}{black}
+\fgzEdgeUColor{fgz_f12}{fgz_gc}{black}
+\fgzEdgeUColor{fgz_f13}{fgz_fa1}{black}
+\fgzEdgeUColor{fgz_f13}{fgz_tau1}{black}
+\fgzEdgeUColor{fgz_f14}{fgz_fb2}{black}
+\fgzEdgeUColor{fgz_f14}{fgz_tau2}{black}
+\fgzEdgeUColor{fgz_f15}{fgz_fc3}{black}
+\fgzEdgeUColor{fgz_f15}{fgz_tau3}{black}
+\end{tikzpicture}
