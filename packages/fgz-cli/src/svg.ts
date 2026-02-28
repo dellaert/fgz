@@ -11,6 +11,7 @@ export interface SvgRenderOptions {
 /** Wrap a TikZ snippet in the minimal TeX document expected by node-tikzjax. */
 function buildTexDocument(tikz: string, options: SvgRenderOptions = {}): string {
   return [
+    "\\usepackage{amsmath}",
     "\\usepackage{tikz}",
     supportSource,
     options.preambleSource?.trim(),

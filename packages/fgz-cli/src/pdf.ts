@@ -16,6 +16,7 @@ export interface PdfRenderOptions {
 function buildStandaloneTexDocument(tikz: string, options: PdfRenderOptions = {}): string {
   return [
     "\\documentclass[tikz,border=2pt]{standalone}",
+    "\\usepackage{amsmath}",
     "\\usepackage{tikz}",
     supportSource,
     options.preambleSource?.trim(),
