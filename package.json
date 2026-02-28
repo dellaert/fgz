@@ -12,6 +12,7 @@
   },
   "scripts": {
     "build": "tsc -b",
+    "prepare": "npm run build",
     "test": "vitest run",
     "fgz2tex": "node packages/fgz-cli/dist/fgz2tex.js",
     "fgz2svg": "node packages/fgz-cli/dist/fgz2svg.js",
