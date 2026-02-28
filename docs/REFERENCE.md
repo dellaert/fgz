@@ -55,7 +55,7 @@ fgz2tex input.fgz -o output.tex
 Rules:
 
 - default output is `input.fgz.tex`
-- no `--macros` flag is supported
+- no `--preamble` flag is supported
 - generated TikZ assumes the consuming paper already does `\input{fgz.tikz.tex}`
 
 ### `fgz2svg`
@@ -66,14 +66,19 @@ Convert an fgz file into an SVG by running the shared TikZ pipeline through
 ```bash
 fgz2svg input.fgz
 fgz2svg input.fgz -o output.svg
-fgz2svg input.fgz --macros path/to/macros.tex
+fgz2svg input.fgz --preamble path/to/preamble.tex
 ```
 
 Rules:
 
 - default output is `input.svg`
-- `--macros` is optional
-- when `--macros` is omitted, no extra macro file is loaded
+- `--preamble` is optional
+- when `--preamble` is omitted, no extra preamble file is loaded
+- the `--preamble` file is inserted verbatim into the TeX preamble
+- treat that file as a TeX/TikZ preamble fragment, not just a bag of `\newcommand`s
+- it may contain TeX macro definitions, `\colorlet`, `\usetikzlibrary`, `\tikzset`,
+  and local overrides of fgz theme or drawing macros
+- for SVG export, that fragment must stay within what `node-tikzjax` supports
 - SVG is convenient for previews and Markdown guides, but it is not always as
   faithful as native LaTeX/TikZ rendering
 
@@ -85,14 +90,18 @@ next to the source.
 ```bash
 fgz2pdf input.fgz
 fgz2pdf input.fgz -o output.pdf
-fgz2pdf input.fgz --macros path/to/macros.tex
+fgz2pdf input.fgz --preamble path/to/preamble.tex
 fgz2pdf input.fgz --keep-temp
 ```
 
 Rules:
 
 - default output is `input.fgz.pdf`
-- `--macros` is optional
+- `--preamble` is optional
+- the `--preamble` file is inserted verbatim into the standalone TeX preamble
+- treat that file as a TeX/TikZ preamble fragment, not just a bag of `\newcommand`s
+- it may contain TeX macro definitions, `\colorlet`, `\usetikzlibrary`, `\tikzset`,
+  and local overrides of fgz theme or drawing macros
 - `--keep-temp` preserves the temporary LaTeX build directory for debugging
 - `pdflatex` must be installed and available on `PATH`
 - `fgz2pdf` embeds the shared `fgz.tikz.tex` support macros automatically
@@ -111,8 +120,8 @@ npx fgz2pdf figures/example.fgz
 If your SVG or PDF labels depend on LaTeX macros, pass them explicitly:
 
 ```bash
-npx fgz2svg figures/example.fgz --macros figures/macros.tex
-npx fgz2pdf figures/example.fgz --macros figures/macros.tex
+npx fgz2svg figures/example.fgz --preamble figures/preamble.tex
+npx fgz2pdf figures/example.fgz --preamble figures/preamble.tex
 ```
 
 `fgz2pdf` also supports:
@@ -122,6 +131,47 @@ npx fgz2pdf figures/example.fgz --keep-temp
 ```
 
 to keep the temporary LaTeX build directory for debugging.
+
+### Overriding fgz Support Macros
+
+The `--preamble` fragment can also override pieces of the shared fgz support
+file when you want local presentation changes without editing `fgz.tikz.tex`.
+
+Example:
+
+```tex
+\makeatletter
+\renewcommand{\fgz@theme@textbook}{%
+  \colorlet{fgz@stroke}{black!85}%
+  \colorlet{fgz@var@draw}{kinNodeDraw}%
+  \colorlet{fgz@var@fill}{kinPoseFill}%
+  \colorlet{fgz@known@draw}{kinNodeDraw}%
+  \colorlet{fgz@known@fill}{kinPoseFill}%
+  \colorlet{fgz@factor@draw}{fgzTextbookFactorDraw}%
+  \colorlet{fgz@factor@fill}{fgzTextbookFactorFill}%
+  \def\fgz@node@line@width{0.65pt}%
+  \def\fgz@edge@line@width{0.7pt}%
+}
+\renewcommand{\fgzKnown}[4]{%
+  \node[fgz known, rounded corners=1pt, minimum width=9mm, minimum height=8mm, inner sep=0pt] (#1) at (#2,#3) {#4};%
+}
+\makeatother
+
+\usetikzlibrary{arrows.meta,calc,positioning,bending,shapes.geometric}
+\colorlet{kinPoseFill}{red!8}
+\colorlet{kinNodeDraw}{black}
+\tikzset{
+  tikzPanel/.style={draw=black!25, fill=black!2, rounded corners=3pt}
+}
+```
+
+Typical uses:
+
+- local palette changes for a paper
+- thinner or heavier node/edge strokes
+- rounded-corner known nodes or factor boxes
+- custom panel styling
+- loading extra TikZ libraries needed by local overrides
 
 ## Names and Labels
 

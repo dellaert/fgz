@@ -5,15 +5,15 @@ import type { Document } from "../../fgz-core/dist/index.js";
 const supportSource = readFileSync(new URL("../../../tikz/fgz.tikz.tex", import.meta.url), "utf8").trim();
 
 export interface SvgRenderOptions {
-  macroSource?: string;
+  preambleSource?: string;
 }
 
 /** Wrap a TikZ snippet in the minimal TeX document expected by node-tikzjax. */
 function buildTexDocument(tikz: string, options: SvgRenderOptions = {}): string {
   return [
     "\\usepackage{tikz}",
-    options.macroSource?.trim(),
     supportSource,
+    options.preambleSource?.trim(),
     "\\begin{document}",
     tikz.trimEnd(),
     "\\end{document}"

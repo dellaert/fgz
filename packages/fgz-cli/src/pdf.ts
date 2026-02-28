@@ -8,7 +8,7 @@ import type { Document } from "../../fgz-core/dist/index.js";
 const supportSource = readFileSync(new URL("../../../tikz/fgz.tikz.tex", import.meta.url), "utf8").trim();
 
 export interface PdfRenderOptions {
-  macroSource?: string;
+  preambleSource?: string;
   keepTemp?: boolean;
 }
 
@@ -17,8 +17,8 @@ function buildStandaloneTexDocument(tikz: string, options: PdfRenderOptions = {}
   return [
     "\\documentclass[tikz,border=2pt]{standalone}",
     "\\usepackage{tikz}",
-    options.macroSource?.trim(),
     supportSource,
+    options.preambleSource?.trim(),
     "\\begin{document}",
     tikz.trimEnd(),
     "\\end{document}"

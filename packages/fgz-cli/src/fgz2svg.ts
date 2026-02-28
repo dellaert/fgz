@@ -5,15 +5,15 @@ import { fileURLToPath } from "node:url";
 import { reportCliError, runCli, defaultSvgOutputPath, usage } from "./cli.js";
 import { renderDocumentToSvg } from "./svg.js";
 
-const usageText = usage("fgz2svg", "svg", { allowMacros: true });
+const usageText = usage("fgz2svg", "svg", { allowPreamble: true });
 
 /** CLI entrypoint for fgz2svg. */
 export async function main(argv: string[] = process.argv.slice(2)): Promise<void> {
   await runCli(
     argv,
     defaultSvgOutputPath,
-    (doc, context) => renderDocumentToSvg(doc, context.macroSource ? { macroSource: context.macroSource } : {}),
-    { allowMacros: true }
+    (doc, context) => renderDocumentToSvg(doc, context.preambleSource ? { preambleSource: context.preambleSource } : {}),
+    { allowPreamble: true }
   );
 }
 

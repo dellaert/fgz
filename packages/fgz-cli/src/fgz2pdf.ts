@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { defaultPdfOutputPath, reportCliError, runCli, usage } from "./cli.js";
 import { renderDocumentToPdf } from "./pdf.js";
 
-const usageText = usage("fgz2pdf", "pdf", { allowMacros: true, extra: "[--keep-temp]" });
+const usageText = usage("fgz2pdf", "pdf", { allowPreamble: true, extra: "[--keep-temp]" });
 
 /** Strip the debug-only `--keep-temp` flag before handing shared args to the common parser. */
 function extractKeepTemp(argv: string[]): { filteredArgv: string[]; keepTemp: boolean } {
@@ -31,10 +31,10 @@ export async function main(argv: string[] = process.argv.slice(2)): Promise<void
     defaultPdfOutputPath,
     (doc, context) =>
       renderDocumentToPdf(doc, {
-        ...(context.macroSource ? { macroSource: context.macroSource } : {}),
+        ...(context.preambleSource ? { preambleSource: context.preambleSource } : {}),
         keepTemp
       }),
-    { allowMacros: true }
+    { allowPreamble: true }
   );
 }
 

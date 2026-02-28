@@ -91,12 +91,18 @@ npx fgz2pdf figures/example.fgz
 
 Those write `figures/example.fgz.tex`, `figures/example.svg`, and `figures/example.fgz.pdf` by default.
 
-If your labels depend on LaTeX macros, pass them explicitly to SVG or PDF export:
+If your labels depend on LaTeX or TikZ preamble setup, pass it explicitly to SVG or PDF export:
 
 ```bash
-npx fgz2svg figures/example.fgz --macros figures/macros.tex
-npx fgz2pdf figures/example.fgz --macros figures/macros.tex
+npx fgz2svg figures/example.fgz --preamble figures/preamble.tex
+npx fgz2pdf figures/example.fgz --preamble figures/preamble.tex
 ```
+
+The `--preamble` file is inserted verbatim into the TeX preamble. It is best thought of
+as a TeX/TikZ preamble fragment: it can contain `\\newcommand`, `\\colorlet`,
+`\\usetikzlibrary`, `\\tikzset`, and even local overrides of fgz theme or drawing
+macros. For SVG export, that same fragment must stay within what the `node-tikzjax`
+backend supports.
 
 For PDF debugging, you can keep the temporary compilation directory:
 

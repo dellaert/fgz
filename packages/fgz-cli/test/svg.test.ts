@@ -25,7 +25,7 @@ factor {x_0, x_1}
   );
 
   it(
-    "renders with macro.tex-style preamble macros when provided",
+    "renders with an explicit TeX/TikZ preamble fragment when provided",
     { timeout: 60_000 },
     async () => {
       const tikz = toTikz(
@@ -36,7 +36,7 @@ variable t (0, 0)
       );
 
       const svg = await renderTikzToSvg(tikz, {
-        macroSource: "\\newcommand{\\twist}{\\mathcal{V}}"
+        preambleSource: "\\newcommand{\\twist}{\\mathcal{V}}"
       });
 
       expect(svg).toContain("<svg");

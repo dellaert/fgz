@@ -20,7 +20,7 @@ factor {x_0, x_1}
   );
 
   it(
-    "renders with explicit macros when provided",
+    "renders with an explicit TeX/TikZ preamble fragment when provided",
     { timeout: 60_000 },
     () => {
       const pdf = renderDocumentToPdf(
@@ -29,7 +29,7 @@ t = \\twist
 variable t (0, 0)
 `),
         {
-          macroSource: "\\newcommand{\\twist}{\\mathcal{V}}"
+          preambleSource: "\\newcommand{\\twist}{\\mathcal{V}}"
         }
       );
 

@@ -6,15 +6,15 @@ import type { Document } from "../../fgz-core/dist/index.js";
 export interface CliOptions {
   inputPath: string;
   outputPath: string;
-  macrosPath?: string;
+  preamblePath?: string;
 }
 
 export interface CliRenderContext {
   inputPath: string;
   inputDir: string;
   outputPath: string;
-  macrosPath?: string;
-  macroSource?: string;
+  preamblePath?: string;
+  preambleSource?: string;
 }
 
 type RenderedOutput = string | Uint8Array;
@@ -22,14 +22,14 @@ type Renderer = (doc: Document, context: CliRenderContext) => Promise<RenderedOu
 
 interface ParseArgsConfig {
   defaultOutputPath: (inputPath: string) => string;
-  allowMacros?: boolean;
+  allowPreamble?: boolean;
 }
 
 /** Build a concise usage string for a CLI entrypoint. */
-export function usage(command: string, extension: string, options: { allowMacros?: boolean; extra?: string } = {}): string {
+export function usage(command: string, extension: string, options: { allowPreamble?: boolean; extra?: string } = {}): string {
   const parts = [`usage: ${command} <input.fgz> [-o <output.${extension}>]`];
-  if (options.allowMacros) {
-    parts.push("[--macros <macros.tex>]");
+  if (options.allowPreamble) {
+    parts.push("[--preamble <preamble.tex>]");
   }
   if (options.extra) {
     parts.push(options.extra);
@@ -41,7 +41,7 @@ export function usage(command: string, extension: string, options: { allowMacros
 function parseArgs(argv: string[], config: ParseArgsConfig): CliOptions {
   let inputPath: string | undefined;
   let outputPath: string | undefined;
-  let macrosPath: string | undefined;
+  let preamblePath: string | undefined;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -57,15 +57,15 @@ function parseArgs(argv: string[], config: ParseArgsConfig): CliOptions {
       index += 1;
       continue;
     }
-    if (arg === "--macros") {
-      if (!config.allowMacros) {
-        throw new Error('unknown option "--macros"');
+    if (arg === "--preamble") {
+      if (!config.allowPreamble) {
+        throw new Error('unknown option "--preamble"');
       }
       const next = argv[index + 1];
       if (!next) {
-        throw new Error("missing value for --macros");
+        throw new Error("missing value for --preamble");
       }
-      macrosPath = next;
+      preamblePath = next;
       index += 1;
       continue;
     }
@@ -88,7 +88,7 @@ function parseArgs(argv: string[], config: ParseArgsConfig): CliOptions {
   return {
     inputPath,
     outputPath: outputPath ?? config.defaultOutputPath(inputPath),
-    ...(macrosPath ? { macrosPath } : {})
+    ...(preamblePath ? { preamblePath } : {})
   };
 }
 
@@ -112,25 +112,25 @@ export async function runCli(
   argv: string[],
   defaultOutputPath: (inputPath: string) => string,
   render: Renderer,
-  options: { allowMacros?: boolean } = {}
+  options: { allowPreamble?: boolean } = {}
 ): Promise<void> {
   const parsed = parseArgs(argv, {
     defaultOutputPath,
-    ...(options.allowMacros !== undefined ? { allowMacros: options.allowMacros } : {})
+    ...(options.allowPreamble !== undefined ? { allowPreamble: options.allowPreamble } : {})
   });
   const inputPath = resolve(parsed.inputPath);
   const outputPath = resolve(parsed.outputPath);
-  const macrosPath = parsed.macrosPath ? resolve(parsed.macrosPath) : undefined;
+  const preamblePath = parsed.preamblePath ? resolve(parsed.preamblePath) : undefined;
   const source = readFileSync(inputPath, "utf8");
   const doc = parseFgz(source);
-  // Macro preambles are opt-in so SVG and PDF exports stay explicit and reproducible.
-  const macroSource = macrosPath ? readFileSync(macrosPath, "utf8") : undefined;
+  // TeX/TikZ preamble fragments are opt-in so SVG and PDF exports stay explicit and reproducible.
+  const preambleSource = preamblePath ? readFileSync(preamblePath, "utf8") : undefined;
   const rendered = await render(doc, {
     inputPath,
     inputDir: dirname(inputPath),
     outputPath,
-    ...(macrosPath ? { macrosPath } : {}),
-    ...(macroSource ? { macroSource } : {})
+    ...(preamblePath ? { preamblePath } : {}),
+    ...(preambleSource ? { preambleSource } : {})
   });
   writeFileSync(outputPath, rendered);
 }
