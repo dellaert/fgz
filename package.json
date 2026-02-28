@@ -13,6 +13,8 @@
   "scripts": {
     "build": "tsc -b",
     "test": "vitest run",
+    "fgz2tex": "node packages/fgz-cli/dist/fgz2tex.js",
+    "fgz2svg": "node packages/fgz-cli/dist/fgz2svg.js",
     "examples:pdf": "npm run build && node scripts/build-examples.mjs",
     "examples:svg": "npm run build && node scripts/build-examples.mjs --svg-only"
   },

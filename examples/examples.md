@@ -1,9 +1,18 @@
 # fgz User Guide
 
+In this repo, build once and then run:
+
+```bash
+npm run build
+npm run fgz2svg -- examples/guide-minimal.fgz
+```
+
+That writes `examples/guide-minimal.svg` by default.
+
 To use fgz in your own project, first install it once:
 
 ```bash
-npm install --save-dev git+https://github.com/<you>/fgz.git#main
+npm install --save-dev git+https://github.com/dellaert/fgz.git#main
 ```
 
 After that, generate SVG output with:

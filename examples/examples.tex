@@ -20,10 +20,19 @@
 \begin{document}
 \maketitle
 
+In this repo, build once and then run:
+
+\begin{verbatim}
+npm run build
+npm run fgz2tex -- examples/guide-minimal.fgz
+\end{verbatim}
+
+That writes \texttt{examples/guide-minimal.fgz.tex} by default.
+
 To use fgz in your own project, first install it once:
 
 \begin{verbatim}
-npm install --save-dev git+https://github.com/<you>/fgz.git#main
+npm install --save-dev git+https://github.com/dellaert/fgz.git#main
 \end{verbatim}
 
 After that, generate TikZ snippets with:

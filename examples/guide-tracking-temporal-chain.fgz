@@ -1,10 +1,10 @@
 fgz 1
-style node_size=8.2mm label_sep=0.15pt label_font=tiny
+style node_size=8.2mm label_sep=0.15pt
 
 km2 = k-2
 km1 = k-1
 k0 = k
-xl = x_{-}
+xl = x_{=}
 xm = x_{-}
 xr = x
 fl = f_{-}
@@ -19,11 +19,11 @@ box (1.7, 0.8) (1.7, 4.1) style=dashed color=black!50
 box (5.3, 0.8) (5.3, 4.1) style=dashed color=black!50
 box (0.0, 2.3) (1.0, 2.3) color=fgzClassicStroke
 
-variable x_l (1.0, 2.3) color=gray!15
-variable x_m (4.6, 2.3) color=gray!15
-variable x_r (8.6, 2.3) color=gray!15
+variable xl (1.0, 2.3) color=gray!15
+variable xm (4.6, 2.3) color=gray!15
+variable xr (8.6, 2.3) color=gray!15
 
-factor {x_l, x_m} (2.9, 2.3) shape=square color=green!20 label=fl size=6.8mm font=scriptsize
-factor {x_m} (4.6, 1.35) shape=square color=red!20 label=fz size=6.8mm font=scriptsize
-factor {x_m, x_r} (6.7, 2.3) shape=square color=green!20 label=fr size=6.8mm font=scriptsize
-factor {x_r} (8.6, 1.35) shape=square color=red!20 label=fz size=6.8mm font=scriptsize
+factor {xl, xm} (2.9, 2.3) shape=square color=green!20 label=fl size=6.8mm font=scriptsize
+factor {xm} (4.6, 1.35) shape=square color=red!20 label=fz size=6.8mm font=scriptsize
+factor {xm, xr} (6.7, 2.3) shape=square color=green!20 label=fr size=6.8mm font=scriptsize
+factor {xr} (8.6, 1.35) shape=square color=red!20 label=fz size=6.8mm font=scriptsize

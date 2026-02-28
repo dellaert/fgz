@@ -1,5 +1,5 @@
 fgz 1
-style node_size=8.2mm label_sep=0.15pt label_font=tiny
+style node_size=8.2mm label_sep=0.15pt
 
 km1 = k-1
 k0 = k
@@ -8,11 +8,10 @@ x1m = x^{1}_{-}
 x1 = x^{1}
 f1 = f^{1}
 g1 = g^{1}
-xnm = x^{n_s}_{-}
-xn = x^{n_s}
+xnm = x^{n_t}_{-}
+xn = x^{n_t}
 fn = f^{n_s}
 gn = g^{n_s}
-a0 = a
 psi0 = \psi
 
 text km1 (1.5, 4.0)
@@ -24,14 +23,14 @@ box (2.5, 0.8) (2.5, 4.1) style=dashed color=black!50
 box (0.0, 3.3) (1.0, 3.3) color=fgzClassicStroke
 box (0.0, 1.2) (1.0, 1.2) color=fgzClassicStroke
 
-variable vx1m (1.0, 3.3) color=gray!15
-variable vx1 (4.45, 3.3) color=gray!15
-variable vxnm (1.0, 1.2) color=gray!15
-variable vxn (4.45, 1.2) color=gray!15
-variable va (8.35, 2.3) color=gray!15
+variable x1m (1.0, 3.3) color=gray!15
+variable x1 (4.45, 3.3) color=gray!15
+variable xnm (1.0, 1.2) color=gray!15
+variable xn (4.45, 1.2) color=gray!15
+variable a (8.35, 2.3) color=gray!15
 
-factor {vx1m, vx1} (3.2, 3.3) shape=square color=green!20 label=f1 size=6.8mm font=scriptsize
-factor {vx1, va} (6.35, 2.75) shape=square color=red!20 label=g1 size=6.8mm font=scriptsize
-factor {vxnm, vxn} (3.2, 1.2) shape=square color=green!20 label=fn size=6.8mm font=scriptsize
-factor {vxn, va} (6.35, 1.75) shape=square color=red!20 label=gn size=6.8mm font=scriptsize
-factor {va} (8.35, 1.35) shape=square color=red!20 label=psi0 size=6.4mm font=scriptsize
+factor {x1m, x1} (3.2, 3.3) shape=square color=green!20 label=f1 size=6.8mm font=scriptsize
+factor {x1, a} (6.35, 2.75) shape=square color=red!20 label=g1 size=6.8mm font=scriptsize
+factor {xnm, xn} (3.2, 1.2) shape=square color=green!20 label=fn size=6.8mm font=scriptsize
+factor {xn, a} (6.35, 1.75) shape=square color=red!20 label=gn size=6.8mm font=scriptsize
+factor {a} (8.35, 1.35) shape=square color=red!20 label=psi0 size=6.4mm font=scriptsize

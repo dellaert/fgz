@@ -37,6 +37,21 @@ The document inputs [tikz/fgz.tikz.tex](tikz/fgz.tikz.tex), so no extra package 
 - Human reference manual: [docs/REFERENCE.md](docs/REFERENCE.md)
 - Agent authoring guidance: [AGENTS.md](AGENTS.md)
 
+## In This Repo
+
+Build once:
+
+```bash
+npm run build
+```
+
+Then use the short wrapper scripts:
+
+```bash
+npm run fgz2tex -- examples/guide-minimal.fgz
+npm run fgz2svg -- examples/guide-minimal.fgz
+```
+
 ## How To Use This In Your Own Project
 
 The recommended setup is a pinned dev dependency, then short `npx` commands.
@@ -44,7 +59,7 @@ The recommended setup is a pinned dev dependency, then short `npx` commands.
 ### Install Once
 
 ```bash
-npm install --save-dev git+https://github.com/<you>/fgz.git#main
+npm install --save-dev git+https://github.com/dellaert/fgz.git#main
 ```
 
 You can pin a specific branch, tag, or commit instead of `#main`.
