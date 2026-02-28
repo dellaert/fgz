@@ -14,19 +14,23 @@ import type {
   VarDecl
 } from "./types.js";
 
+/** Format a point using the original authored numeric text. */
 function formatPoint(point: Point): string {
   return `(${point.rawX}, ${point.rawY})`;
 }
 
+/** Format a sparse attribute list without emitting empty keys. */
 function formatAttributes(entries: Array<[string, string | undefined]>): string {
   const parts = entries.flatMap(([key, value]) => (value ? [`${key}=${value}`] : []));
   return parts.length === 0 ? "" : ` ${parts.join(" ")}`;
 }
 
+/** Format a macro definition line. */
 function formatMacro(statement: MacroDef): string {
   return `${statement.lhs} = ${statement.rhsLatex}`;
 }
 
+/** Format a document-level style declaration. */
 function formatStyle(statement: StyleDecl): string {
   return `style${formatAttributes([
     ["node_size", statement.nodeSize],
@@ -36,6 +40,7 @@ function formatStyle(statement: StyleDecl): string {
   ])}`;
 }
 
+/** Format a factor-graph variable or known declaration. */
 function formatVar(statement: VarDecl): string {
   const head = statement.kind === "var" ? "variable" : "known";
   return `${head} ${statement.name} ${formatPoint(statement.pos)}${formatAttributes([
@@ -45,6 +50,7 @@ function formatVar(statement: VarDecl): string {
   ])}`;
 }
 
+/** Format a factor declaration without reordering authored attributes. */
 function formatFactor(statement: FactorDecl): string {
   const point = statement.pos ? ` ${formatPoint(statement.pos)}` : "";
   const base = `factor {${statement.vars.join(", ")}}${point}`;
@@ -58,6 +64,7 @@ function formatFactor(statement: FactorDecl): string {
   ])}`;
 }
 
+/** Format a Bayes-net node declaration. */
 function formatBn(statement: BNDecl): string {
   return `${statement.kind} ${statement.name} {${statement.parents.join(", ")}} ${formatPoint(statement.pos)}${formatAttributes([
     ["color", statement.color],
@@ -66,6 +73,7 @@ function formatBn(statement: BNDecl): string {
   ])}`;
 }
 
+/** Format a curve override declaration. */
 function formatCurve(statement: CurveDecl): string {
   const operator = statement.directed ? "->" : "--";
   return `curve ${statement.a} ${operator} ${statement.b} via ${formatPoint(statement.control)}${formatAttributes([
@@ -73,6 +81,7 @@ function formatCurve(statement: CurveDecl): string {
   ])}`;
 }
 
+/** Format a directed edge override declaration. */
 function formatEdge(statement: EdgeDecl): string {
   return `edge ${statement.a} -> ${statement.b}${formatAttributes([
     ["style", statement.style],
@@ -82,6 +91,7 @@ function formatEdge(statement: EdgeDecl): string {
   ])}`;
 }
 
+/** Format a text annotation declaration. */
 function formatText(statement: TextDecl): string {
   return `text ${statement.name} ${formatPoint(statement.pos)}${formatAttributes([
     ["color", statement.color],
@@ -89,6 +99,7 @@ function formatText(statement: TextDecl): string {
   ])}`;
 }
 
+/** Format a box annotation declaration. */
 function formatBox(statement: BoxDecl): string {
   return `box ${formatPoint(statement.from)} ${formatPoint(statement.to)}${formatAttributes([
     ["style", statement.style],
@@ -96,6 +107,7 @@ function formatBox(statement: BoxDecl): string {
   ])}`;
 }
 
+/** Format a plate annotation declaration. */
 function formatPlate(statement: PlateDecl): string {
   return `plate ${formatPoint(statement.from)} ${formatPoint(statement.to)}${formatAttributes([
     ["color", statement.color],
@@ -104,6 +116,7 @@ function formatPlate(statement: PlateDecl): string {
   ])}`;
 }
 
+/** Dispatch formatting to the statement-specific formatter. */
 function formatStatement(statement: Statement): string {
   switch (statement.kind) {
     case "theme":

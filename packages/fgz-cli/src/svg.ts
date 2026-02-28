@@ -8,6 +8,7 @@ export interface SvgRenderOptions {
   macroSource?: string;
 }
 
+/** Wrap a TikZ snippet in the minimal TeX document expected by node-tikzjax. */
 function buildTexDocument(tikz: string, options: SvgRenderOptions = {}): string {
   return [
     "\\usepackage{tikz}",
@@ -21,10 +22,12 @@ function buildTexDocument(tikz: string, options: SvgRenderOptions = {}): string 
     .join("\n");
 }
 
+/** Normalize line endings so SVG golden tests stay stable. */
 function normalizeSvg(svg: string): string {
   return `${svg.replace(/\r\n/g, "\n").trim()}\n`;
 }
 
+/** Unwrap the default-export shape used by node-tikzjax across module formats. */
 function resolveTex2Svg(module: unknown): (input: string) => Promise<string> {
   let current = module;
 

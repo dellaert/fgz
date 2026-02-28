@@ -2,6 +2,11 @@
 
 **fgz** is a mermaid-inspired, plain-text DSL + toolchain for rendering factor graphs and Bayes nets, designed for robotics papers.
 
+The highest-quality output path is still LaTeX/TikZ. SVG export is convenient for guides,
+web pages, and quick previews, but it does not always match LaTeX rendering exactly. For
+standalone figure PDFs without keeping intermediate TeX files around, fgz also provides
+`fgz2pdf`, which assumes `pdflatex` is installed and available on your system.
+
 ## Example Document
 
 The repository includes:

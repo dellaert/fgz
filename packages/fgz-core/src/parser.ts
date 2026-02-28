@@ -22,6 +22,7 @@ const NAME_PATTERN = String.raw`([^\s(),=#]+)`;
 const NUMBER_PATTERN = String.raw`([-+]?(?:\d+(?:\.\d+)?|\.\d+))`;
 const POINT_PATTERN = String.raw`\(\s*${NUMBER_PATTERN}\s*,\s*${NUMBER_PATTERN}\s*\)`;
 
+/** Parse a whitespace-separated attribute list into a key/value map. */
 function parseAttributes(raw: string | undefined, line: number, allowed: readonly string[]): Record<string, string> {
   const attrs: Record<string, string> = {};
   const trimmed = raw?.trim() ?? "";
@@ -46,6 +47,7 @@ function parseAttributes(raw: string | undefined, line: number, allowed: readonl
   return attrs;
 }
 
+/** Read a required regex capture or throw a parser error. */
 function capture(match: RegExpMatchArray, index: number, line: number): string {
   const value = match[index];
   if (value === undefined) {
@@ -54,11 +56,13 @@ function capture(match: RegExpMatchArray, index: number, line: number): string {
   return value;
 }
 
+/** Remove trailing `#` comments from a source line. */
 function stripComment(line: string): string {
   const commentIndex = line.indexOf("#");
   return commentIndex === -1 ? line : line.slice(0, commentIndex);
 }
 
+/** Parse a numeric point while preserving the authored coordinate text. */
 function parsePoint(line: number, rawX: string, rawY: string): Point {
   const x = Number(rawX);
   const y = Number(rawY);
@@ -70,6 +74,7 @@ function parsePoint(line: number, rawX: string, rawY: string): Point {
   return { x, y, rawX, rawY };
 }
 
+/** Parse a parenthesized inline point value such as `(1,2)`. */
 function parseInlinePoint(raw: string, line: number, label: string): Point {
   const match = raw.match(new RegExp(`^${POINT_PATTERN}$`));
   if (!match) {
@@ -78,6 +83,7 @@ function parseInlinePoint(raw: string, line: number, label: string): Point {
   return parsePoint(line, capture(match, 1, line), capture(match, 2, line));
 }
 
+/** Parse a comma-separated list of names, allowing nested braces in labels. */
 function parseNameList(body: string, line: number, label: string, allowEmpty: boolean): string[] {
   const trimmed = body.trim();
   if (trimmed === "") {
@@ -121,6 +127,7 @@ function parseNameList(body: string, line: number, label: string, allowEmpty: bo
   return names;
 }
 
+/** Parse a `theme` declaration when present. */
 function parseTheme(raw: string, line: number): ThemeDecl | undefined {
   const match = raw.match(/^theme\s+([A-Za-z]+)\s*$/);
   if (!match) {
@@ -135,6 +142,7 @@ function parseTheme(raw: string, line: number): ThemeDecl | undefined {
   return { kind: "theme", theme, loc: { line } };
 }
 
+/** Parse a document-level `style` declaration when present. */
 function parseStyle(raw: string, line: number): StyleDecl | undefined {
   const match = raw.match(/^style(?:\s+(.*?))?\s*$/);
   if (!match) {
@@ -156,6 +164,7 @@ function parseStyle(raw: string, line: number): StyleDecl | undefined {
   };
 }
 
+/** Parse a macro definition line of the form `lhs = rhs`. */
 function parseMacro(raw: string, line: number): MacroDef | undefined {
   const match = raw.match(/^([^\s=#]+)\s*=\s*(.+?)\s*$/);
   if (!match) {
@@ -170,6 +179,7 @@ function parseMacro(raw: string, line: number): MacroDef | undefined {
   };
 }
 
+/** Parse either a `variable` or `known` declaration. */
 function parseVarLike(raw: string, line: number): VarDecl | undefined {
   const match = raw.match(new RegExp(`^(variable|known)\\s+${NAME_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
   if (!match) {
@@ -188,6 +198,7 @@ function parseVarLike(raw: string, line: number): VarDecl | undefined {
   };
 }
 
+/** Parse a factor declaration, including midpoint-based geometry attributes. */
 function parseFactor(raw: string, line: number): FactorDecl | undefined {
   const match = raw.match(
     new RegExp(`^factor\\s+\\{(.*)\\}(?:\\s+${POINT_PATTERN})?(?:\\s+(.*?))?\\s*$`)
@@ -215,6 +226,7 @@ function parseFactor(raw: string, line: number): FactorDecl | undefined {
   };
 }
 
+/** Parse either a latent or observed Bayes-net node declaration. */
 function parseBn(raw: string, line: number): BNDecl | undefined {
   const match = raw.match(
     new RegExp(`^(node|known_node)\\s+${NAME_PATTERN}\\s+\\{(.*)\\}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`)
@@ -236,6 +248,7 @@ function parseBn(raw: string, line: number): BNDecl | undefined {
   };
 }
 
+/** Parse a directed or undirected curve override. */
 function parseCurve(raw: string, line: number): CurveDecl | undefined {
   const match = raw.match(
     new RegExp(`^curve\\s+${NAME_PATTERN}\\s+(--|->)\\s+${NAME_PATTERN}\\s+via\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`)
@@ -256,6 +269,7 @@ function parseCurve(raw: string, line: number): CurveDecl | undefined {
   };
 }
 
+/** Parse a directed Bayes-net edge override. */
 function parseEdge(raw: string, line: number): EdgeDecl | undefined {
   const match = raw.match(new RegExp(`^edge\\s+${NAME_PATTERN}\\s+->\\s+${NAME_PATTERN}(?:\\s+(.*?))?\\s*$`));
   if (!match) {
@@ -278,6 +292,7 @@ function parseEdge(raw: string, line: number): EdgeDecl | undefined {
   };
 }
 
+/** Parse a free-standing text annotation. */
 function parseText(raw: string, line: number): TextDecl | undefined {
   const match = raw.match(new RegExp(`^text\\s+${NAME_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
   if (!match) {
@@ -295,6 +310,7 @@ function parseText(raw: string, line: number): TextDecl | undefined {
   };
 }
 
+/** Parse a rectangular box annotation or degenerate box separator. */
 function parseBox(raw: string, line: number): BoxDecl | undefined {
   const match = raw.match(new RegExp(`^box\\s+${POINT_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
   if (!match) {
@@ -319,6 +335,7 @@ function parseBox(raw: string, line: number): BoxDecl | undefined {
   return statement;
 }
 
+/** Parse a labeled plate annotation for repeated substructure. */
 function parsePlate(raw: string, line: number): PlateDecl | undefined {
   const match = raw.match(new RegExp(`^plate\\s+${POINT_PATTERN}\\s+${POINT_PATTERN}(?:\\s+(.*?))?\\s*$`));
   if (!match) {
@@ -346,6 +363,7 @@ function parsePlate(raw: string, line: number): PlateDecl | undefined {
   return statement;
 }
 
+/** Parse a single non-header statement by trying each known grammar branch in order. */
 function parseStatement(raw: string, line: number): Statement {
   return (
     parseTheme(raw, line) ??
@@ -383,6 +401,7 @@ export function parseFgz(text: string): Document {
     }
 
     if (!headerLoc) {
+      // The first non-empty, non-comment line must always be the version header.
       const header = raw.match(/^fgz\s+(\d+)\s*$/);
       if (!header) {
         throw new FgzError('expected header "fgz 1"', lineNumber);
@@ -396,6 +415,7 @@ export function parseFgz(text: string): Document {
 
     const statement = parseStatement(raw, lineNumber);
     if (statement.kind === "theme") {
+      // Preserve authored order, but still track the effective theme separately.
       if (theme) {
         throw new FgzError("theme already declared", lineNumber);
       }
@@ -403,6 +423,7 @@ export function parseFgz(text: string): Document {
     }
 
     if (statement.kind === "macro") {
+      // Macro labels are resolved during formatting and TikZ generation.
       if (macros.has(statement.lhs)) {
         throw new FgzError(`duplicate macro "${statement.lhs}"`, lineNumber);
       }

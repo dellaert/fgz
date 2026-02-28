@@ -7,6 +7,7 @@ import { renderDocumentToPdf } from "./pdf.js";
 
 const usageText = usage("fgz2pdf", "pdf", { allowMacros: true, extra: "[--keep-temp]" });
 
+/** Strip the debug-only `--keep-temp` flag before handing shared args to the common parser. */
 function extractKeepTemp(argv: string[]): { filteredArgv: string[]; keepTemp: boolean } {
   const filteredArgv: string[] = [];
   let keepTemp = false;

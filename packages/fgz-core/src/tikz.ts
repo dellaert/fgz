@@ -46,6 +46,7 @@ interface DirectedEdgeStyle {
   labelPos?: string;
 }
 
+/** Pick the base TikZ macro for a variable-like node. */
 function nodeMacro(statement: VarDecl | BNDecl): string {
   const colored = statement.color ? "Fill" : "";
   return statement.kind === "known" || statement.kind === "known_node"
@@ -53,6 +54,7 @@ function nodeMacro(statement: VarDecl | BNDecl): string {
     : `\\fgzVar${colored}`;
 }
 
+/** Pick the edge macro family for directedness, curvature, and color. */
 function edgeMacro(directed: boolean, color: string | undefined, curved: boolean): string {
   const head = curved ? "Curve" : "Edge";
   const direction = directed ? "D" : "U";
@@ -60,12 +62,14 @@ function edgeMacro(directed: boolean, color: string | undefined, curved: boolean
   return `\\fgz${head}${direction}${colored}`;
 }
 
+/** Pick the macro family used for bridged binary factor edges. */
 function bridgeMacro(color: string | undefined): string {
   const head = "BridgeU";
   const colored = color ? "Color" : "";
   return `\\fgz${head}${colored}`;
 }
 
+/** Render a free-standing text annotation. */
 function textLine(statement: TextDecl, doc: Document): string {
   const options: string[] = [];
   if (statement.color) {
@@ -86,6 +90,7 @@ function textLine(statement: TextDecl, doc: Document): string {
       )}}{, ${options.join(", ")}}`;
 }
 
+/** Translate simple line styling into a TikZ option suffix. */
 function linearOptionSuffix(style: "solid" | "dashed" | undefined, color: string | undefined): string {
   const options: string[] = [];
   if (style === "dashed") {
@@ -97,6 +102,7 @@ function linearOptionSuffix(style: "solid" | "dashed" | undefined, color: string
   return edgeOptionSuffix(options);
 }
 
+/** Render a box annotation as a TikZ macro call. */
 function boxDeclLine(statement: BoxDecl): string {
   const options = linearOptionSuffix(statement.style, statement.color);
   return options === ""
@@ -108,6 +114,7 @@ function boxDeclLine(statement: BoxDecl): string {
       )}}{${formatCoordinate(statement.to.rawX)}}{${formatCoordinate(statement.to.rawY)}}{${options}}`;
 }
 
+/** Render a plate outline as a TikZ macro call. */
 function plateDeclLine(statement: PlateDecl): string {
   const options = statement.color ? edgeOptionSuffix([`draw=${statement.color}`]) : "";
   return options === ""
@@ -119,34 +126,42 @@ function plateDeclLine(statement: PlateDecl): string {
       )}}{${formatCoordinate(statement.to.rawX)}}{${formatCoordinate(statement.to.rawY)}}{${options}}`;
 }
 
+/** Join an option list into the shared macro suffix format. */
 function edgeOptionSuffix(options: string[]): string {
   return options.length === 0 ? "" : `, ${options.join(", ")}`;
 }
 
+/** Convert an fgz symbol name into a TikZ-safe node id. */
 function symbolId(name: string): string {
   return `fgz_${name.replace(/[^A-Za-z0-9_]/g, "_")}`;
 }
 
+/** Build an order-insensitive key for a factor-graph symbol pair. */
 function factorCurveKey(a: string, b: string): string {
   return [a, b].sort().join("\u0000");
 }
 
+/** Resolve a symbol label using the document macro table when present. */
 function labelFor(name: string, doc: Document): string {
   return `$${doc.macros.get(name) ?? name}$`;
 }
 
+/** Resolve an inline label token using the document macro table when present. */
 function inlineLatexLabel(value: string, doc: Document): string {
   return `$${doc.macros.get(value) ?? value}$`;
 }
 
+/** Preserve an authored coordinate string exactly as emitted TikZ text. */
 function formatCoordinate(raw: string): string {
   return raw;
 }
 
+/** Return the effective document theme, falling back to `classic`. */
 function themeFor(doc: Document): Theme {
   return doc.theme ?? "classic";
 }
 
+/** Merge all document-level style statements into the effective render style. */
 function collectDocumentStyle(statements: Statement[]): DocumentStyle {
   const style: DocumentStyle = {};
 
@@ -172,10 +187,12 @@ function collectDocumentStyle(statements: Statement[]): DocumentStyle {
   return style;
 }
 
+/** Normalize a font token into a TeX command. */
 function latexFont(value: string): string {
   return value.startsWith("\\") ? value : `\\${value}`;
 }
 
+/** Emit document-level style setup macros. */
 function styleLines(style: DocumentStyle): string[] {
   const lines: string[] = [];
   if (style.nodeSize) {
@@ -193,6 +210,7 @@ function styleLines(style: DocumentStyle): string[] {
   return lines;
 }
 
+/** Compute the automatic top-right label placement used for plates. */
 function plateLabelGeometry(statement: PlateDecl): { x: string; y: string; anchor: string } | undefined {
   if (!statement.label) {
     return undefined;
@@ -203,6 +221,7 @@ function plateLabelGeometry(statement: PlateDecl): { x: string; y: string; ancho
   return { x: String(statement.to.x - insetX), y: String(statement.to.y - insetY), anchor: "north east" };
 }
 
+/** Render the label attached to a plate outline. */
 function plateLabelLine(statement: PlateDecl, doc: Document): string | undefined {
   if (!statement.label) {
     return undefined;
@@ -221,6 +240,7 @@ function plateLabelLine(statement: PlateDecl, doc: Document): string | undefined
   return `\\fgzTextOpts{${geometry.x}}{${geometry.y}}{${inlineLatexLabel(statement.label, doc)}}{, ${options.join(", ")}}`;
 }
 
+/** Assign deterministic TikZ ids to factors in statement order. */
 function collectFactorIds(statements: Statement[]): Map<FactorDecl, string> {
   const ids = new Map<FactorDecl, string>();
   let index = 0;
@@ -236,6 +256,7 @@ function collectFactorIds(statements: Statement[]): Map<FactorDecl, string> {
   return ids;
 }
 
+/** Map implied factor-graph pairs back to the factor that owns them. */
 function collectFactorCurveBindings(
   statements: Statement[],
   factorIds: Map<FactorDecl, string>
@@ -265,6 +286,7 @@ function collectFactorCurveBindings(
   return bindings;
 }
 
+/** Split curve overrides into directed and undirected lookup maps. */
 function collectCurveOverrides(statements: Statement[]) {
   const directed = new Map<string, CurveDecl>();
   const undirected = new Map<string, CurveDecl>();
@@ -284,6 +306,7 @@ function collectCurveOverrides(statements: Statement[]) {
   return { directed, undirected };
 }
 
+/** Collect directed edge-style overrides by parent-child key. */
 function collectDirectedEdgeOverrides(statements: Statement[]): Map<string, EdgeDecl> {
   const directed = new Map<string, EdgeDecl>();
 
@@ -298,6 +321,7 @@ function collectDirectedEdgeOverrides(statements: Statement[]): Map<string, Edge
   return directed;
 }
 
+/** Group undirected curve overrides by the factor node they target. */
 function collectUndirectedOverridesByFactor(
   statements: Statement[],
   factorBindings: Map<string, FactorBinding>
@@ -325,6 +349,7 @@ function collectUndirectedOverridesByFactor(
   return overrides;
 }
 
+/** Render a variable-like node with any per-node overrides applied. */
 function nodeLine(statement: VarDecl | BNDecl, doc: Document): string {
   const options: string[] = [];
   if (statement.color) {
@@ -351,15 +376,18 @@ function nodeLine(statement: VarDecl | BNDecl, doc: Document): string {
   return statement.color ? `${base}{${statement.color}}` : base;
 }
 
+/** Resolve the optional label rendered inside a factor node. */
 function factorLabel(statement: FactorDecl, doc: Document): string {
   return statement.label ? inlineLatexLabel(statement.label, doc) : "";
 }
 
+/** Format the midpoint between two scalar coordinates. */
 function midpointRaw(left: number, right: number): string {
   const value = (left + right) / 2;
   return String(value);
 }
 
+/** Compute the midpoint between two points while preserving readable coordinate text. */
 function midpointPoint(left: Point, right: Point): Point {
   return {
     x: (left.x + right.x) / 2,
@@ -369,6 +397,7 @@ function midpointPoint(left: Point, right: Point): Point {
   };
 }
 
+/** Apply an authored offset to an inferred factor position. */
 function offsetPoint(base: Point, offset: Point): Point {
   return {
     x: base.x + offset.x,
@@ -378,6 +407,7 @@ function offsetPoint(base: Point, offset: Point): Point {
   };
 }
 
+/** Derive the cubic control point used for bridged binary factor edges. */
 function controlFromFactorPoint(left: Point, factor: Point, right: Point): Point {
   return {
     x: (8 * factor.x - left.x - right.x) / 6,
@@ -387,6 +417,7 @@ function controlFromFactorPoint(left: Point, factor: Point, right: Point): Point
   };
 }
 
+/** Resolve the effective factor position from explicit coordinates or midpoint rules. */
 function resolveFactorGeometry(statement: FactorDecl, positions: Map<string, Point>): FactorGeometry {
   if (statement.pos) {
     return { point: statement.pos };
@@ -415,6 +446,7 @@ function resolveFactorGeometry(statement: FactorDecl, positions: Map<string, Poi
   };
 }
 
+/** Render a factor node, including labels and per-factor sizing overrides. */
 function factorLine(
   statement: FactorDecl,
   factorIds: Map<FactorDecl, string>,
@@ -454,6 +486,7 @@ function factorLine(
   )}}{${formatCoordinate(point.rawY)}}{${label}}{${edgeOptionSuffix(options)}}`;
 }
 
+/** Render a single curved bridge edge through an implied binary factor. */
 function bridgeLine(statement: FactorDecl, spec: BridgeSpec): string {
   const color = spec.color ?? statement.color;
   const macro = bridgeMacro(color);
@@ -463,6 +496,7 @@ function bridgeLine(statement: FactorDecl, spec: BridgeSpec): string {
   return color ? `${base}{${color}}` : base;
 }
 
+/** Render a directed BN edge with optional curve, style, and label overrides. */
 function directedEdgeLine(
   parent: string,
   child: string,
@@ -527,6 +561,7 @@ export function toTikz(doc: Document): string {
   const factorGeometry = new Map<FactorDecl, FactorGeometry>();
   const bridgeSpecs = new Map<FactorDecl, BridgeSpec>();
 
+  // Pass 1 emits positioned nodes and annotations while collecting geometry needed for edges.
   for (const statement of doc.statements) {
     switch (statement.kind) {
       case "var":
@@ -564,6 +599,7 @@ export function toTikz(doc: Document): string {
     }
   }
 
+  // Pass 2 emits factor nodes after any bridge geometry has been resolved.
   for (const statement of doc.statements) {
     if (statement.kind !== "factor") {
       continue;
@@ -606,6 +642,7 @@ export function toTikz(doc: Document): string {
     lines.push(factorLine(statement, factorIds, positions, doc));
   }
 
+  // Pass 3 emits all implied edges, skipping any pair already replaced by a bridge.
   for (const statement of doc.statements) {
     if (statement.kind === "factor") {
       const factorId = factorIds.get(statement) ?? "fgz_factor_missing";

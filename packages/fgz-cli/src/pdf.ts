@@ -12,6 +12,7 @@ export interface PdfRenderOptions {
   keepTemp?: boolean;
 }
 
+/** Wrap a TikZ snippet in a standalone document suitable for PDF compilation. */
 function buildStandaloneTexDocument(tikz: string, options: PdfRenderOptions = {}): string {
   return [
     "\\documentclass[tikz,border=2pt]{standalone}",
@@ -26,6 +27,7 @@ function buildStandaloneTexDocument(tikz: string, options: PdfRenderOptions = {}
     .join("\n");
 }
 
+/** Keep the PDF renderer signature symmetric with the SVG pipeline. */
 function normalizePdf(buffer: Buffer): Buffer {
   return buffer;
 }
@@ -37,6 +39,7 @@ export function renderTikzToPdf(tikz: string, options: PdfRenderOptions = {}): B
   const pdfPath = join(tempDir, "figure.pdf");
 
   try {
+    // Compile in an isolated temp directory so successful runs leave no sidecar files behind.
     writeFileSync(texPath, buildStandaloneTexDocument(tikz, options), "utf8");
     execFileSync("pdflatex", ["-interaction=nonstopmode", "-halt-on-error", "figure.tex"], {
       cwd: tempDir,

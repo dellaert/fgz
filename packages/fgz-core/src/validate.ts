@@ -22,6 +22,7 @@ interface SymbolBinding {
   bn: BnSymbolDecl | undefined;
 }
 
+/** Convert an internal symbol kind into user-facing validation text. */
 function symbolLabel(kind: SymbolDecl["kind"]): string {
   switch (kind) {
     case "var":
@@ -35,30 +36,37 @@ function symbolLabel(kind: SymbolDecl["kind"]): string {
   }
 }
 
+/** Append a validation issue with its source line. */
 function addIssue(errors: ValidationIssue[], line: number, message: string): void {
   errors.push({ line, message });
 }
 
+/** Build an order-insensitive key for a pair of factor-graph symbols. */
 function curvePairKey(a: string, b: string): string {
   return [a, b].sort().join("\u0000");
 }
 
+/** Return whether a symbol kind belongs to the factor-graph namespace. */
 function isFactorSymbol(kind: SymbolDecl["kind"]): boolean {
   return kind === "var" || kind === "known";
 }
 
+/** Return whether a symbol kind belongs to the Bayes-net namespace. */
 function isBnSymbol(kind: SymbolDecl["kind"]): boolean {
   return kind === "node" || kind === "known_node";
 }
 
+/** Return whether a declaration represents an observed symbol. */
 function isObserved(kind: SymbolDecl["kind"]): boolean {
   return kind === "known" || kind === "known_node";
 }
 
+/** Check whether a factor-graph and BN declaration occupy the same position. */
 function samePosition(left: VarDecl["pos"], right: BNDecl["pos"]): boolean {
   return left.x === right.x && left.y === right.y;
 }
 
+/** Report cross-namespace symbol reuse when a name is declared in both worlds. */
 function ensureCompatibleBinding(name: string, binding: SymbolBinding, errors: ValidationIssue[]): void {
   if (!binding.fg || !binding.bn) {
     return;
@@ -71,6 +79,7 @@ function ensureCompatibleBinding(name: string, binding: SymbolBinding, errors: V
   );
 }
 
+/** Collect symbol declarations while checking duplicates and mixed-namespace reuse. */
 function collectSymbols(statements: Statement[], errors: ValidationIssue[]): Map<string, SymbolBinding> {
   const symbols = new Map<string, SymbolBinding>();
 
@@ -115,6 +124,7 @@ function collectSymbols(statements: Statement[], errors: ValidationIssue[]): Map
   return symbols;
 }
 
+/** Precompute all implied undirected factor connections for curve validation. */
 function collectCurveTargets(statements: Statement[]): Map<string, FactorDecl[]> {
   const matches = new Map<string, FactorDecl[]>();
 
@@ -144,6 +154,7 @@ function collectCurveTargets(statements: Statement[]): Map<string, FactorDecl[]>
   return matches;
 }
 
+/** Validate that a factor references legal symbols and legal geometry options. */
 function validateFactorDecl(
   statement: FactorDecl,
   symbols: Map<string, SymbolBinding>,
@@ -167,6 +178,7 @@ function validateFactorDecl(
   }
 }
 
+/** Validate that a Bayes-net node references declared parent symbols. */
 function validateBnDecl(statement: BNDecl, symbols: Map<string, SymbolBinding>, errors: ValidationIssue[]): void {
   for (const parent of statement.parents) {
     const binding = symbols.get(parent);
@@ -177,6 +189,7 @@ function validateBnDecl(statement: BNDecl, symbols: Map<string, SymbolBinding>, 
   }
 }
 
+/** Validate that a curve override maps to an implied graph edge. */
 function validateCurveDecl(
   statement: CurveDecl,
   statements: Statement[],
@@ -215,6 +228,7 @@ function validateCurveDecl(
   }
 }
 
+/** Validate a directed BN edge override and its style attributes. */
 function validateEdgeDecl(statement: EdgeDecl, statements: Statement[], errors: ValidationIssue[]): void {
   if (statement.style && statement.style !== "solid" && statement.style !== "dashed") {
     addIssue(errors, statement.loc.line, `unknown edge style "${statement.style}"`);
@@ -241,12 +255,14 @@ function validateEdgeDecl(statement: EdgeDecl, statements: Statement[], errors: 
   }
 }
 
+/** Validate the styling attributes accepted by box annotations. */
 function validateBoxStyle(statement: BoxDecl, errors: ValidationIssue[]): void {
   if (statement.style && statement.style !== "solid" && statement.style !== "dashed") {
     addIssue(errors, statement.loc.line, `unknown box style "${statement.style}"`);
   }
 }
 
+/** Validate the minimal contract required by a plate annotation. */
 function validatePlate(statement: PlateDecl, errors: ValidationIssue[]): void {
   if (!statement.label) {
     addIssue(errors, statement.loc.line, "plate requires a label");
@@ -266,6 +282,7 @@ export function validate(doc: Document): ValidationResult {
   const symbols = collectSymbols(doc.statements, errors);
   const factorPairs = collectCurveTargets(doc.statements);
 
+  // Statement-local checks run after global symbol and edge context has been collected.
   for (const statement of doc.statements) {
     switch (statement.kind) {
       case "factor":

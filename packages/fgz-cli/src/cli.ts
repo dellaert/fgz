@@ -25,6 +25,7 @@ interface ParseArgsConfig {
   allowMacros?: boolean;
 }
 
+/** Build a concise usage string for a CLI entrypoint. */
 export function usage(command: string, extension: string, options: { allowMacros?: boolean; extra?: string } = {}): string {
   const parts = [`usage: ${command} <input.fgz> [-o <output.${extension}>]`];
   if (options.allowMacros) {
@@ -36,6 +37,7 @@ export function usage(command: string, extension: string, options: { allowMacros
   return parts.join(" ");
 }
 
+/** Parse common CLI arguments shared by the fgz command-line tools. */
 function parseArgs(argv: string[], config: ParseArgsConfig): CliOptions {
   let inputPath: string | undefined;
   let outputPath: string | undefined;
@@ -90,14 +92,17 @@ function parseArgs(argv: string[], config: ParseArgsConfig): CliOptions {
   };
 }
 
+/** Compute the default `.fgz.tex` output path for a source file. */
 export function defaultTexOutputPath(inputPath: string): string {
   return `${inputPath}.tex`;
 }
 
+/** Compute the default `.svg` output path for a source file. */
 export function defaultSvgOutputPath(inputPath: string): string {
   return extname(inputPath) === ".fgz" ? `${inputPath.slice(0, -4)}.svg` : `${inputPath}.svg`;
 }
 
+/** Compute the default `.fgz.pdf` output path for a source file. */
 export function defaultPdfOutputPath(inputPath: string): string {
   return `${inputPath}.pdf`;
 }
@@ -118,6 +123,7 @@ export async function runCli(
   const macrosPath = parsed.macrosPath ? resolve(parsed.macrosPath) : undefined;
   const source = readFileSync(inputPath, "utf8");
   const doc = parseFgz(source);
+  // Macro preambles are opt-in so SVG and PDF exports stay explicit and reproducible.
   const macroSource = macrosPath ? readFileSync(macrosPath, "utf8") : undefined;
   const rendered = await render(doc, {
     inputPath,
@@ -129,6 +135,7 @@ export async function runCli(
   writeFileSync(outputPath, rendered);
 }
 
+/** Print a user-friendly CLI error and matching usage string. */
 export function reportCliError(error: unknown, usageText: string): void {
   if (error instanceof FgzError) {
     console.error(error.message);
