@@ -15,6 +15,9 @@ for (const file of fgzFiles) {
   execFileSync("node", ["packages/fgz-cli/dist/fgz2svg.js", join(examplesDir, file), "--macros", join(examplesDir, "macro.tex")], {
     stdio: "inherit"
   });
+  execFileSync("node", ["packages/fgz-cli/dist/fgz2pdf.js", join(examplesDir, file), "--macros", join(examplesDir, "macro.tex")], {
+    stdio: "inherit"
+  });
 }
 
 if (svgOnly) {

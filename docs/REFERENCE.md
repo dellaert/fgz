@@ -17,6 +17,7 @@ The file can be converted into:
 
 - a readable TikZ snippet with `fgz2tex`
 - an SVG with `fgz2svg`
+- a standalone PDF with `fgz2pdf`
 
 Statements are line-oriented and remain ordered exactly as written.
 
@@ -37,6 +38,90 @@ Supported statement kinds:
 - `plate`
 
 Comments start with `#` and continue to the end of the line.
+
+## CLI Commands
+
+fgz currently ships three end-user commands.
+
+### `fgz2tex`
+
+Convert an fgz file into a readable TikZ snippet.
+
+```bash
+fgz2tex input.fgz
+fgz2tex input.fgz -o output.tex
+```
+
+Rules:
+
+- default output is `input.fgz.tex`
+- no `--macros` flag is supported
+- generated TikZ assumes the consuming paper already does `\input{fgz.tikz.tex}`
+
+### `fgz2svg`
+
+Convert an fgz file into an SVG by running the shared TikZ pipeline through
+`node-tikzjax`.
+
+```bash
+fgz2svg input.fgz
+fgz2svg input.fgz -o output.svg
+fgz2svg input.fgz --macros path/to/macros.tex
+```
+
+Rules:
+
+- default output is `input.svg`
+- `--macros` is optional
+- when `--macros` is omitted, no extra macro file is loaded
+- SVG is convenient for previews and Markdown guides, but it is not always as
+  faithful as native LaTeX/TikZ rendering
+
+### `fgz2pdf`
+
+Convert an fgz file into a standalone PDF without leaving intermediate TeX files
+next to the source.
+
+```bash
+fgz2pdf input.fgz
+fgz2pdf input.fgz -o output.pdf
+fgz2pdf input.fgz --macros path/to/macros.tex
+fgz2pdf input.fgz --keep-temp
+```
+
+Rules:
+
+- default output is `input.fgz.pdf`
+- `--macros` is optional
+- `--keep-temp` preserves the temporary LaTeX build directory for debugging
+- `pdflatex` must be installed and available on `PATH`
+- `fgz2pdf` embeds the shared `fgz.tikz.tex` support macros automatically
+- successful runs leave no auxiliary LaTeX files behind
+
+## External Use
+
+Outside this repository, the supported user-facing interface is the installed CLI:
+
+```bash
+npx fgz2tex figures/example.fgz
+npx fgz2svg figures/example.fgz
+npx fgz2pdf figures/example.fgz
+```
+
+If your SVG or PDF labels depend on LaTeX macros, pass them explicitly:
+
+```bash
+npx fgz2svg figures/example.fgz --macros figures/macros.tex
+npx fgz2pdf figures/example.fgz --macros figures/macros.tex
+```
+
+`fgz2pdf` also supports:
+
+```bash
+npx fgz2pdf figures/example.fgz --keep-temp
+```
+
+to keep the temporary LaTeX build directory for debugging.
 
 ## Names and Labels
 

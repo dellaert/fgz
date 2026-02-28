@@ -27,6 +27,7 @@ The run command:
 - builds the TypeScript packages
 - regenerates every `examples/*.fgz.tex`
 - regenerates every `examples/*.svg`
+- regenerates every `examples/*.fgz.pdf`
 - runs `pdflatex` on `examples/examples.tex`
 
 If you only want the SVG outputs, run:
