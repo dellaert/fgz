@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseFgz, toTikz } from "../../fgz-core/src/index.js";
-import { loadMacroSource, renderTikzToSvg } from "../src/svg.js";
+import { renderTikzToSvg } from "../src/svg.js";
 
 describe.sequential("renderTikzToSvg", () => {
   it(
@@ -43,9 +43,4 @@ variable t (0, 0)
       expect(svg).toContain("viewBox=");
     }
   );
-
-  it("loads macro.tex from the fgz directory when present", () => {
-    const macros = loadMacroSource(new URL("../../../examples", import.meta.url).pathname);
-    expect(macros).toContain("\\newcommand{\\twist}{\\mathcal{V}}");
-  });
 });

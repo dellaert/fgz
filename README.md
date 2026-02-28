@@ -50,7 +50,10 @@ Then use the short wrapper scripts:
 ```bash
 npm run fgz2tex -- examples/guide-minimal.fgz
 npm run fgz2svg -- examples/guide-minimal.fgz
+npm run fgz2pdf -- examples/guide-minimal.fgz
 ```
+
+`fgz2pdf` requires `pdflatex` on `PATH`.
 
 ## How To Use This In Your Own Project
 
@@ -77,9 +80,23 @@ After that, run:
 ```bash
 npx fgz2tex figures/example.fgz
 npx fgz2svg figures/example.fgz
+npx fgz2pdf figures/example.fgz
 ```
 
-Those write `figures/example.fgz.tex` and `figures/example.svg` by default.
+Those write `figures/example.fgz.tex`, `figures/example.svg`, and `figures/example.fgz.pdf` by default.
+
+If your labels depend on LaTeX macros, pass them explicitly to SVG or PDF export:
+
+```bash
+npx fgz2svg figures/example.fgz --macros figures/macros.tex
+npx fgz2pdf figures/example.fgz --macros figures/macros.tex
+```
+
+For PDF debugging, you can keep the temporary compilation directory:
+
+```bash
+npx fgz2pdf figures/example.fgz --keep-temp
+```
 
 If you prefer package scripts, add:
 
@@ -92,13 +109,13 @@ If you prefer package scripts, add:
 }
 ```
 
-In both cases, the generated `.fgz.tex` file assumes your LaTeX preamble already includes:
+The generated `.fgz.tex` file assumes your LaTeX preamble already includes:
 
 ```tex
 \input{fgz.tikz.tex}
 ```
 
-For now, the simplest approach is to copy [tikz/fgz.tikz.tex](tikz/fgz.tikz.tex) into your own project and keep it alongside your paper sources. SVG export does not need that file on your LaTeX side, but the CLI still uses the shared support macros from this repository to keep SVG and TikZ output aligned.
+For now, the simplest approach is to copy [tikz/fgz.tikz.tex](tikz/fgz.tikz.tex) into your own project and keep it alongside your paper sources. SVG and standalone PDF export do not need that file on your LaTeX side, but the CLI still uses the shared support macros from this repository to keep SVG, PDF, and TikZ output aligned.
 
 ## Roadmap
 

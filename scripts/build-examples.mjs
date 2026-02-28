@@ -12,7 +12,7 @@ for (const file of fgzFiles) {
   execFileSync("node", ["packages/fgz-cli/dist/fgz2tex.js", join(examplesDir, file)], {
     stdio: "inherit"
   });
-  execFileSync("node", ["packages/fgz-cli/dist/fgz2svg.js", join(examplesDir, file)], {
+  execFileSync("node", ["packages/fgz-cli/dist/fgz2svg.js", join(examplesDir, file), "--macros", join(examplesDir, "macro.tex")], {
     stdio: "inherit"
   });
 }

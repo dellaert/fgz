@@ -6,23 +6,40 @@ import type { Document } from "../../fgz-core/dist/index.js";
 export interface CliOptions {
   inputPath: string;
   outputPath: string;
+  macrosPath?: string;
 }
 
 export interface CliRenderContext {
   inputPath: string;
   inputDir: string;
   outputPath: string;
+  macrosPath?: string;
+  macroSource?: string;
 }
 
-type Renderer = (doc: Document, context: CliRenderContext) => Promise<string> | string;
+type RenderedOutput = string | Uint8Array;
+type Renderer = (doc: Document, context: CliRenderContext) => Promise<RenderedOutput> | RenderedOutput;
 
-export function usage(command: string, extension: string): string {
-  return `usage: ${command} <input.fgz> [-o <output.${extension}>]`;
+interface ParseArgsConfig {
+  defaultOutputPath: (inputPath: string) => string;
+  allowMacros?: boolean;
 }
 
-function parseArgs(argv: string[], defaultOutputPath: (inputPath: string) => string): CliOptions {
+export function usage(command: string, extension: string, options: { allowMacros?: boolean; extra?: string } = {}): string {
+  const parts = [`usage: ${command} <input.fgz> [-o <output.${extension}>]`];
+  if (options.allowMacros) {
+    parts.push("[--macros <macros.tex>]");
+  }
+  if (options.extra) {
+    parts.push(options.extra);
+  }
+  return parts.join(" ");
+}
+
+function parseArgs(argv: string[], config: ParseArgsConfig): CliOptions {
   let inputPath: string | undefined;
   let outputPath: string | undefined;
+  let macrosPath: string | undefined;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -35,6 +52,18 @@ function parseArgs(argv: string[], defaultOutputPath: (inputPath: string) => str
         throw new Error("missing value for -o");
       }
       outputPath = next;
+      index += 1;
+      continue;
+    }
+    if (arg === "--macros") {
+      if (!config.allowMacros) {
+        throw new Error('unknown option "--macros"');
+      }
+      const next = argv[index + 1];
+      if (!next) {
+        throw new Error("missing value for --macros");
+      }
+      macrosPath = next;
       index += 1;
       continue;
     }
@@ -56,7 +85,8 @@ function parseArgs(argv: string[], defaultOutputPath: (inputPath: string) => str
 
   return {
     inputPath,
-    outputPath: outputPath ?? defaultOutputPath(inputPath)
+    outputPath: outputPath ?? config.defaultOutputPath(inputPath),
+    ...(macrosPath ? { macrosPath } : {})
   };
 }
 
@@ -68,23 +98,35 @@ export function defaultSvgOutputPath(inputPath: string): string {
   return extname(inputPath) === ".fgz" ? `${inputPath.slice(0, -4)}.svg` : `${inputPath}.svg`;
 }
 
+export function defaultPdfOutputPath(inputPath: string): string {
+  return `${inputPath}.pdf`;
+}
+
 /** Read an fgz file, render it, and write the output path selected by CLI arguments. */
 export async function runCli(
   argv: string[],
   defaultOutputPath: (inputPath: string) => string,
-  render: Renderer
+  render: Renderer,
+  options: { allowMacros?: boolean } = {}
 ): Promise<void> {
-  const options = parseArgs(argv, defaultOutputPath);
-  const inputPath = resolve(options.inputPath);
-  const outputPath = resolve(options.outputPath);
+  const parsed = parseArgs(argv, {
+    defaultOutputPath,
+    ...(options.allowMacros !== undefined ? { allowMacros: options.allowMacros } : {})
+  });
+  const inputPath = resolve(parsed.inputPath);
+  const outputPath = resolve(parsed.outputPath);
+  const macrosPath = parsed.macrosPath ? resolve(parsed.macrosPath) : undefined;
   const source = readFileSync(inputPath, "utf8");
   const doc = parseFgz(source);
+  const macroSource = macrosPath ? readFileSync(macrosPath, "utf8") : undefined;
   const rendered = await render(doc, {
     inputPath,
     inputDir: dirname(inputPath),
-    outputPath
+    outputPath,
+    ...(macrosPath ? { macrosPath } : {}),
+    ...(macroSource ? { macroSource } : {})
   });
-  writeFileSync(outputPath, rendered, "utf8");
+  writeFileSync(outputPath, rendered);
 }
 
 export function reportCliError(error: unknown, usageText: string): void {

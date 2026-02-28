@@ -8,7 +8,8 @@
   },
   "bin": {
     "fgz2tex": "./packages/fgz-cli/bin/fgz2tex",
-    "fgz2svg": "./packages/fgz-cli/bin/fgz2svg"
+    "fgz2svg": "./packages/fgz-cli/bin/fgz2svg",
+    "fgz2pdf": "./packages/fgz-cli/bin/fgz2pdf"
   },
   "scripts": {
     "build": "tsc -b",
@@ -16,6 +17,7 @@
     "test": "vitest run",
     "fgz2tex": "node packages/fgz-cli/dist/fgz2tex.js",
     "fgz2svg": "node packages/fgz-cli/dist/fgz2svg.js",
+    "fgz2pdf": "node packages/fgz-cli/dist/fgz2pdf.js",
     "examples:pdf": "npm run build && node scripts/build-examples.mjs",
     "examples:svg": "npm run build && node scripts/build-examples.mjs --svg-only"
   },

@@ -1,5 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { readFileSync } from "node:fs";
 import { toTikz } from "../../fgz-core/dist/index.js";
 import type { Document } from "../../fgz-core/dist/index.js";
 
@@ -46,12 +45,6 @@ export async function renderTikzToSvg(tikz: string, options: SvgRenderOptions = 
   const tex2svg = resolveTex2Svg(module);
   const svg = await tex2svg(buildTexDocument(tikz, options));
   return normalizeSvg(svg);
-}
-
-/** Load `macro.tex` from the fgz file directory when present. */
-export function loadMacroSource(inputDir: string): string | undefined {
-  const macroPath = join(inputDir, "macro.tex");
-  return existsSync(macroPath) ? readFileSync(macroPath, "utf8") : undefined;
 }
 
 /** Render a validated fgz document into SVG via the shared TikZ pipeline. */

@@ -3,16 +3,18 @@
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { reportCliError, runCli, defaultSvgOutputPath, usage } from "./cli.js";
-import { loadMacroSource, renderDocumentToSvg } from "./svg.js";
+import { renderDocumentToSvg } from "./svg.js";
 
-const usageText = usage("fgz2svg", "svg");
+const usageText = usage("fgz2svg", "svg", { allowMacros: true });
 
 /** CLI entrypoint for fgz2svg. */
 export async function main(argv: string[] = process.argv.slice(2)): Promise<void> {
-  await runCli(argv, defaultSvgOutputPath, (doc, context) => {
-    const macroSource = loadMacroSource(context.inputDir);
-    return renderDocumentToSvg(doc, macroSource ? { macroSource } : {});
-  });
+  await runCli(
+    argv,
+    defaultSvgOutputPath,
+    (doc, context) => renderDocumentToSvg(doc, context.macroSource ? { macroSource: context.macroSource } : {}),
+    { allowMacros: true }
+  );
 }
 
 const invokedPath = process.argv[1];
