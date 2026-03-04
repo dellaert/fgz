@@ -1,100 +1,107 @@
 \begin{tikzpicture}[x=1cm,y=1cm]
 \fgzsettheme{textbook}
-\fgzsetnodesize{9mm}
-\fgzsetfactorsize{3.0mm}
-\fgzsetlabelsep{0.2pt}
-\fgzsetlabelfont{\scriptsize}
-\fgzVar{fgz_v0}{1.0}{5.9}{$\twist_0$}
-\fgzVar{fgz_va}{4.0}{5.9}{$\twist_a$}
-\fgzVar{fgz_vb}{8.0}{5.9}{$\twist_b$}
-\fgzVar{fgz_vc}{12.0}{5.9}{$\twist_c$}
-\fgzKnown{fgz_qd1}{2.42}{6.95}{$\dot{q}_1$}
-\fgzKnown{fgz_qd2}{6.42}{6.95}{$\dot{q}_2$}
-\fgzKnown{fgz_qd3}{10.42}{6.95}{$\dot{q}_3$}
-\fgzVar{fgz_dv0}{1.0}{4.1}{$\dot{\twist}_0$}
-\fgzVar{fgz_dva}{5.2}{4.1}{$\dot{\twist}_a$}
-\fgzVar{fgz_dvb}{9.2}{4.1}{$\dot{\twist}_b$}
-\fgzVar{fgz_dvc}{13.2}{4.1}{$\dot{\twist}_c$}
-\fgzKnown{fgz_qdd1}{2.42}{5.0}{$\ddot{q}_1$}
-\fgzKnown{fgz_qdd2}{6.42}{5.0}{$\ddot{q}_2$}
-\fgzKnown{fgz_qdd3}{10.42}{5.0}{$\ddot{q}_3$}
-\fgzVarOpts{fgz_f01}{1.8}{2.6}{$\mathcal{F}_{0,1}$}{, minimum size=11.4mm, font=\footnotesize}
-\fgzVarOpts{fgz_fa1}{4.2}{2.6}{$\mathcal{F}_{a,1}$}{, minimum size=11.4mm, font=\footnotesize}
-\fgzVarOpts{fgz_fa2}{5.8}{2.6}{$\mathcal{F}_{a,2}$}{, minimum size=11.4mm, font=\footnotesize}
-\fgzVarOpts{fgz_fb2}{8.2}{2.6}{$\mathcal{F}_{b,2}$}{, minimum size=11.4mm, font=\footnotesize}
-\fgzVarOpts{fgz_fb3}{9.8}{2.6}{$\mathcal{F}_{b,3}$}{, minimum size=11.4mm, font=\footnotesize}
-\fgzVarOpts{fgz_fc3}{12.2}{2.6}{$\mathcal{F}_{c,3}$}{, minimum size=11.4mm, font=\footnotesize}
-\fgzKnownOpts{fgz_fct}{14.6}{2.6}{$\mathcal{F}_{c,t}$}{, minimum size=11.4mm, font=\footnotesize}
-\fgzKnown{fgz_tau1}{3.0}{1.35}{$\tau_1$}
-\fgzKnown{fgz_tau2}{7.0}{1.35}{$\tau_2$}
-\fgzKnown{fgz_tau3}{11.0}{1.35}{$\tau_3$}
-\fgzKnown{fgz_ga}{5.0}{0.75}{$m_a\gs$}
-\fgzKnown{fgz_gb}{9.0}{0.75}{$m_b\gs$}
-\fgzKnown{fgz_gc}{13.0}{0.75}{$m_c\gs$}
-\fgzFactorOpts{fgz_f1}{3.0}{5.9}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f2}{7.0}{5.9}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f3}{11.0}{5.9}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f4}{3.0}{4.1}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f5}{7.0}{4.1}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f6}{11.0}{4.1}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f7}{3.0}{2.6}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f8}{7.0}{2.6}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f9}{11.0}{2.6}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f10}{5.0}{2.6}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f11}{9.0}{2.6}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f12}{13.0}{2.6}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f13}{3.0}{1.95}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f14}{7.0}{1.95}{}{, draw=black, fill=black}
-\fgzFactorOpts{fgz_f15}{11.0}{1.95}{}{, draw=black, fill=black}
-\fgzEdgeUColor{fgz_f1}{fgz_v0}{black}
-\fgzEdgeUColor{fgz_f1}{fgz_qd1}{black}
-\fgzEdgeUColor{fgz_f1}{fgz_va}{black}
-\fgzEdgeUColor{fgz_f2}{fgz_va}{black}
-\fgzEdgeUColor{fgz_f2}{fgz_qd2}{black}
-\fgzEdgeUColor{fgz_f2}{fgz_vb}{black}
-\fgzEdgeUColor{fgz_f3}{fgz_vb}{black}
-\fgzEdgeUColor{fgz_f3}{fgz_qd3}{black}
-\fgzEdgeUColor{fgz_f3}{fgz_vc}{black}
-\fgzEdgeUColor{fgz_f4}{fgz_dv0}{black}
-\fgzEdgeUColor{fgz_f4}{fgz_dva}{black}
-\fgzEdgeUColor{fgz_f4}{fgz_va}{black}
-\fgzEdgeUColor{fgz_f4}{fgz_qd1}{black}
-\fgzEdgeUColor{fgz_f4}{fgz_qdd1}{black}
-\fgzEdgeUColor{fgz_f5}{fgz_dva}{black}
-\fgzEdgeUColor{fgz_f5}{fgz_dvb}{black}
-\fgzEdgeUColor{fgz_f5}{fgz_vb}{black}
-\fgzEdgeUColor{fgz_f5}{fgz_qd2}{black}
-\fgzEdgeUColor{fgz_f5}{fgz_qdd2}{black}
-\fgzEdgeUColor{fgz_f6}{fgz_dvb}{black}
-\fgzEdgeUColor{fgz_f6}{fgz_dvc}{black}
-\fgzEdgeUColor{fgz_f6}{fgz_vc}{black}
-\fgzEdgeUColor{fgz_f6}{fgz_qd3}{black}
-\fgzEdgeUColor{fgz_f6}{fgz_qdd3}{black}
-\fgzEdgeUColor{fgz_f7}{fgz_f01}{black}
-\fgzEdgeUColor{fgz_f7}{fgz_fa1}{black}
-\fgzEdgeUColor{fgz_f8}{fgz_fa2}{black}
-\fgzEdgeUColor{fgz_f8}{fgz_fb2}{black}
-\fgzEdgeUColor{fgz_f9}{fgz_fb3}{black}
-\fgzEdgeUColor{fgz_f9}{fgz_fc3}{black}
-\fgzEdgeUColor{fgz_f10}{fgz_fa1}{black}
-\fgzEdgeUColor{fgz_f10}{fgz_fa2}{black}
-\fgzEdgeUColor{fgz_f10}{fgz_va}{black}
-\fgzEdgeUColor{fgz_f10}{fgz_dva}{black}
-\fgzEdgeUColor{fgz_f10}{fgz_ga}{black}
-\fgzEdgeUColor{fgz_f11}{fgz_fb2}{black}
-\fgzEdgeUColor{fgz_f11}{fgz_fb3}{black}
-\fgzEdgeUColor{fgz_f11}{fgz_vb}{black}
-\fgzEdgeUColor{fgz_f11}{fgz_dvb}{black}
-\fgzEdgeUColor{fgz_f11}{fgz_gb}{black}
-\fgzEdgeUColor{fgz_f12}{fgz_fc3}{black}
-\fgzEdgeUColor{fgz_f12}{fgz_fct}{black}
-\fgzEdgeUColor{fgz_f12}{fgz_vc}{black}
-\fgzEdgeUColor{fgz_f12}{fgz_dvc}{black}
-\fgzEdgeUColor{fgz_f12}{fgz_gc}{black}
-\fgzEdgeUColor{fgz_f13}{fgz_fa1}{black}
-\fgzEdgeUColor{fgz_f13}{fgz_tau1}{black}
-\fgzEdgeUColor{fgz_f14}{fgz_fb2}{black}
-\fgzEdgeUColor{fgz_f14}{fgz_tau2}{black}
-\fgzEdgeUColor{fgz_f15}{fgz_fc3}{black}
-\fgzEdgeUColor{fgz_f15}{fgz_tau3}{black}
+\fgzsetnodesize{8mm}
+\fgzsetfactorsize{1.8mm}
+\fgzsetlabelsep{0pt}
+\fgzKnownOpts{fgz__twist_0}{1.6}{7.4}{$\twist_0$}{, fill=kinTwistFill}
+\fgzVarOpts{fgz__twist_a}{5.6}{7.4}{$\twist_a$}{, fill=kinTwistFill}
+\fgzVarOpts{fgz__twist_b}{9.6}{7.4}{$\twist_b$}{, fill=kinTwistFill}
+\fgzVarOpts{fgz__twist_c}{13.6}{7.4}{$\twist_c$}{, fill=kinTwistFill}
+\fgzKnownOpts{fgz__qdot_1}{4.02}{6.5}{$\qdot_1$}{, fill=kinTwistFill}
+\fgzKnownOpts{fgz__qdot_2}{8.02}{6.5}{$\qdot_2$}{, fill=kinTwistFill}
+\fgzKnownOpts{fgz__qdot_3}{12.02}{6.5}{$\qdot_3$}{, fill=kinTwistFill}
+\fgzKnownOpts{fgz__accel_0}{2.6}{5.6}{$\accel_0$}{, fill=kinAccelFill}
+\fgzVarOpts{fgz__accel_a}{6.8}{5.6}{$\accel_a$}{, fill=kinAccelFill}
+\fgzVarOpts{fgz__accel_b}{10.8}{5.6}{$\accel_b$}{, fill=kinAccelFill}
+\fgzVarOpts{fgz__accel_c}{14.8}{5.6}{$\accel_c$}{, fill=kinAccelFill}
+\fgzKnownOpts{fgz__qddot_1}{4.02}{4.35}{$\qddot_1$}{, fill=kinAccelFill}
+\fgzKnownOpts{fgz__qddot_2}{8.02}{4.35}{$\qddot_2$}{, fill=kinAccelFill}
+\fgzKnownOpts{fgz__qddot_3}{12.02}{4.35}{$\qddot_3$}{, fill=kinAccelFill}
+\fgzVarOpts{fgz_w01}{3.4}{3.1}{$\wrench_{0,1}$}{, fill=kinDynamicsFill}
+\fgzVarOpts{fgz_wa1}{5.4}{3.1}{$\wrench_{a,1}$}{, fill=kinDynamicsFill}
+\fgzVarOpts{fgz_wa2}{7.4}{3.1}{$\wrench_{a,2}$}{, fill=kinDynamicsFill}
+\fgzVarOpts{fgz_wb2}{9.4}{3.1}{$\wrench_{b,2}$}{, fill=kinDynamicsFill}
+\fgzVarOpts{fgz_wb3}{11.4}{3.1}{$\wrench_{b,3}$}{, fill=kinDynamicsFill}
+\fgzVarOpts{fgz_wc3}{13.4}{3.1}{$\wrench_{c,3}$}{, fill=kinDynamicsFill}
+\fgzKnownOpts{fgz_wct}{15.4}{3.1}{$\wrench_{c,t}$}{, fill=kinDynamicsFill}
+\fgzVarOpts{fgz__tau_1}{4.4}{1.85}{$\tau_1$}{, fill=kinDynamicsFill}
+\fgzVarOpts{fgz__tau_2}{8.4}{1.85}{$\tau_2$}{, fill=kinDynamicsFill}
+\fgzVarOpts{fgz__tau_3}{12.4}{1.85}{$\tau_3$}{, fill=kinDynamicsFill}
+\fgzKnownOpts{fgz_m_a}{5.6}{1.25}{$m_a$}{, fill=kinDynamicsFill}
+\fgzKnownOpts{fgz_m_b}{9.6}{1.25}{$m_b$}{, fill=kinDynamicsFill}
+\fgzKnownOpts{fgz_m_c}{13.6}{1.25}{$m_c$}{, fill=kinDynamicsFill}
+\fgzKnownOpts{fgz__GG_a}{6.8}{1.25}{$\GG_a$}{, fill=kinDynamicsFill}
+\fgzKnownOpts{fgz__GG_b}{10.8}{1.25}{$\GG_b$}{, fill=kinDynamicsFill}
+\fgzKnownOpts{fgz__GG_c}{14.8}{1.25}{$\GG_c$}{, fill=kinDynamicsFill}
+\fgzBoxOpts{0.0}{-0.45}{18.8}{8.65}{, draw=black!25}
+\fgzTextOpts{9.4}{-0.05}{$\wrench_{p,j}=-[Ad_{T_{cp}}]^T\wrench_{c,j}\quad \sum_{j\in\joints_i}\wrench_{i,j}+m_iR_i^T\gs=\GG_i\accel_i+ad_{\twist_i}^T(\GG_i\twist_i)$}{, font=\small}
+\fgzFactorOpts{fgz_f1}{3.5999999999999996}{7.4}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f2}{7.6}{7.4}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f3}{11.6}{7.4}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f4}{4.7}{5.6}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f5}{8.8}{5.6}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f6}{12.8}{5.6}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f7}{4.4}{3.1}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f8}{8.4}{3.1}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f9}{12.4}{3.1}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f10}{4.9}{2.475}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f11}{8.9}{2.475}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f12}{12.9}{2.475}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f13}{6.4}{3.1}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f14}{10.4}{3.1}{}{, draw=black, fill=black}
+\fgzFactorOpts{fgz_f15}{14.4}{3.1}{}{, draw=black, fill=black}
+\fgzEdgeUColor{fgz_f1}{fgz__twist_0}{black}
+\fgzEdgeUColor{fgz_f1}{fgz__twist_a}{black}
+\fgzEdgeUColor{fgz_f1}{fgz__qdot_1}{black}
+\fgzEdgeUColor{fgz_f2}{fgz__twist_a}{black}
+\fgzEdgeUColor{fgz_f2}{fgz__twist_b}{black}
+\fgzEdgeUColor{fgz_f2}{fgz__qdot_2}{black}
+\fgzEdgeUColor{fgz_f3}{fgz__twist_b}{black}
+\fgzEdgeUColor{fgz_f3}{fgz__twist_c}{black}
+\fgzEdgeUColor{fgz_f3}{fgz__qdot_3}{black}
+\fgzEdgeUColor{fgz_f4}{fgz__accel_0}{black}
+\fgzEdgeUColor{fgz_f4}{fgz__accel_a}{black}
+\fgzEdgeUColor{fgz_f4}{fgz__twist_a}{black}
+\fgzEdgeUColor{fgz_f4}{fgz__qdot_1}{black}
+\fgzEdgeUColor{fgz_f4}{fgz__qddot_1}{black}
+\fgzEdgeUColor{fgz_f5}{fgz__accel_a}{black}
+\fgzEdgeUColor{fgz_f5}{fgz__accel_b}{black}
+\fgzEdgeUColor{fgz_f5}{fgz__twist_b}{black}
+\fgzEdgeUColor{fgz_f5}{fgz__qdot_2}{black}
+\fgzEdgeUColor{fgz_f5}{fgz__qddot_2}{black}
+\fgzEdgeUColor{fgz_f6}{fgz__accel_b}{black}
+\fgzEdgeUColor{fgz_f6}{fgz__accel_c}{black}
+\fgzEdgeUColor{fgz_f6}{fgz__twist_c}{black}
+\fgzEdgeUColor{fgz_f6}{fgz__qdot_3}{black}
+\fgzEdgeUColor{fgz_f6}{fgz__qddot_3}{black}
+\fgzEdgeUColor{fgz_f7}{fgz_w01}{black}
+\fgzEdgeUColor{fgz_f7}{fgz_wa1}{black}
+\fgzEdgeUColor{fgz_f8}{fgz_wa2}{black}
+\fgzEdgeUColor{fgz_f8}{fgz_wb2}{black}
+\fgzEdgeUColor{fgz_f9}{fgz_wb3}{black}
+\fgzEdgeUColor{fgz_f9}{fgz_wc3}{black}
+\fgzEdgeUColor{fgz_f10}{fgz_wa1}{black}
+\fgzEdgeUColor{fgz_f10}{fgz__tau_1}{black}
+\fgzEdgeUColor{fgz_f11}{fgz_wb2}{black}
+\fgzEdgeUColor{fgz_f11}{fgz__tau_2}{black}
+\fgzEdgeUColor{fgz_f12}{fgz_wc3}{black}
+\fgzEdgeUColor{fgz_f12}{fgz__tau_3}{black}
+\fgzEdgeUColor{fgz_f13}{fgz_wa1}{black}
+\fgzEdgeUColor{fgz_f13}{fgz_wa2}{black}
+\fgzEdgeUColor{fgz_f13}{fgz__twist_a}{black}
+\fgzEdgeUColor{fgz_f13}{fgz__accel_a}{black}
+\fgzEdgeUColor{fgz_f13}{fgz_m_a}{black}
+\fgzEdgeUColor{fgz_f13}{fgz__GG_a}{black}
+\fgzEdgeUColor{fgz_f14}{fgz_wb2}{black}
+\fgzEdgeUColor{fgz_f14}{fgz_wb3}{black}
+\fgzEdgeUColor{fgz_f14}{fgz__twist_b}{black}
+\fgzEdgeUColor{fgz_f14}{fgz__accel_b}{black}
+\fgzEdgeUColor{fgz_f14}{fgz_m_b}{black}
+\fgzEdgeUColor{fgz_f14}{fgz__GG_b}{black}
+\fgzEdgeUColor{fgz_f15}{fgz_wc3}{black}
+\fgzEdgeUColor{fgz_f15}{fgz_wct}{black}
+\fgzEdgeUColor{fgz_f15}{fgz__twist_c}{black}
+\fgzEdgeUColor{fgz_f15}{fgz__accel_c}{black}
+\fgzEdgeUColor{fgz_f15}{fgz_m_c}{black}
+\fgzEdgeUColor{fgz_f15}{fgz__GG_c}{black}
 \end{tikzpicture}

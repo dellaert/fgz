@@ -1,89 +1,77 @@
 fgz 1
 theme textbook
-style node_size=9mm factor_size=3.0mm label_sep=0.2pt label_font=scriptsize
+style node_size=8mm factor_size=1.8mm label_sep=0pt
 
-v0 = \twist_0
-va = \twist_a
-vb = \twist_b
-vc = \twist_c
+eqn = \wrench_{p,j}=-[Ad_{T_{cp}}]^T\wrench_{c,j}\quad \sum_{j\in\joints_i}\wrench_{i,j}+m_iR_i^T\gs=\GG_i\accel_i+ad_{\twist_i}^T(\GG_i\twist_i)
 
-dv0 = \dot{\twist}_0
-dva = \dot{\twist}_a
-dvb = \dot{\twist}_b
-dvc = \dot{\twist}_c
+# V
+known \twist_0 (1.6, 7.4) color=kinTwistFill
+variable \twist_a (5.6, 7.4) color=kinTwistFill
+variable \twist_b (9.6, 7.4) color=kinTwistFill
+variable \twist_c (13.6, 7.4) color=kinTwistFill
 
-qd1 = \dot{q}_1
-qd2 = \dot{q}_2
-qd3 = \dot{q}_3
-qdd1 = \ddot{q}_1
-qdd2 = \ddot{q}_2
-qdd3 = \ddot{q}_3
+known \qdot_1 (4.02, 6.5) color=kinTwistFill
+known \qdot_2 (8.02, 6.5) color=kinTwistFill
+known \qdot_3 (12.02, 6.5) color=kinTwistFill
 
-f01 = \mathcal{F}_{0,1}
-fa1 = \mathcal{F}_{a,1}
-fa2 = \mathcal{F}_{a,2}
-fb2 = \mathcal{F}_{b,2}
-fb3 = \mathcal{F}_{b,3}
-fc3 = \mathcal{F}_{c,3}
-fct = \mathcal{F}_{c,t}
+factor {\twist_0, \twist_a, \qdot_1} color=black
+factor {\twist_a, \twist_b, \qdot_2} color=black
+factor {\twist_b, \twist_c, \qdot_3} color=black
 
-tau1 = \tau_1
-tau2 = \tau_2
-tau3 = \tau_3
-ga = m_a\gs
-gb = m_b\gs
-gc = m_c\gs
+# A
+known \accel_0 (2.6, 5.6) color=kinAccelFill
+variable \accel_a (6.8, 5.6) color=kinAccelFill
+variable \accel_b (10.8, 5.6) color=kinAccelFill
+variable \accel_c (14.8, 5.6) color=kinAccelFill
 
-variable v0 (1.0, 5.9)
-variable va (4.0, 5.9)
-variable vb (8.0, 5.9)
-variable vc (12.0, 5.9)
+known \qddot_1 (4.02, 4.35) color=kinAccelFill
+known \qddot_2 (8.02, 4.35) color=kinAccelFill
+known \qddot_3 (12.02, 4.35) color=kinAccelFill
 
-known qd1 (2.42, 6.95)
-known qd2 (6.42, 6.95)
-known qd3 (10.42, 6.95)
+factor {\accel_0, \accel_a, \twist_a, \qdot_1, \qddot_1} color=black
+factor {\accel_a, \accel_b, \twist_b, \qdot_2, \qddot_2} color=black
+factor {\accel_b, \accel_c, \twist_c, \qdot_3, \qddot_3} color=black
 
-variable dv0 (1.0, 4.1)
-variable dva (5.2, 4.1)
-variable dvb (9.2, 4.1)
-variable dvc (13.2, 4.1)
+# D
+w01 = \wrench_{0,1}
+wa1 = \wrench_{a,1}
+wa2 = \wrench_{a,2}
+wb2 = \wrench_{b,2}
+wb3 = \wrench_{b,3}
+wc3 = \wrench_{c,3}
+wct = \wrench_{c,t}
 
-known qdd1 (2.42, 5.0)
-known qdd2 (6.42, 5.0)
-known qdd3 (10.42, 5.0)
+variable w01 (3.4, 3.1) color=kinDynamicsFill
+variable wa1 (5.4, 3.1) color=kinDynamicsFill
+variable wa2 (7.4, 3.1) color=kinDynamicsFill
+variable wb2 (9.4, 3.1) color=kinDynamicsFill
+variable wb3 (11.4, 3.1) color=kinDynamicsFill
+variable wc3 (13.4, 3.1) color=kinDynamicsFill
+known wct (15.4, 3.1) color=kinDynamicsFill
 
-variable f01 (1.8, 2.6) size=11.4mm font=footnotesize
-variable fa1 (4.2, 2.6) size=11.4mm font=footnotesize
-variable fa2 (5.8, 2.6) size=11.4mm font=footnotesize
-variable fb2 (8.2, 2.6) size=11.4mm font=footnotesize
-variable fb3 (9.8, 2.6) size=11.4mm font=footnotesize
-variable fc3 (12.2, 2.6) size=11.4mm font=footnotesize
-known fct (14.6, 2.6) size=11.4mm font=footnotesize
+factor {w01, wa1} color=black
+factor {wa2, wb2} color=black
+factor {wb3, wc3} color=black
 
-known tau1 (3.0, 1.35)
-known tau2 (7.0, 1.35)
-known tau3 (11.0, 1.35)
+variable \tau_1 (4.4, 1.85) color=kinDynamicsFill
+variable \tau_2 (8.4, 1.85) color=kinDynamicsFill
+variable \tau_3 (12.4, 1.85) color=kinDynamicsFill
 
-known ga (5.0, 0.75)
-known gb (9.0, 0.75)
-known gc (13.0, 0.75)
+factor {wa1, \tau_1} color=black
+factor {wb2, \tau_2} color=black
+factor {wc3, \tau_3} color=black
 
-factor {v0, qd1, va} (3.0, 5.9) color=black
-factor {va, qd2, vb} (7.0, 5.9) color=black
-factor {vb, qd3, vc} (11.0, 5.9) color=black
+known m_a (5.6, 1.25) color=kinDynamicsFill
+known m_b (9.6, 1.25) color=kinDynamicsFill
+known m_c (13.6, 1.25) color=kinDynamicsFill
 
-factor {dv0, dva, va, qd1, qdd1} (3.0, 4.1) color=black
-factor {dva, dvb, vb, qd2, qdd2} (7.0, 4.1) color=black
-factor {dvb, dvc, vc, qd3, qdd3} (11.0, 4.1) color=black
+known \GG_a (6.8, 1.25) color=kinDynamicsFill
+known \GG_b (10.8, 1.25) color=kinDynamicsFill
+known \GG_c (14.8, 1.25) color=kinDynamicsFill
 
-factor {f01, fa1} (3.0, 2.6) color=black
-factor {fa2, fb2} (7.0, 2.6) color=black
-factor {fb3, fc3} (11.0, 2.6) color=black
+factor {wa1, wa2, \twist_a, \accel_a, m_a, \GG_a} color=black
+factor {wb2, wb3, \twist_b, \accel_b, m_b, \GG_b} color=black
+factor {wc3, wct, \twist_c, \accel_c, m_c, \GG_c}  color=black
 
-factor {fa1, fa2, va, dva, ga} (5.0, 2.6) color=black
-factor {fb2, fb3, vb, dvb, gb} (9.0, 2.6) color=black
-factor {fc3, fct, vc, dvc, gc} (13.0, 2.6) color=black
-
-factor {fa1, tau1} (3.0, 1.95) color=black
-factor {fb2, tau2} (7.0, 1.95) color=black
-factor {fc3, tau3} (11.0, 1.95) color=black
+box (0.0, -0.45) (18.8, 8.65) color=black!25
+text eqn (9.4, -0.05) font=small
