@@ -101,8 +101,17 @@ npx fgz2pdf figures/example.fgz --preamble figures/preamble.tex
 The `--preamble` file is inserted verbatim into the TeX preamble. It is best thought of
 as a TeX/TikZ preamble fragment: it can contain `\\newcommand`, `\\colorlet`,
 `\\usetikzlibrary`, `\\tikzset`, and even local overrides of fgz theme or drawing
-macros. For SVG export, that same fragment must stay within what the `node-tikzjax`
-backend supports.
+macros.
+
+By default, `fgz2svg` uses the browser-friendly `node-tikzjax` renderer so the same SVG
+path can be reused in a future in-browser editor. If you want TeX-native SVG output that
+tracks standalone PDF quality more closely, use:
+
+```bash
+npx fgz2svg figures/example.fgz --backend native --preamble figures/preamble.tex
+```
+
+The `native` backend requires local `latex` and `dvisvgm`.
 
 For PDF debugging, you can keep the temporary compilation directory:
 
