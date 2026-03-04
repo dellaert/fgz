@@ -43,4 +43,22 @@ variable t (0, 0)
       expect(svg).toContain("viewBox=");
     }
   );
+
+  it(
+    "inlines browser font CSS instead of depending on external imports",
+    { timeout: 60_000 },
+    async () => {
+      const tikz = toTikz(
+        parseFgz(`fgz 1
+variable x_0 (0, 0)
+`)
+      );
+
+      const svg = await renderTikzToSvg(tikz);
+
+      expect(svg).toContain("@font-face");
+      expect(svg).toContain("data:font/ttf;base64,");
+      expect(svg).not.toContain("@import url(");
+    }
+  );
 });

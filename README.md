@@ -113,6 +113,11 @@ npx fgz2svg figures/example.fgz --backend native --preamble figures/preamble.tex
 
 The `native` backend requires local `latex` and `dvisvgm`.
 
+To keep browser-rendered math portable across Markdown previews and other SVG viewers,
+the default browser backend embeds the required math fonts directly into the SVG. That
+makes the checked-in `.svg` files noticeably larger, but avoids broken math caused by
+blocked external font or stylesheet loads.
+
 For PDF debugging, you can keep the temporary compilation directory:
 
 ```bash

@@ -6,6 +6,9 @@ import { toTikz } from "../../fgz-core/dist/index.js";
 import type { Document } from "../../fgz-core/dist/index.js";
 
 const supportSource = readFileSync(new URL("../../../tikz/fgz.tikz.tex", import.meta.url), "utf8").trim();
+const nodeTikzJaxFontsCssSource = readFileSync(new URL("../../../node_modules/node-tikzjax/css/fonts.css", import.meta.url), "utf8");
+
+const embeddedFontCssCache = new Map<string, string>();
 
 export interface SvgRenderOptions {
   preambleSource?: string;
@@ -39,6 +42,79 @@ function normalizeSvg(svg: string): string {
   return `${normalized}\n`;
 }
 
+function extractUsedFontFamilies(svg: string): string[] {
+  const families = new Set<string>();
+
+  for (const match of svg.matchAll(/font-family="([^"]+)"/g)) {
+    const family = match[1];
+    if (family) {
+      families.add(family);
+    }
+  }
+
+  for (const match of svg.matchAll(/font-family='([^']+)'/g)) {
+    const family = match[1];
+    if (family) {
+      families.add(family);
+    }
+  }
+
+  return [...families].sort();
+}
+
+function buildEmbeddedFontCss(fontFamilies: string[]): string {
+  const key = fontFamilies.join("|");
+  const cached = embeddedFontCssCache.get(key);
+  if (cached) {
+    return cached;
+  }
+
+  const rules: string[] = [];
+
+  for (const family of fontFamilies) {
+    const escapedFamily = family.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const ruleMatch = nodeTikzJaxFontsCssSource.match(
+      new RegExp(`@font-face\\s*\\{\\s*font-family:\\s*${escapedFamily};\\s*src:\\s*url\\('([^']+)'\\);\\s*\\}`)
+    );
+
+    if (!ruleMatch) {
+      continue;
+    }
+
+    const fontPath = new URL(`../../../node_modules/node-tikzjax/css/${ruleMatch[1]}`, import.meta.url);
+    const fontBase64 = readFileSync(fontPath).toString("base64");
+    rules.push(`@font-face{font-family:${family};src:url(data:font/ttf;base64,${fontBase64}) format('truetype');}`);
+  }
+
+  const css = rules.join("");
+  embeddedFontCssCache.set(key, css);
+  return css;
+}
+
+function inlineEmbeddedFontCss(svg: string): string {
+  const fontFamilies = extractUsedFontFamilies(svg);
+  if (fontFamilies.length === 0) {
+    return svg;
+  }
+
+  const embeddedCss = buildEmbeddedFontCss(fontFamilies);
+  if (embeddedCss.length === 0) {
+    return svg;
+  }
+
+  const styleBlock = `<style>${embeddedCss}</style>`;
+
+  if (svg.includes("<defs><style>@import url(")) {
+    return svg.replace(/<defs><style>@import url\([^)]*\);<\/style><\/defs>/, `<defs>${styleBlock}</defs>`);
+  }
+
+  if (svg.includes("<defs>")) {
+    return svg.replace("<defs>", `<defs>${styleBlock}`);
+  }
+
+  return svg.replace(/<svg\b([^>]*)>/, `<svg$1><defs>${styleBlock}</defs>`);
+}
+
 function commandMissing(error: unknown): boolean {
   return Boolean(
     error &&
@@ -49,7 +125,7 @@ function commandMissing(error: unknown): boolean {
 }
 
 /** Unwrap the default-export shape used by node-tikzjax across module formats. */
-function resolveTex2Svg(module: unknown): (input: string) => Promise<string> {
+function resolveTex2Svg(module: unknown): (input: string, options?: { embedFontCss?: boolean }) => Promise<string> {
   let current = module;
 
   while (current && typeof current !== "function" && typeof current === "object" && "default" in current) {
@@ -60,7 +136,7 @@ function resolveTex2Svg(module: unknown): (input: string) => Promise<string> {
     throw new Error("unable to load node-tikzjax renderer");
   }
 
-  return current as (input: string) => Promise<string>;
+  return current as (input: string, options?: { embedFontCss?: boolean }) => Promise<string>;
 }
 
 /** Render a TikZ snippet into SVG via the browser-compatible node-tikzjax path. */
@@ -78,9 +154,12 @@ async function renderTikzToSvgWithNodeTikzJax(tikz: string, options: SvgRenderOp
       "\\end{document}"
     ]
       .filter((line): line is string => Boolean(line))
-      .join("\n")
+      .join("\n"),
+    {
+      embedFontCss: true
+    }
   );
-  return normalizeSvg(svg);
+  return normalizeSvg(inlineEmbeddedFontCss(svg));
 }
 
 /** Render a TikZ snippet into SVG via latex + dvisvgm for TeX-quality math outlines. */
