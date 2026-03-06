@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdtempSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -33,6 +33,19 @@ function runNpm(args, cwd) {
   return run(npmCommand, args, cwd);
 }
 
+function moveFile(sourcePath, destinationPath) {
+  try {
+    renameSync(sourcePath, destinationPath);
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === "EXDEV") {
+      copyFileSync(sourcePath, destinationPath);
+      rmSync(sourcePath, { force: true });
+      return;
+    }
+    throw error;
+  }
+}
+
 const repoRoot = process.cwd();
 const tempRoot = mkdtempSync(join(tmpdir(), "fgz-package-"));
 const packDir = join(tempRoot, "pack");
@@ -56,7 +69,7 @@ try {
 
   const producedTarballPath = join(repoRoot, tarballName);
   const tarballPath = join(packDir, tarballName);
-  renameSync(producedTarballPath, tarballPath);
+  moveFile(producedTarballPath, tarballPath);
 
   runNpm(["init", "-y"], consumerDir);
   runNpm(["install", "--save-dev", tarballPath], consumerDir);
