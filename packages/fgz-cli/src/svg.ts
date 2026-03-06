@@ -1,12 +1,15 @@
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { toTikz } from "../../fgz-core/dist/index.js";
 import type { Document } from "../../fgz-core/dist/index.js";
 
+const require = createRequire(import.meta.url);
 const supportSource = readFileSync(new URL("../../../tikz/fgz.tikz.tex", import.meta.url), "utf8").trim();
-const nodeTikzJaxFontsCssSource = readFileSync(new URL("../../../node_modules/node-tikzjax/css/fonts.css", import.meta.url), "utf8");
+const nodeTikzJaxCssDir = join(dirname(require.resolve("node-tikzjax/package.json")), "css");
+const nodeTikzJaxFontsCssSource = readFileSync(join(nodeTikzJaxCssDir, "fonts.css"), "utf8");
 
 const embeddedFontCssCache = new Map<string, string>();
 
@@ -81,7 +84,12 @@ function buildEmbeddedFontCss(fontFamilies: string[]): string {
       continue;
     }
 
-    const fontPath = new URL(`../../../node_modules/node-tikzjax/css/${ruleMatch[1]}`, import.meta.url);
+    const relativeFontPath = ruleMatch[1];
+    if (!relativeFontPath) {
+      continue;
+    }
+
+    const fontPath = join(nodeTikzJaxCssDir, relativeFontPath);
     const fontBase64 = readFileSync(fontPath).toString("base64");
     rules.push(`@font-face{font-family:${family};src:url(data:font/ttf;base64,${fontBase64}) format('truetype');}`);
   }

@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "packages/fgz-cli/bin",
+    "packages/fgz-cli/dist",
+    "packages/fgz-core/dist",
+    "tikz/fgz.tikz.tex"
+  ],
   "engines": {
     "node": ">=20"
   },
@@ -15,6 +23,7 @@
     "build": "tsc -b",
     "prepare": "npm run build",
     "test": "vitest run",
+    "test:package-install": "node scripts/test-package-install.mjs",
     "fgz2tex": "node packages/fgz-cli/dist/fgz2tex.js",
     "fgz2svg": "node packages/fgz-cli/dist/fgz2svg.js",
     "fgz2pdf": "node packages/fgz-cli/dist/fgz2pdf.js",
