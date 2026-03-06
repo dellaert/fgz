@@ -3,8 +3,7 @@ import { existsSync, mkdtempSync, mkdirSync, readFileSync, renameSync, rmSync, w
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 
-const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
-const npxCommand = process.platform === "win32" ? "npx.cmd" : "npx";
+const npmCli = process.env.npm_execpath;
 
 function run(command, args, cwd) {
   try {
@@ -25,6 +24,15 @@ function run(command, args, cwd) {
   }
 }
 
+function runNpm(args, cwd) {
+  if (npmCli) {
+    return run(process.execPath, [npmCli, ...args], cwd);
+  }
+
+  const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+  return run(npmCommand, args, cwd);
+}
+
 const repoRoot = process.cwd();
 const tempRoot = mkdtempSync(join(tmpdir(), "fgz-package-"));
 const packDir = join(tempRoot, "pack");
@@ -34,7 +42,7 @@ try {
   mkdirSync(packDir);
   mkdirSync(consumerDir);
 
-  const packOutput = run(npmCommand, ["pack"], repoRoot);
+  const packOutput = runNpm(["pack"], repoRoot);
   const tarballName = packOutput
     .trim()
     .split(/\r?\n/)
@@ -50,8 +58,8 @@ try {
   const tarballPath = join(packDir, tarballName);
   renameSync(producedTarballPath, tarballPath);
 
-  run(npmCommand, ["init", "-y"], consumerDir);
-  run(npmCommand, ["install", "--save-dev", tarballPath], consumerDir);
+  runNpm(["init", "-y"], consumerDir);
+  runNpm(["install", "--save-dev", tarballPath], consumerDir);
 
   const installedCli = join(consumerDir, "node_modules", "fgz", "packages", "fgz-cli", "dist", "fgz2svg.js");
   const installedCore = join(consumerDir, "node_modules", "fgz", "packages", "fgz-core", "dist", "index.js");
@@ -74,8 +82,8 @@ factor {x_0, x_1}
     "utf8"
   );
 
-  run(npxCommand, ["fgz2tex", inputPath], consumerDir);
-  run(npxCommand, ["fgz2svg", inputPath], consumerDir);
+  runNpm(["exec", "--", "fgz2tex", inputPath], consumerDir);
+  runNpm(["exec", "--", "fgz2svg", inputPath], consumerDir);
 
   const texPath = `${inputPath}.tex`;
   const svgPath = join(consumerDir, "sample.svg");
