@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdtempSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -34,14 +34,21 @@ try {
   mkdirSync(packDir);
   mkdirSync(consumerDir);
 
-  run(npmCommand, ["pack", repoRoot], packDir);
+  const packOutput = run(npmCommand, ["pack"], repoRoot);
+  const tarballName = packOutput
+    .trim()
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.endsWith(".tgz"))
+    .at(-1);
 
-  const tarballName = readdirSync(packDir).find((name) => name.endsWith(".tgz"));
   if (!tarballName) {
     throw new Error("npm pack did not produce a tarball");
   }
 
+  const producedTarballPath = join(repoRoot, tarballName);
   const tarballPath = join(packDir, tarballName);
+  renameSync(producedTarballPath, tarballPath);
 
   run(npmCommand, ["init", "-y"], consumerDir);
   run(npmCommand, ["install", "--save-dev", tarballPath], consumerDir);
