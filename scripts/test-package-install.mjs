@@ -34,7 +34,7 @@ try {
   mkdirSync(packDir);
   mkdirSync(consumerDir);
 
-  run(npmCommand, ["pack", "--pack-destination", packDir], repoRoot);
+  run(npmCommand, ["pack", repoRoot], packDir);
 
   const tarballName = readdirSync(packDir).find((name) => name.endsWith(".tgz"));
   if (!tarballName) {
