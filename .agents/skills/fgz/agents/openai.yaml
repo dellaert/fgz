@@ -1,0 +1,4 @@
+interface:
+  display_name: "fgz Diagrams"
+  short_description: "Author paper-quality fgz diagrams"
+  default_prompt: "Use $fgz to author or review this graphical-model diagram."

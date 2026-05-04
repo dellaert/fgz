@@ -42,6 +42,33 @@ The document inputs [tikz/fgz.tikz.tex](tikz/fgz.tikz.tex), so no extra package 
 
 - Human reference manual: [docs/REFERENCE.md](docs/REFERENCE.md)
 - Agent authoring guidance: [AGENTS.md](AGENTS.md)
+- Agent Skill for Codex and Claude Code: [.agents/skills/fgz/SKILL.md](.agents/skills/fgz/SKILL.md)
+
+## Agent Skill
+
+This repo includes an Agent Skill for AI coding tools that support `SKILL.md`.
+It teaches agents how to author good `.fgz` diagrams and how to work on the
+TypeScript compiler/CLI.
+
+- Codex discovers the repo skill from [.agents/skills/fgz/](.agents/skills/fgz/)
+  when launched inside this repository.
+- Claude Code discovers the same repo skill through
+  [.claude/skills/fgz](.claude/skills/fgz).
+
+To install it as a personal skill outside this repo:
+
+```bash
+mkdir -p ~/.agents/skills ~/.claude/skills
+cp -R .agents/skills/fgz ~/.agents/skills/
+cp -R .agents/skills/fgz ~/.claude/skills/
+```
+
+In Codex, you can also ask the built-in installer to install the GitHub skill
+directory:
+
+```txt
+$skill-installer install https://github.com/dellaert/fgz/tree/main/.agents/skills/fgz
+```
 
 ## In This Repo
 

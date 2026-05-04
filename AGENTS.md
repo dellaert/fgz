@@ -11,6 +11,18 @@ Agents working here should optimize for:
 - minimal overrides
 - diagrams that look good in papers, not just parse correctly
 
+## Agent Skill
+
+This repository includes a repo-scoped Agent Skill at:
+
+```txt
+.agents/skills/fgz/SKILL.md
+```
+
+Use it when authoring, reviewing, or modifying `.fgz` diagrams, or when changing
+the TypeScript parser, validator, formatter, TikZ generator, or CLI. Claude Code
+users can load the same skill through `.claude/skills/fgz`.
+
 ## Authoring Rules
 
 Prefer these defaults unless the user asks otherwise.
