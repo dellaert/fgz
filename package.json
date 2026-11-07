@@ -29,7 +29,8 @@
     "fgz2pdf": "node packages/fgz-cli/dist/fgz2pdf.js",
     "examples:pdf": "npm run build && node scripts/build-examples.mjs",
     "examples:svg": "npm run build && node scripts/build-examples.mjs --svg-only",
-    "example:browser": "npm run build && node examples/browser/build.mjs"
+    "example:browser": "npm run build && node examples/browser/build.mjs",
+    "build:site": "npm run example:browser && node site/build.mjs"
   },
   "dependencies": {
     "node-tikzjax": "^1.0.5"

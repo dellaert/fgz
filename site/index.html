@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive JavaScript examples built with fgz, a plain-text language for factor graphs and Bayes nets.">
+  <title>Interactive factor graphs · fgz</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172e33;
+      --muted: #4f6265;
+      --accent: #096659;
+      --rule: #cad5d2;
+      --mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+      font: 100%/1.55 system-ui, sans-serif;
+      color: var(--ink);
+      background: #fff;
+    }
+    * { box-sizing: border-box; }
+    body { max-width: 74rem; margin: auto; padding: 0 clamp(1.25rem, 5vw, 4rem) 4rem; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible { outline: 3px solid #b05713; outline-offset: 4px; }
+    header, nav, .actions { display: flex; align-items: center; flex-wrap: wrap; }
+    header { justify-content: space-between; gap: 1rem; padding: 1.4rem 0; border-bottom: 1px solid var(--rule); }
+    .wordmark { font: bold 1.85rem/1 var(--mono); letter-spacing: -.09em; }
+    nav { gap: .5rem 1.5rem; font-size: .9rem; }
+    nav a { color: var(--muted); text-decoration: none; }
+    .intro { padding: clamp(2.25rem, 5vw, 4.25rem) 0 2rem; }
+    .eyebrow, .details::before { font: 600 .72rem/1.4 var(--mono); letter-spacing: .09em; text-transform: uppercase; color: var(--accent); }
+    .eyebrow { margin: 0 0 .75rem; }
+    h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; line-height: 1.12; }
+    h1 { margin: 0; font-size: clamp(2.5rem, 6vw, 4.75rem); letter-spacing: -.045em; }
+    .intro > p:last-child { max-width: 55ch; margin: 1rem 0 0; color: var(--muted); font-size: 1.08rem; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 23rem), 1fr)); gap: 1.5rem; counter-reset: example; }
+    .example { display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--rule); border-radius: .55rem; counter-increment: example; }
+    .preview { display: grid; place-items: center; height: 14rem; padding: 1.5rem; background: #f3f7f5; }
+    .preview:focus-visible { outline-offset: -4px; }
+    .preview img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: contain; }
+    .details { flex: 1; padding: 1.5rem; display: flex; flex-direction: column; align-items: flex-start; }
+    .details::before { content: "Fig. " counter(example, decimal-leading-zero); }
+    h2 { margin: .55rem 0; font-size: 1.85rem; letter-spacing: -.025em; }
+    h2 a { color: inherit; text-decoration: none; }
+    .details p { margin: 0 0 1.25rem; color: var(--muted); }
+    .actions { gap: .7rem 1.1rem; margin-top: auto; font-size: .9rem; }
+    .open { padding: .55rem .9rem; border-radius: .3rem; color: white; background: var(--accent); text-decoration: none; font-weight: 600; }
+    @media (min-width: 48rem) {
+      .example:only-child { display: grid; grid-template-columns: 1.2fr 1fr; }
+      .example:only-child .preview { height: auto; min-height: 17rem; }
+      .example:only-child .details { justify-content: center; padding: clamp(1.5rem, 4vw, 3rem); }
+      .example:only-child .actions { margin-top: .5rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="wordmark">fgz</span>
+    <nav aria-label="Project links">
+      <a href="https://github.com/dellaert/fgz/blob/main/docs/REFERENCE.md">Language reference</a>
+      <a href="https://github.com/dellaert/fgz">GitHub</a>
+    </nav>
+  </header>
+  <main>
+    <div class="intro">
+      <p class="eyebrow">JavaScript examples</p>
+      <h1>Interactive factor graphs</h1>
+      <p>fgz renders factor graphs and Bayes nets from plain text. Explore a demo in your browser or download a copy to use offline.</p>
+    </div>
+    <section class="gallery" aria-label="Examples">
+      <!-- examples -->
+    </section>
+  </main>
+</body>
+</html>

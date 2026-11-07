@@ -2,6 +2,8 @@
 
 **fgz** is a mermaid-inspired, plain-text DSL + toolchain for rendering factor graphs and Bayes nets, designed for robotics papers.
 
+[Open the interactive examples gallery](https://dellaert.github.io/fgz/).
+
 The highest-quality output path is still LaTeX/TikZ. SVG export is convenient for guides,
 web pages, and quick previews, but it does not always match LaTeX rendering exactly. For
 standalone figure PDFs without keeping intermediate TeX files around, fgz also provides
@@ -193,6 +195,13 @@ The generated `.fgz.tex` file assumes your LaTeX preamble already includes:
 ```
 
 For now, the simplest approach is to copy [tikz/fgz.tikz.tex](tikz/fgz.tikz.tex) into your own project and keep it alongside your paper sources. SVG and standalone PDF export do not need that file on your LaTeX side, but the CLI still uses the shared support macros from this repository to keep SVG, PDF, and TikZ output aligned.
+
+## Publishing the examples gallery
+
+`npm run build:site` writes the static gallery and its standalone demos to
+`_site/`. Open `_site/index.html` locally or serve the directory over HTTP.
+The Pages workflow builds pull requests and publishes updates from `main`.
+For initial setup, select **GitHub Actions** under **Settings → Pages → Source**.
 
 ## Roadmap
 
