@@ -75,4 +75,103 @@ describe("renderFactorGraph", () => {
     expect(container.childNodes).toHaveLength(1);
     expect(empty.svg.getAttribute("viewBox")).not.toMatch(/NaN|Infinity/);
   });
+
+  it("keeps a scrollable SVG layout and connects each observation at its specified endpoints", () => {
+    const graph = toFactorGraph(parseFgz(`fgz 1
+variable pose (32, 64)
+variable stance (90, 175)
+factor {pose, stance} (61, 121) shape=square
+factor {pose} (32, 28)
+`));
+    const { svg } = renderFactorGraph(document.createElement("div"), graph, {
+      viewport: { width: 1190, height: 320 },
+      edgeEndpoint: (factor, variable) => factor.variables.length === 2
+        ? { x: variable.x, y: variable.y + (variable.id === "pose" ? 16 : -13) }
+        : undefined
+    });
+    expect(svg.getAttribute("viewBox")).toBe("0 0 1190 320");
+    expect(svg.getAttribute("width")).toBe("1190");
+    expect(svg.getAttribute("height")).toBe("320");
+    expect(svg.style.maxWidth).toBe("");
+    expect(svg.querySelector("[data-variable]")?.getAttribute("transform")).toBe("translate(32 64)");
+    const lines = Array.from(svg.querySelectorAll("line"), line =>
+      ["x1", "y1", "x2", "y2"].map(attr => Number(line.getAttribute(attr)))
+    );
+    expect(lines).toEqual([[61, 121, 32, 80], [61, 121, 90, 162], [32, 28, 32, 64]]);
+  });
+
+  it("includes custom endpoints in the bounds of an auto-fitted fgz graph", () => {
+    const { svg } = renderFactorGraph(document.createElement("div"), graph, {
+      edgeEndpoint: () => ({ x: -10, y: 10 })
+    });
+    expect(svg.querySelector("line")?.getAttribute("x2")).toBe("-480");
+    expect(svg.querySelector("line")?.getAttribute("y2")).toBe("-480");
+    expect(svg.getAttribute("viewBox")?.split(" ").slice(0, 2)).toEqual(["-486", "-486"]);
+  });
+
+  it("rejects an invalid viewport before replacing existing content", () => {
+    const host = document.createElement("div");
+    host.textContent = "original";
+    for (const width of [0, -1, NaN, Infinity]) {
+      expect(() => renderFactorGraph(host, graph, { viewport: { width, height: 320 } })).toThrow(RangeError);
+    }
+    expect(host.textContent).toBe("original");
+  });
+
+  it("keeps passive neighbors out of the tab order and highlights only eligible factors", () => {
+    const contactGraph = toFactorGraph(parseFgz(`fgz 1
+variable x0 (0, 0)
+variable x1 (2, 0)
+variable stance (1, -2)
+factor {x0, stance} label=observation
+factor {x1, stance} label=observation
+factor {x0, x1} label=motion
+`));
+    const onSelect = vi.fn();
+    const { svg, setSelection } = renderFactorGraph(document.createElement("div"), contactGraph, {
+      onSelect,
+      isSelectable: v => v.id !== "stance",
+      isHighlightable: f => f.label === "observation"
+    });
+    const x0 = svg.querySelector('[data-variable="x0"]')!;
+    const x1 = svg.querySelector('[data-variable="x1"]')!;
+    const stance = svg.querySelector('[data-variable="stance"]')!;
+    const factors = svg.querySelectorAll("[data-factor]");
+    const first = factors.item(0), second = factors.item(1), motion = factors.item(2);
+    expect(svg.querySelectorAll('[role="button"][tabindex="0"]')).toHaveLength(2);
+    for (const attribute of ["role", "tabindex", "aria-pressed"]) {
+      expect(stance.hasAttribute(attribute)).toBe(false);
+    }
+    stance.dispatchEvent(new MouseEvent("click"));
+    for (const key of ["Enter", " "]) {
+      const event = new KeyboardEvent("keydown", { key, cancelable: true });
+      stance.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(false);
+    }
+    expect(onSelect).not.toHaveBeenCalled();
+    expect(() => setSelection("stance")).toThrow(RangeError);
+
+    x0.dispatchEvent(new MouseEvent("click"));
+    expect(onSelect).toHaveBeenCalledWith("x0");
+    expect(stance.getAttribute("data-active")).toBe("true");
+    expect(x1.getAttribute("data-active")).toBe("false");
+    expect(first.getAttribute("data-active")).toBe("true");
+    expect(second.getAttribute("opacity")).toBe("0.45");
+    expect(motion.getAttribute("data-active")).toBe("false");
+    expect(motion.getAttribute("opacity")).toBe("1");
+    const motionId = motion.getAttribute("data-factor");
+    for (const edge of svg.querySelectorAll(`[data-factor-id="${motionId}"]`)) {
+      expect(edge.getAttribute("data-active")).toBe("false");
+      expect(edge.getAttribute("opacity")).toBe("1");
+      expect(edge.getAttribute("stroke-width")).toBe("1.5");
+    }
+
+    setSelection("x1");
+    expect(first.getAttribute("data-active")).toBe("false");
+    expect(second.getAttribute("data-active")).toBe("true");
+    expect(stance.hasAttribute("aria-pressed")).toBe(false);
+    setSelection(null);
+    expect(svg.querySelector('[data-active="true"]')).toBeNull();
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
 });

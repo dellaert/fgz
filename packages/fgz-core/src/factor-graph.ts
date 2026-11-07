@@ -11,7 +11,7 @@ interface GraphNode {
   color?: string;
 }
 
-/** An authored symbol at its fgz coordinates (positive y is up). */
+/** A positioned variable. toFactorGraph preserves its authored, y-up coordinates. */
 export interface GraphVariable extends GraphNode {
   known: boolean;
 }
