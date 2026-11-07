@@ -1,3 +1,4 @@
+import { buildCatalog } from "./catalog/build.mjs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { build } from "esbuild";
 
@@ -21,3 +22,5 @@ for (const name of ["contact", "slam-elimination"]) {
   await writeFile(`dist/${name}.html`, html);
   console.log(`Open dist/${name}.html in a browser.`);
 }
+
+await buildCatalog(fontLicense);

@@ -471,10 +471,11 @@ function directedEdgeLine(
   return `\\fgzEdgeD{${symbolId(parent)}}{${symbolId(child)}}`;
 }
 
-/**
- * Convert a validated fgz document into a readable TikZ snippet.
- */
-export function toTikz(doc: Document): string {
+/** Optional backend hook for identifying the graph element drawn by a TikZ command. */
+type TagCommand = (command: string, attributes: Record<string, string>, layer: "main" | "fgzbg") => string;
+
+/** Convert a validated fgz document into a readable TikZ snippet. */
+export function toTikz(doc: Document, tag: TagCommand = command => command): string {
   assertValid(doc);
 
   const lines = ["\\begin{tikzpicture}[x=1cm,y=1cm]", `\\fgzsettheme{${themeFor(doc)}}`];
@@ -499,7 +500,7 @@ export function toTikz(doc: Document): string {
       case "node":
       case "known_node":
         if (!renderedSymbols.has(statement.name)) {
-          lines.push(nodeLine(statement, doc));
+          lines.push(tag(nodeLine(statement, doc), { "data-variable": statement.name }, "main"));
           renderedSymbols.add(statement.name);
         }
         if (!positions.has(statement.name)) {
@@ -535,6 +536,8 @@ export function toTikz(doc: Document): string {
       continue;
     }
 
+    const factorId = factorIds.get(statement)!;
+    lines.push(tag(factorLine(statement, factorIds, positions, doc), { "data-factor": factorId }, "main"));
     const geometry = factorGeometry.get(statement);
     const overrides = undirectedOverridesByFactor.get(statement) ?? [];
     const override = overrides[0];
@@ -546,13 +549,11 @@ export function toTikz(doc: Document): string {
         control: override.control,
         color: override.color ?? statement.color
       });
-      lines.push(factorLine(statement, factorIds, positions, doc));
       continue;
     }
 
     const control = geometry?.bridgeControl;
     if (!control) {
-      lines.push(factorLine(statement, factorIds, positions, doc));
       continue;
     }
 
@@ -562,7 +563,6 @@ export function toTikz(doc: Document): string {
       control,
       color: statement.color
     });
-    lines.push(factorLine(statement, factorIds, positions, doc));
   }
 
   // Pass 3 emits all implied edges, skipping any pair already replaced by a bridge.
@@ -571,7 +571,7 @@ export function toTikz(doc: Document): string {
       const factorId = factorIds.get(statement) ?? "fgz_factor_missing";
       const bridge = bridgeSpecs.get(statement);
       if (bridge) {
-        edgeLines.push(bridgeLine(statement, bridge));
+        edgeLines.push(tag(bridgeLine(statement, bridge), { "data-factor-id": factorId }, "fgzbg"));
         consumedFactorEdges.add(`${factorId}\u0000${bridge.left}`);
         consumedFactorEdges.add(`${factorId}\u0000${bridge.right}`);
       }
@@ -583,7 +583,8 @@ export function toTikz(doc: Document): string {
         }
         const macro = edgeMacro(false, statement.color, false);
         const base = `${macro}{${factorId}}{${symbolId(name)}}`;
-        edgeLines.push(statement.color ? `${base}{${statement.color}}` : base);
+        const command = statement.color ? `${base}{${statement.color}}` : base;
+        edgeLines.push(tag(command, { "data-factor-id": factorId, "data-variable-id": name }, "fgzbg"));
       }
       continue;
     }
@@ -596,7 +597,8 @@ export function toTikz(doc: Document): string {
       for (const parent of statement.parents) {
         const curveOverride = curves.directed.get(`${parent}\u0000${statement.name}`);
         const edgeOverride = directedEdges.get(`${parent}\u0000${statement.name}`);
-        edgeLines.push(directedEdgeLine(parent, statement.name, curveOverride, edgeOverride));
+        const command = directedEdgeLine(parent, statement.name, curveOverride, edgeOverride);
+        edgeLines.push(tag(command, { "data-parent": parent, "data-child": statement.name }, "fgzbg"));
       }
     }
   }

@@ -187,6 +187,16 @@ Explicit `curve` and `edge` overrides, annotations, TeX style overrides, and
 nondefault DSL themes are available through the TikZ exporters. The browser
 adapter reports unsupported constructs with their source line.
 
+### Standalone example applets
+
+`npm run example:browser` creates an interactive HTML file in `dist/examples/`
+for each top-level `examples/*.fgz` file. These applets use the full TikZ
+renderer and `examples/macro.tex` at build time, so their math, colors, plates,
+and edge styles match the paper figures. At viewing time, JavaScript uses the
+authored graph to highlight incident edges, neighboring variables, or a factor's
+scope. Select a graph element by click, Enter, or Space. Escape clears the
+selection. Each file embeds its figure, fonts, source, and interaction code.
+
 The [SLAM elimination demo](../examples/browser/slam-elimination.js) renders
 the six authored stages in a common frame. The [pose/contact demo](../examples/browser/contact.js)
 shows how to synchronize selection with a host application.
