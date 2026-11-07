@@ -9,15 +9,18 @@ standalone figure PDFs without keeping intermediate TeX files around, fgz also p
 
 ## Interactive factor graphs
 
-Build the [pose/contact example](examples/browser/contact.fgz) with the dependencies
-installed, then open `dist/contact.html` directly in a browser. The file includes
-the graph, renderer, and styles and can be copied to a presentation laptop.
+Build the offline examples from a checkout with dependencies installed.
 
 ```bash
 npm run example:browser
 ```
 
-A web app can import the same renderer from its pinned fgz dependency.
+Open either file directly in a browser:
+
+- `dist/slam-elimination.html` steps through the six [SLAM elimination diagrams](examples/examples.md#toy-slam-elimination-sequence). Use **←** and **→** or the buttons. **View fgz source** shows the authored file for the current stage.
+- `dist/contact.html` lets you select a variable in the [pose/contact graph](examples/browser/contact.fgz) and inspect its neighborhood.
+
+Each HTML file embeds its code and assets. A web app can import the same renderer from its pinned fgz dependency.
 
 ```js
 import { parseFgz, toFactorGraph, renderFactorGraph } from "fgz/browser";

@@ -376,16 +376,6 @@ function factorLabel(statement: FactorDecl, doc: Document): string {
   return statement.label ? inlineLatexLabel(statement.label, doc) : "";
 }
 
-/** Derive the cubic control point used for bridged binary factor edges. */
-function controlFromFactorPoint(left: Point, factor: Point, right: Point): Point {
-  return {
-    x: (8 * factor.x - left.x - right.x) / 6,
-    y: (8 * factor.y - left.y - right.y) / 6,
-    rawX: String((8 * factor.x - left.x - right.x) / 6),
-    rawY: String((8 * factor.y - left.y - right.y) / 6)
-  };
-}
-
 /** Render a factor node, including labels and per-factor sizing overrides. */
 function factorLine(
   statement: FactorDecl,
@@ -560,23 +550,16 @@ export function toTikz(doc: Document): string {
       continue;
     }
 
-    const pair = geometry?.bridgedPair;
-    if (!pair) {
-      lines.push(factorLine(statement, factorIds, positions, doc));
-      continue;
-    }
-
-    const left = positions.get(pair[0]);
-    const right = positions.get(pair[1]);
-    if (!left || !right || !geometry) {
+    const control = geometry?.bridgeControl;
+    if (!control) {
       lines.push(factorLine(statement, factorIds, positions, doc));
       continue;
     }
 
     bridgeSpecs.set(statement, {
-      left: pair[0],
-      right: pair[1],
-      control: controlFromFactorPoint(left, geometry.point, right),
+      left: statement.vars[0]!,
+      right: statement.vars[1]!,
+      control,
       color: statement.color
     });
     lines.push(factorLine(statement, factorIds, positions, doc));

@@ -1,6 +1,6 @@
 import { FgzError } from "./error.js";
 import { resolveFactorGeometry } from "./geometry.js";
-import type { Document, FactorDecl, Point, VarDecl } from "./types.js";
+import type { BNDecl, Document, FactorDecl, Point, VarDecl } from "./types.js";
 import { assertValid } from "./validate.js";
 
 interface GraphNode {
@@ -14,15 +14,21 @@ interface GraphNode {
 /** A positioned variable. toFactorGraph preserves its authored, y-up coordinates. */
 export interface GraphVariable extends GraphNode {
   known: boolean;
+  /** BN parents, ordered as declared. Present (and possibly empty) for Bayes-net nodes. */
+  parents?: string[];
+  /** Authored fill for a Bayes-net node. */
+  fill?: string;
 }
 
 /** A factor and the ordered IDs of its incident variables. */
 export interface GraphFactor extends GraphNode {
   variables: string[];
   shape: "circle" | "square";
+  /** A cubic between the first two incident variables using this point for both controls. */
+  bridgeControl?: { x: number; y: number };
 }
 
-/** A JSON-serializable bipartite graph. IDs are scoped to each collection. */
+/** A JSON-serializable factor graph, Bayes net, or mixed graph. IDs are scoped to each collection. */
 export interface FactorGraph {
   variables: GraphVariable[];
   factors: GraphFactor[];
@@ -38,20 +44,27 @@ function unsupported(feature: string, line: number): never {
   throw new FgzError(`interactive factor graphs do not support ${feature}`, line);
 }
 
-function nodeStyle(statement: VarDecl | FactorDecl): Pick<GraphNode, "color"> {
+function nodeColor(statement: VarDecl | BNDecl | FactorDecl): string | undefined {
   if (statement.size || statement.font) {
     unsupported(statement.size ? "size" : "font", statement.loc.line);
   }
   if (!statement.color) {
-    return {};
+    return undefined;
+  }
+  const tint = /^gray!(\d+(?:\.\d+)?)$/.exec(statement.color);
+  if (tint && Number(tint[1]) <= 100) {
+    // xcolor gray is 50% black; an omitted second color mixes it with white.
+    const intensity = 1 - Number(tint[1]) / 200;
+    const channel = Math.min(255, Math.floor(256 * intensity)).toString(16).padStart(2, "0");
+    return `#${channel.repeat(3)}`;
   }
   if (!namedColors.has(statement.color)) {
-    unsupported(`color "${statement.color}" (use a predefined color name)`, statement.loc.line);
+    unsupported(`color "${statement.color}" (use a predefined color name or gray!percent)`, statement.loc.line);
   }
-  return { color: statement.color };
+  return statement.color;
 }
 
-/** Convert a straight-edge fgz factor graph into positioned, individually addressable nodes. */
+/** Convert an fgz graph into positioned, individually addressable nodes. */
 export function toFactorGraph(doc: Document): FactorGraph {
   assertValid(doc);
   const positions = new Map<string, Point>();
@@ -73,32 +86,36 @@ export function toFactorGraph(doc: Document): FactorGraph {
         }
         break;
       case "known":
-      case "var": {
+      case "var":
+      case "known_node":
+      case "node": {
         const { name, pos } = statement;
+        const color = nodeColor(statement);
+        const isBayesNode = "parents" in statement;
         variables.push({
           id: name,
           label: doc.macros.get(name) ?? name,
           x: pos.x,
           y: pos.y,
-          known: statement.kind === "known",
-          ...nodeStyle(statement)
+          known: statement.kind === "known" || statement.kind === "known_node",
+          ...(isBayesNode && { parents: [...statement.parents] }),
+          ...(color && (isBayesNode ? { fill: color } : { color }))
         });
         break;
       }
       case "factor": {
-        if (statement.offset) {
-          unsupported("offset", statement.loc.line);
-        }
-        const { point } = resolveFactorGeometry(statement, positions);
+        const { point, bridgeControl } = resolveFactorGeometry(statement, positions);
         const label = statement.label ?? "";
+        const color = nodeColor(statement);
         factors.push({
           id: `fgz_f${factors.length + 1}`,
           label: doc.macros.get(label) ?? label,
           x: point.x,
           y: point.y,
           variables: [...statement.vars],
+          ...(bridgeControl && { bridgeControl: { x: bridgeControl.x, y: bridgeControl.y } }),
           shape: statement.shape ?? "circle",
-          ...nodeStyle(statement)
+          ...(color && { color })
         });
         break;
       }
