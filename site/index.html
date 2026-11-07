@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore interactive factor graphs and the fgz language reference.">
+  <title>Examples and reference · fgz</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <style>
+    :root { color-scheme: light; font: 100%/1.4 system-ui, sans-serif; color: #182d31; }
+    * { box-sizing: border-box; }
+    body { margin: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+    header { display: flex; flex-wrap: wrap; align-items: center; gap: 0 2rem; padding: 0 clamp(.65rem, 3vw, 3rem); border-bottom: 1px solid #ccd7d4; }
+    .wordmark { margin: 0; font: bold 1.6rem/1.8 ui-monospace, monospace; letter-spacing: -.09em; }
+    [role="tablist"] { display: flex; align-self: stretch; max-width: 100%; overflow-x: auto; }
+    [role="tab"] { appearance: none; background: white; border: 0; border-bottom: 3px solid transparent; padding: .7rem clamp(.5rem, 1.5vw, 1.25rem); color: #495d60; font: inherit; cursor: pointer; }
+    [role="tab"]:hover { background: #f2f7f5; }
+    [role="tab"][aria-selected="true"] { border-bottom-color: #096659; color: #075c51; font-weight: 650; }
+    a { color: #096659; text-underline-offset: .2em; }
+    :focus-visible { outline: 2px solid #a94e0a; outline-offset: -3px; }
+    .repo { margin-left: auto; padding: .5rem; font-size: .875rem; }
+    main, [role="tabpanel"], iframe { flex: 1; min-height: 0; }
+    main, [role="tabpanel"] { display: flex; flex-direction: column; }
+    [role="tabpanel"][hidden] { display: none; }
+    iframe { display: block; width: 100%; border: 0; }
+    [role="tabpanel"] > a { align-self: flex-end; margin: .25rem 1rem; font-size: .875rem; }
+    @media (max-width: 44rem) {
+      [role="tablist"] { order: 1; width: 100%; }
+      [role="tab"] { flex: 1; font-size: .875rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="wordmark" aria-label="fgz examples and reference">fgz</h1>
+    <div role="tablist" aria-label="Examples and reference">
+      <!-- tabs -->
+    </div>
+    <a class="repo" href="https://github.com/dellaert/fgz">GitHub</a>
+  </header>
+  <main>
+    <!-- panels -->
+  </main>
+  <script>
+    const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+    const panelId = tab => tab.getAttribute('aria-controls');
+    function show(selected) {
+      for (const tab of tabs) {
+        const active = tab === selected;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        const panel = document.getElementById(panelId(tab));
+        panel.hidden = !active;
+        const frame = panel.querySelector('iframe[data-src]');
+        if (active && frame) {
+          frame.src = frame.dataset.src;
+          delete frame.dataset.src;
+        }
+      }
+    }
+    function select(tab) {
+      show(tab);
+      const hash = '#' + panelId(tab);
+      if (location.hash !== hash) history.pushState(null, '', hash);
+    }
+    function restore() {
+      show(tabs.find(tab => '#' + panelId(tab) === location.hash) || tabs[0]);
+    }
+    for (const [i, tab] of tabs.entries()) {
+      tab.addEventListener('click', event => {
+        select(tab);
+        // A pointer click enters the demo; keyboard focus stays on the tab strip.
+        if (event.detail) document.getElementById(panelId(tab)).querySelector('iframe').focus();
+      });
+      tab.addEventListener('keydown', event => {
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        const last = tabs.length - 1;
+        const index = { ArrowLeft: (i + last) % tabs.length, ArrowRight: (i + 1) % tabs.length, Home: 0, End: last }[event.key];
+        if (index === undefined) return;
+        event.preventDefault();
+        tabs[index].focus();
+        select(tabs[index]);
+      });
+    }
+    window.addEventListener('hashchange', restore);
+    restore();
+  </script>
+</body>
+</html>

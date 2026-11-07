@@ -7,6 +7,8 @@ lerna-debug.log*
 .pnpm-debug.log*
 
 # Build outputs
+/_site/
+/_build/
 dist/
 build/
 packages/*/dist/
