@@ -2,7 +2,7 @@
 
 **fgz** is a mermaid-inspired, plain-text DSL + toolchain for rendering factor graphs and Bayes nets, designed for robotics papers.
 
-[Open the interactive examples gallery](https://dellaert.github.io/fgz/).
+[Open the interactive examples and reference manual](https://dellaert.github.io/fgz/).
 
 The highest-quality output path is still LaTeX/TikZ. SVG export is convenient for guides,
 web pages, and quick previews, but it does not always match LaTeX rendering exactly. For
@@ -196,12 +196,26 @@ The generated `.fgz.tex` file assumes your LaTeX preamble already includes:
 
 For now, the simplest approach is to copy [tikz/fgz.tikz.tex](tikz/fgz.tikz.tex) into your own project and keep it alongside your paper sources. SVG and standalone PDF export do not need that file on your LaTeX side, but the CLI still uses the shared support macros from this repository to keep SVG, PDF, and TikZ output aligned.
 
-## Publishing the examples gallery
+## Building the examples and reference manual
 
-`npm run build:site` writes the static gallery and its standalone demos to
-`_site/`. Open `_site/index.html` locally or serve the directory over HTTP.
-The Pages workflow builds pull requests and publishes updates from `main`.
-For initial setup, select **GitHub Actions** under **Settings → Pages → Source**.
+The site opens the pose/contact demo immediately. The top tabs switch between
+available demos and the MyST reference manual. Each demo also has a standalone
+HTML download.
+
+To build and preview the site, run these commands from the repository root:
+
+```sh
+npm ci
+npm run build:site
+python3 -m http.server 8000 --directory _site
+```
+
+Open [localhost:8000](http://localhost:8000/). The site builds its manual
+from [docs/REFERENCE.md](docs/REFERENCE.md) with the MyST Book Theme.
+Set `SITE_BASE_PATH` when building for a subdirectory such as `/fgz`.
+The Pages workflow sets this value, builds pull requests, and publishes
+updates from `main`. For initial setup, select **GitHub Actions** under
+**Settings → Pages → Source**.
 
 ## Roadmap
 

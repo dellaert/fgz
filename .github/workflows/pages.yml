@@ -26,9 +26,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:site
+        env:
+          SITE_BASE_PATH: /${{ github.event.repository.name }}
       - name: Check gallery and demos
         run: |
           test -s _site/index.html
+          test -s _site/manual/index.html
           for template in examples/browser/*.html; do
             test -s "_site/$(basename "$template")"
           done

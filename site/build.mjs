@@ -1,52 +1,33 @@
 import { copyFile, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
-import { JSDOM } from "jsdom";
-import { parseFgz, renderFactorGraph, toFactorGraph } from "fgz/browser";
 
-const examples = [
-  {
-    name: "contact",
-    title: "Pose and contact factors",
-    description: "Select a robot pose to see which foot contacts constrain it, or select a stance to find the poses that observed it.",
-    alt: "Four poses connected by motion factors, with the observations of the second pose highlighted."
-  },
-  {
-    name: "slam-elimination",
-    title: "SLAM variable elimination",
-    description: "Step from a factor graph to a Bayes net as two landmarks and three poses are eliminated. Follow the new factor at each step.",
-    alt: "Eliminating the first landmark produces two parent arrows and a red curved factor between two poses."
-  }
+const demos = [
+  { id: "contact", title: "Pose and contact" },
+  { id: "slam-elimination", title: "SLAM elimination" }
 ];
-
-// A clean site should expose exactly the examples available on this revision.
 const templates = await readdir("examples/browser");
-const available = examples.filter(({ name }) => templates.includes(`${name}.html`));
+const available = demos.filter(demo => templates.includes(`${demo.id}.html`));
 await rm("_site", { recursive: true, force: true });
 await mkdir("_site");
-
-for (const { name } of available) {
-  await copyFile(`dist/${name}.html`, `_site/${name}.html`);
-}
-const dom = new JSDOM();
-const contact = await readFile("examples/browser/contact.fgz", "utf8");
-const { svg, setSelection } = renderFactorGraph(dom.window.document.createElement("div"), toFactorGraph(parseFgz(contact)));
-setSelection("X_1");
-await writeFile("_site/contact.svg", new dom.window.XMLSerializer().serializeToString(svg));
-if (available.some(example => example.name === "slam-elimination")) {
-  await copyFile("examples/slam-eliminate-l1.svg", "_site/slam-elimination.svg");
+await copyFile("site/favicon.svg", "_site/favicon.svg");
+for (const { id } of available) {
+  await copyFile(`dist/${id}.html`, `_site/${id}.html`);
 }
 
-function card({ name, title, description, alt }) {
-  const page = `./${name}.html`;
-  return `<article class="example">
-      <a class="preview" href="${page}" aria-label="Open ${title}"><img src="./${name}.svg" alt="${alt}"></a>
-      <div class="details">
-        <h2><a href="${page}">${title}</a></h2>
-        <p>${description}</p>
-        <div class="actions"><a class="open" href="${page}">Open demo</a><a href="${page}" download>Download HTML</a></div>
-      </div>
-    </article>`;
-}
+const pages = [
+  ...available.map(demo => ({ ...demo, href: `./${demo.id}.html`, downloadable: true })),
+  { id: "manual", title: "Reference manual", href: "./manual/" }
+];
 
+const tabs = pages.map(({ id, title }, i) =>
+  `<button type="button" role="tab" id="tab-${id}" aria-controls="${id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${title}</button>`
+);
+const panels = pages.map(({ id, title, href, downloadable }, i) =>
+  `<section role="tabpanel" id="${id}" aria-labelledby="tab-${id}"${i === 0 ? "" : " hidden"}>
+      <iframe title="${title}" ${i === 0 ? "src" : "data-src"}="${href}"></iframe>
+      ${downloadable ? `<a href="${href}" download>Download standalone HTML</a>` : ""}
+    </section>`
+);
 const template = await readFile("site/index.html", "utf8");
-await writeFile("_site/index.html", template.replace("<!-- examples -->", () => available.map(card).join("\n")));
-console.log(`Built ${available.length} interactive example(s) in _site/.`);
+await writeFile("_site/index.html", template
+  .replace("<!-- tabs -->", () => tabs.join("\n"))
+  .replace("<!-- panels -->", () => panels.join("\n")));

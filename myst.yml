@@ -1,0 +1,11 @@
+version: 1
+project:
+  title: fgz Reference Manual
+  github: https://github.com/dellaert/fgz
+  toc:
+    - file: docs/REFERENCE.md
+site:
+  template: book-theme
+  options:
+    favicon: site/favicon.svg
+    logo_text: fgz

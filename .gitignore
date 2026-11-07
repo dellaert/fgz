@@ -8,6 +8,7 @@ lerna-debug.log*
 
 # Build outputs
 /_site/
+/_build/
 dist/
 build/
 packages/*/dist/
