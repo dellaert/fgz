@@ -28,14 +28,24 @@
     "fgz2svg": "node packages/fgz-cli/dist/fgz2svg.js",
     "fgz2pdf": "node packages/fgz-cli/dist/fgz2pdf.js",
     "examples:pdf": "npm run build && node scripts/build-examples.mjs",
-    "examples:svg": "npm run build && node scripts/build-examples.mjs --svg-only"
+    "examples:svg": "npm run build && node scripts/build-examples.mjs --svg-only",
+    "example:browser": "npm run build && node examples/browser/build.mjs"
   },
   "dependencies": {
     "node-tikzjax": "^1.0.5"
   },
   "devDependencies": {
     "@types/node": "^20.17.57",
+    "esbuild": "^0.27.3",
+    "jsdom": "^23.2.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
+  },
+  "exports": {
+    "./browser": {
+      "types": "./packages/fgz-core/dist/browser.d.ts",
+      "import": "./packages/fgz-core/dist/browser.js"
+    },
+    "./*": "./*"
   }
 }

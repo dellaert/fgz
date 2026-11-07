@@ -1,4 +1,6 @@
 export { FgzError } from "./error.js";
+export { toFactorGraph } from "./factor-graph.js";
+export type { FactorGraph, GraphFactor, GraphVariable } from "./factor-graph.js";
 export { formatFgz } from "./format.js";
 export { parseFgz } from "./parser.js";
 export { toTikz } from "./tikz.js";

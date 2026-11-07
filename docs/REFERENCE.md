@@ -107,9 +107,49 @@ Rules:
 - `fgz2pdf` embeds the shared `fgz.tikz.tex` support macros automatically
 - successful runs leave no auxiliary LaTeX files behind
 
+## Interactive browser API
+
+`fgz/browser` is an ESM entry point for applications. It has no Vue, Node.js,
+TeX, or external asset requirements at render time.
+
+- `toFactorGraph(parseFgz(source))` produces a serializable `FactorGraph`. Each
+  variable has its authored ID, resolved label, position, and known flag. Each
+  factor has its label, position, shape, ordered variable IDs, and a generated
+  ID (`fgz_f1`, `fgz_f2`, … in factor declaration order). Both collections
+  accept optional colors and have separate ID namespaces.
+- `renderFactorGraph(container, graph, { onSelect })` mounts an SVG and returns
+  `{ svg, setSelection }`. It replaces the contents of the container. The callback
+  receives the original variable ID when a user selects it, including by keyboard.
+- `setSelection(id)` highlights the selected variable, each incident factor, and
+  every variable sharing those factors. `setSelection(null)` clears the highlight.
+  Programmatic selection leaves the callback silent, so a host can synchronize
+  its own timeline or 3D viewer. Unknown variable IDs raise a `RangeError`.
+
+The browser view supports straight, arbitrary-arity factors, `variable`,
+`known`, label aliases, the default theme, explicit positions, shape, and
+the predefined colors listed below. Omitted factor positions use the midpoint of the first two
+variables. Coordinates remain in the authored, y-up frame. Simple trailing
+subscripts such as `X_0` and `X_{t+1}` are typeset in SVG. Other math displays
+as literal text. Variable colors accent their outlines and factor colors mark
+their symbols and edges.
+
+The supported DSL colors are `black`, `blue`, `brown`, `cyan`, `darkgray`,
+`gray`, `green`, `lightgray`, `lime`, `magenta`, `olive`, `orange`, `pink`,
+`purple`, `red`, `teal`, `violet`, `white`, and `yellow`.
+
+Bayes nets, curved connections (including `offset`), annotations, TeX styling,
+and nondefault themes are outside this first browser backend. The adapter
+reports unsupported statements and attributes with their source line. The
+TikZ-based exporters support the full language described below.
+
+The [offline example](../examples/browser/contact.js) shows how a host synchronizes
+selection and bundles a [contact graph](../examples/browser/contact.fgz) for a talk.
+Its visual style and selection behavior follow the
+[GTDynamics contact-initialization app](https://github.com/borglab/GTDynamics/blob/7d2eccefebf1c2e390937338a992d0971107e5c9/apps/contact-initialization/src/PoseContactGraph.vue).
+
 ## External Use
 
-Outside this repository, the supported user-facing interface is the installed CLI:
+To export figures from another repository, use the installed CLI:
 
 ```bash
 npx fgz2tex figures/example.fgz

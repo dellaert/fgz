@@ -95,6 +95,16 @@ factor {x_0, x_1}
     "utf8"
   );
 
+  // Exercise the public ESM entry point from the installed tarball.
+  run(process.execPath, ["--input-type=module", "-e", `
+    import assert from "node:assert/strict";
+    import { readFileSync } from "node:fs";
+    import { parseFgz, renderFactorGraph, toFactorGraph } from "fgz/browser";
+    const graph = toFactorGraph(parseFgz(readFileSync("sample.fgz", "utf8")));
+    assert.deepEqual(graph.factors[0].variables, ["x_0", "x_1"]);
+    assert.equal(typeof renderFactorGraph, "function");
+  `], consumerDir);
+
   runNpm(["exec", "--", "fgz2tex", inputPath], consumerDir);
   runNpm(["exec", "--", "fgz2svg", inputPath], consumerDir);
 
