@@ -7,6 +7,30 @@ web pages, and quick previews, but it does not always match LaTeX rendering exac
 standalone figure PDFs without keeping intermediate TeX files around, fgz also provides
 `fgz2pdf`, which assumes `pdflatex` is installed and available on your system.
 
+## Interactive factor graphs
+
+Build the [pose/contact example](examples/browser/contact.fgz) with the dependencies
+installed, then open `dist/contact.html` directly in a browser. The file includes
+the graph, renderer, and styles and can be copied to a presentation laptop.
+
+```bash
+npm run example:browser
+```
+
+A web app can import the same renderer from its pinned fgz dependency.
+
+```js
+import { parseFgz, toFactorGraph, renderFactorGraph } from "fgz/browser";
+
+const graph = toFactorGraph(parseFgz(source));
+const view = renderFactorGraph(container, graph, { onSelect: id => showPose(id) });
+view.setSelection("X_1"); // Synchronize from playback or a slide step.
+```
+
+Selecting a variable by click, Enter, or Space highlights its incident factors
+and their other variables. A host can pass the renderer a positioned graph
+directly or compile one from fgz. See the [browser API and supported syntax](docs/REFERENCE.md#interactive-browser-api).
+
 ## Example Document
 
 The repository includes:

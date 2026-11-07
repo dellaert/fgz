@@ -1,5 +1,5 @@
 import { assertValid } from "./validate.js";
-import { FgzError } from "./error.js";
+import { resolveFactorGeometry, type FactorGeometry } from "./geometry.js";
 import type {
   BNDecl,
   BoxDecl,
@@ -18,11 +18,6 @@ import type {
 interface FactorBinding {
   factor: FactorDecl;
   factorId: string;
-}
-
-interface FactorGeometry {
-  point: Point;
-  bridgedPair?: [string, string];
 }
 
 interface BridgeSpec {
@@ -381,32 +376,6 @@ function factorLabel(statement: FactorDecl, doc: Document): string {
   return statement.label ? inlineLatexLabel(statement.label, doc) : "";
 }
 
-/** Format the midpoint between two scalar coordinates. */
-function midpointRaw(left: number, right: number): string {
-  const value = (left + right) / 2;
-  return String(value);
-}
-
-/** Compute the midpoint between two points while preserving readable coordinate text. */
-function midpointPoint(left: Point, right: Point): Point {
-  return {
-    x: (left.x + right.x) / 2,
-    y: (left.y + right.y) / 2,
-    rawX: midpointRaw(left.x, right.x),
-    rawY: midpointRaw(left.y, right.y)
-  };
-}
-
-/** Apply an authored offset to an inferred factor position. */
-function offsetPoint(base: Point, offset: Point): Point {
-  return {
-    x: base.x + offset.x,
-    y: base.y + offset.y,
-    rawX: String(base.x + offset.x),
-    rawY: String(base.y + offset.y)
-  };
-}
-
 /** Derive the cubic control point used for bridged binary factor edges. */
 function controlFromFactorPoint(left: Point, factor: Point, right: Point): Point {
   return {
@@ -414,35 +383,6 @@ function controlFromFactorPoint(left: Point, factor: Point, right: Point): Point
     y: (8 * factor.y - left.y - right.y) / 6,
     rawX: String((8 * factor.x - left.x - right.x) / 6),
     rawY: String((8 * factor.y - left.y - right.y) / 6)
-  };
-}
-
-/** Resolve the effective factor position from explicit coordinates or midpoint rules. */
-function resolveFactorGeometry(statement: FactorDecl, positions: Map<string, Point>): FactorGeometry {
-  if (statement.pos) {
-    return { point: statement.pos };
-  }
-
-  const first = statement.vars[0];
-  const second = statement.vars[1];
-  if (!first || !second) {
-    throw new FgzError("factor position inference requires at least two variables", statement.loc.line);
-  }
-
-  const left = positions.get(first);
-  const right = positions.get(second);
-  if (!left || !right) {
-    throw new FgzError("factor position inference requires declared variable positions", statement.loc.line);
-  }
-
-  const midpoint = midpointPoint(left, right);
-  if (!statement.offset) {
-    return { point: midpoint };
-  }
-
-  return {
-    point: offsetPoint(midpoint, statement.offset),
-    bridgedPair: [first, second]
   };
 }
 
