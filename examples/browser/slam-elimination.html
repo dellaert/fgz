@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SLAM variable elimination · fgz</title>
+<style>
+  * { box-sizing: border-box }
+  body { margin: 0; background: white; color: #18272f; font: 1rem/1.5 system-ui, sans-serif }
+  main { max-width: 75rem; margin: auto; padding: clamp(1.2rem, 4.5vw, 4rem) }
+  header, footer, nav { display: flex; align-items: center; gap: 1rem }
+  header, footer { justify-content: space-between }
+  header { padding-bottom: 1rem; border-bottom: 1px solid #d7e1df }
+  header strong { letter-spacing: -.025em }
+  header small, footer, summary { color: #53696d }
+  .spread { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 1fr); gap: clamp(1rem, 4vw, 4rem); align-items: center; padding-block: 1.5rem }
+  #graph { display: grid; place-items: center }
+  #graph svg { display: block; width: 100%; height: auto; max-height: 60vh }
+  #graph svg text { font-family: fgz-CMMI, serif; font-style: normal; font-synthesis: none }
+  #graph svg tspan { font-family: fgz-CMR7, serif; font-style: normal; font-synthesis: none }
+  #step { color: #21695e; font-size: .78rem; font-weight: 680; letter-spacing: .08em; text-transform: uppercase; font-variant-numeric: tabular-nums }
+  h1 { margin: .55rem 0 .9rem; font-size: clamp(1.9rem, 3.3vw, 3rem); line-height: 1.12; letter-spacing: -.04em; text-wrap: balance }
+  #explanation { color: #485a60; margin: 0; max-width: 32em }
+  footer { border-top: 1px solid #d7e1df; padding-block: 1rem; flex-wrap: wrap }
+  nav { gap: .5rem }
+  button { padding: .5rem .9rem; border: 1px solid #aabdb8; border-radius: .35rem; color: inherit; background: white; font: inherit; cursor: pointer }
+  button:not(:disabled):hover { background: #edf5f2 }
+  button:focus-visible, summary:focus-visible { outline: 2px solid #21695e; outline-offset: 3px }
+  button:disabled { color: #879693; border-color: #d9dfdd; cursor: default }
+  summary { cursor: pointer; width: fit-content; font-size: .875rem }
+  pre { padding: 1rem; overflow: auto; background: #f5f8f7; border-radius: .3rem; font-size: .875rem }
+  @media (max-width: 43rem) {
+    .spread { grid-template-columns: 1fr; gap: 1rem }
+    #graph svg { max-height: 42vh }
+    h1 { font-size: 1.8rem }
+  }
+</style>
+<main>
+  <header><strong>SLAM variable elimination</strong><small>fgz</small></header>
+  <div class="spread">
+    <div id="graph"></div>
+    <section aria-live="polite" aria-atomic="true">
+      <span id="step"></span>
+      <h1></h1>
+      <p id="explanation"></p>
+    </section>
+  </div>
+  <footer>
+    <small>Use the ← and → keys to step through the graph.</small>
+    <nav aria-label="Elimination steps">
+      <button id="previous" type="button">← Previous</button>
+      <button id="next" type="button">Next →</button>
+    </nav>
+  </footer>
+  <details>
+    <summary>View fgz source</summary>
+    <pre><code></code></pre>
+  </details>
+</main>
+<script type="text/plain" id="font-license"><!-- font-license --></script>
+<!-- inline-script -->
+</html>

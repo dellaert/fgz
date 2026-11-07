@@ -116,12 +116,14 @@ TeX, or external asset requirements at render time.
   variable has its authored ID, resolved label, position, and known flag. Each
   factor has its label, position, shape, ordered variable IDs, and a generated
   ID (`fgz_f1`, `fgz_f2`, … in factor declaration order). Both collections
-  accept optional colors and have separate ID namespaces.
+  accept optional colors and have separate ID namespaces. A Bayes-net node also
+  has a `parents` array (empty for a root). A factor with an authored `offset`
+  carries a `bridgeControl` point for its first two endpoints.
 - `renderFactorGraph(container, graph, { onSelect })` mounts an SVG and returns
   `{ svg, setSelection }`. It replaces the contents of the container. The callback
   receives the original variable ID when a user selects it, including by keyboard.
-- `setSelection(id)` highlights the selected variable, each incident factor, and
-  every variable sharing those factors. `setSelection(null)` clears the highlight.
+- `setSelection(id)` highlights the selected variable, its incident factors and
+  their variables, and any adjacent parent–child arrows and their endpoints. `setSelection(null)` clears the highlight.
   Programmatic selection leaves the callback silent, so a host can synchronize
   its own timeline or 3D viewer. Unknown or unselectable variable IDs raise a `RangeError`.
 
@@ -141,6 +143,9 @@ const view = renderFactorGraph(container, graph, {
 view.setSelection(currentFrameId);
 ```
 
+- `presentation: "classic"` uses the classic TikZ palette and glyph sizes, including
+  authored variable fills. The default `"interactive"` presentation uses the
+  browser palette and variable outlines from the pose/contact example.
 - `viewport: { width, height }` uses SVG pixel coordinates, with the origin at
   the upper left and y increasing downward. The SVG keeps the supplied
   dimensions inside a scrollable container. Omitting this option uses fgz's
@@ -157,31 +162,34 @@ view.setSelection(currentFrameId);
   are evaluated when the graph is mounted.
 
 The returned SVG exposes `[data-variable]` and `[data-factor]` groups keyed by
-ID, and `[data-edge]` lines with `data-factor-id` and `data-variable-id`.
+ID. Straight incidence lines carry `data-factor-id` and `data-variable-id`.
+A curved bridge carries `data-factor-id` and connects the first two variables
+through a single path. Directed arrows carry `data-parent` and `data-child`.
 Hosts can style `[data-active="true"]` and `[aria-pressed="true"]` and attach
 their own timestamps or fixed-pose marks to the corresponding groups.
 
-The browser view supports straight, arbitrary-arity factors, `variable`,
-`known`, label aliases, the default theme, explicit positions, shape, and
-the predefined colors listed below. Omitted factor positions use the midpoint of the first two
-variables. Coordinates remain in the authored, y-up frame. Simple trailing
-subscripts such as `X_0` and `X_{t+1}` are typeset in SVG. Other math displays
-as literal text. Variable colors accent their outlines and factor colors mark
-their symbols and edges.
+The browser supports factor graphs, Bayes nets, and mixed diagrams with
+`variable`, `known`, `factor`, `node`, and `known_node`. For each parent in a
+node declaration it draws an arrow from parent to child. It supports aliases,
+the classic theme, explicit positions, and factor shape. A factor with no
+position uses the midpoint of its first two variables. Adding `offset` moves
+the factor and draws a cubic bridge through it. Any remaining incidences are
+straight. Coordinates from the DSL retain their authored y-up frame. Simple
+trailing subscripts such as `X_0` or `X_{t+1}` use SVG text. Other math
+displays literally.
 
-The supported DSL colors are `black`, `blue`, `brown`, `cyan`, `darkgray`,
-`gray`, `green`, `lightgray`, `lime`, `magenta`, `olive`, `orange`, `pink`,
-`purple`, `red`, `teal`, `violet`, `white`, and `yellow`.
+Colors can be `gray!N` (N percent gray mixed with white, from 0 to 100) or any
+of the predefined names `black`, `blue`, `brown`, `cyan`, `darkgray`, `gray`,
+`green`, `lightgray`, `lime`, `magenta`, `olive`, `orange`, `pink`, `purple`,
+`red`, `teal`, `violet`, `white`, and `yellow`.
 
-Bayes nets, curved connections (including `offset`), annotations, TeX styling,
-and nondefault themes are outside this first browser backend. The adapter
-reports unsupported statements and attributes with their source line. The
-TikZ-based exporters support the full language described below.
+Explicit `curve` and `edge` overrides, annotations, TeX style overrides, and
+nondefault DSL themes are available through the TikZ exporters. The browser
+adapter reports unsupported constructs with their source line.
 
-The [offline example](../examples/browser/contact.js) shows how a host synchronizes
-selection and bundles a [contact graph](../examples/browser/contact.fgz) for a talk.
-Its visual style and selection behavior follow the
-[GTDynamics contact-initialization app](https://github.com/borglab/GTDynamics/blob/7d2eccefebf1c2e390937338a992d0971107e5c9/apps/contact-initialization/src/PoseContactGraph.vue).
+The [SLAM elimination demo](../examples/browser/slam-elimination.js) renders
+the six authored stages in a common frame. The [pose/contact demo](../examples/browser/contact.js)
+shows how to synchronize selection with a host application.
 
 ## External Use
 

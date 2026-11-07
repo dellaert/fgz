@@ -3,7 +3,7 @@ import type { FactorDecl, Point } from "./types.js";
 
 export interface FactorGeometry {
   point: Point;
-  bridgedPair?: [string, string];
+  bridgeControl?: Point;
 }
 
 /** Resolve an explicit position or the midpoint of the first two incident variables, plus any offset. */
@@ -26,5 +26,12 @@ export function resolveFactorGeometry(statement: FactorDecl, positions: Readonly
   const x = (left.x + right.x) / 2 + (statement.offset?.x ?? 0);
   const y = (left.y + right.y) / 2 + (statement.offset?.y ?? 0);
   const point = { x, y, rawX: String(x), rawY: String(y) };
-  return statement.offset ? { point, bridgedPair: [first, second] } : { point };
+  if (!statement.offset) {
+    return { point };
+  }
+
+  // With both cubic controls equal to C, B(1/2) = (left + 6C + right) / 8.
+  const cx = (8 * x - left.x - right.x) / 6;
+  const cy = (8 * y - left.y - right.y) / 6;
+  return { point, bridgeControl: { x: cx, y: cy, rawX: String(cx), rawY: String(cy) } };
 }

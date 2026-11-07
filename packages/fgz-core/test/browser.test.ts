@@ -29,6 +29,62 @@ describe("renderFactorGraph", () => {
     expect(svg.querySelector('[data-variable-id="x"]')?.getAttribute("stroke")).toBe("teal");
   });
 
+  it("draws a bridge through its factor, with remaining incidences straight", () => {
+    const graph = toFactorGraph(parseFgz(`fgz 1
+variable a (0, 0)
+variable b (4, 0)
+variable c (2, 2)
+factor {a, b, c} offset=(0,-0.75) color=red
+`));
+    const { svg, setSelection } = renderFactorGraph(document.createElement("div"), graph);
+    const curve = svg.querySelector("path[data-edge]")!;
+    expect(curve.getAttribute("d")).toBe("M 0 0 C 96 48 96 48 192 0");
+    expect(curve.getAttribute("stroke")).toBe("red");
+    expect(svg.querySelector("[data-factor]")?.getAttribute("transform")).toBe("translate(96 36)");
+    expect(svg.querySelectorAll("line[data-edge]")).toHaveLength(1);
+    expect(svg.querySelector("line[data-edge]")?.getAttribute("data-variable-id")).toBe("c");
+    setSelection("b");
+    expect(curve.getAttribute("data-active")).toBe("true");
+  });
+
+  it("clips parent arrows at the child and restores the authored classic node fill", () => {
+    const graph = toFactorGraph(parseFgz(`fgz 1
+variable x_1 (0, 0)
+node x_2 {x_1} (2, 0) color=gray!25
+factor {x_1} (0, 1)
+`));
+    const { svg, setSelection } = renderFactorGraph(document.createElement("div"), graph, { presentation: "classic" });
+    const circle = svg.querySelector('[data-variable="x_2"] circle')!;
+    expect(Number(circle.getAttribute("r"))).toBeCloseTo(19.2);
+    expect(circle.getAttribute("fill")).toBe(graph.variables[1]!.fill);
+    expect(circle.getAttribute("stroke")).toBe("#1f2933");
+    expect(svg.querySelector("[data-factor] circle")?.getAttribute("r")).toBe("7.68");
+    expect(svg.querySelector("[data-factor] circle")?.getAttribute("fill")).toBe("#111827");
+    const arrow = svg.querySelector('[data-parent="x_1"][data-child="x_2"]')!;
+    const contour = arrow.querySelector("path")!.getAttribute("d")!.split(" ");
+    const tip = Number(contour[1]), notch = Number(contour[7]);
+    // The visible miter tip meets the outside of the child stroke.
+    expect(tip + 0.75 / Math.sin(Math.PI / 8)).toBeCloseTo(96 - 19.2 - 0.75);
+    expect(Number(arrow.querySelector("line")!.getAttribute("x2"))).toBe(notch);
+    expect(arrow.getAttribute("transform")).toBe("translate(0 0) rotate(0)");
+    setSelection("x_2");
+    expect(arrow.getAttribute("data-active")).toBe("true");
+    setSelection(null);
+    expect(circle.getAttribute("fill")).toBe(graph.variables[1]!.fill);
+  });
+
+  it("omits the arrow glyph when parent and child circles coincide or overlap", () => {
+    const graph = toFactorGraph(parseFgz(`fgz 1
+variable a (0, 0)
+node b {a} (0, 0)
+node c {a} (0.5, 0)
+`));
+    const { svg } = renderFactorGraph(document.createElement("div"), graph);
+    for (const id of ["b", "c"]) {
+      expect(svg.querySelector(`[data-parent="a"][data-child="${id}"]`)?.childElementCount).toBe(0);
+    }
+  });
+
   it("synchronizes user and host selection and keeps simultaneous views independent", () => {
     const onSelect = vi.fn();
     const { svg, setSelection } = renderFactorGraph(document.createElement("div"), graph, { onSelect });
