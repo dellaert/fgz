@@ -123,7 +123,43 @@ TeX, or external asset requirements at render time.
 - `setSelection(id)` highlights the selected variable, each incident factor, and
   every variable sharing those factors. `setSelection(null)` clears the highlight.
   Programmatic selection leaves the callback silent, so a host can synchronize
-  its own timeline or 3D viewer. Unknown variable IDs raise a `RangeError`.
+  its own timeline or 3D viewer. Unknown or unselectable variable IDs raise a `RangeError`.
+
+### Embedding an existing app layout
+
+A host can pass its positioned graph and optional `FactorGraphRenderOptions`
+directly to `renderFactorGraph`. For example, a scrollable pose timeline can
+keep frame selection synchronized with its player.
+
+```js
+const view = renderFactorGraph(container, graph, {
+  viewport: { width: timelineWidth, height: 320 },
+  isSelectable: variable => frameIds.has(variable.id),
+  isHighlightable: factor => observationIds.has(factor.id),
+  onSelect: id => player.seek(frameIndex.get(id))
+});
+view.setSelection(currentFrameId);
+```
+
+- `viewport: { width, height }` uses SVG pixel coordinates, with the origin at
+  the upper left and y increasing downward. The SVG keeps the supplied
+  dimensions inside a scrollable container. Omitting this option uses fgz's
+  y-up coordinates and fits the SVG to its contents.
+- `edgeEndpoint(factor, variable)` optionally returns the point on the variable
+  where this incidence line terminates, in the same coordinate system. Return
+  `undefined` for the variable center. This allows, for example, observation
+  lines to leave the bottom of a pose circle while motion lines meet its sides.
+- `isSelectable(variable)` determines which variables can take focus or be
+  selected. Other variables can still be highlighted as neighbors.
+- `isHighlightable(factor)` determines which factors respond to selection.
+  Excluded factors and their edges retain their ordinary appearance and do
+  not highlight neighboring variables. Both predicates default to true and
+  are evaluated when the graph is mounted.
+
+The returned SVG exposes `[data-variable]` and `[data-factor]` groups keyed by
+ID, and `[data-edge]` lines with `data-factor-id` and `data-variable-id`.
+Hosts can style `[data-active="true"]` and `[aria-pressed="true"]` and attach
+their own timestamps or fixed-pose marks to the corresponding groups.
 
 The browser view supports straight, arbitrary-arity factors, `variable`,
 `known`, label aliases, the default theme, explicit positions, shape, and
