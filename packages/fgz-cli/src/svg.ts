@@ -226,3 +226,21 @@ export async function renderTikzToSvg(tikz: string, options: SvgRenderOptions = 
 export async function renderDocumentToSvg(doc: Document, options: SvgRenderOptions = {}): Promise<string> {
   return renderTikzToSvg(toTikz(doc), options);
 }
+
+/** Compile the same TikZ figure with selectable variable, factor and edge attributes. */
+export async function renderInteractiveSvg(doc: Document, options: SvgRenderOptions = {}): Promise<string> {
+  const tikz = toTikz(doc, (command, data, layer) => {
+    const attributes = Object.entries(data).map(([key, value]) => {
+      // XML character references carry arbitrary fgz IDs through TeX without expanding them.
+      const escaped = value.replace(/[^A-Za-z0-9_-]/gu, char => `&\\string#${char.codePointAt(0)};`);
+      return `${key}="${escaped}"`;
+    }).join(" ");
+    // Edge macros draw on fgzbg; their opening and closing specials belong on that same layer.
+    const special = (raw: string) => {
+      const marker = `\\special{dvisvgm:raw ${raw}}`;
+      return layer === "fgzbg" ? `\\begin{pgfonlayer}{fgzbg}${marker}\\end{pgfonlayer}` : marker;
+    };
+    return `${special(`<g ${attributes}>`)}${command}${special("</g>")}`;
+  });
+  return renderTikzToSvg(tikz, options);
+}

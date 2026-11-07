@@ -35,6 +35,9 @@ jobs:
           for template in examples/browser/*.html; do
             test -s "_site/$(basename "$template")"
           done
+          for source in examples/*.fgz; do
+            test -s "_site/examples/$(basename "$source" .fgz).html"
+          done
       - uses: actions/upload-pages-artifact@v5
         with:
           path: _site

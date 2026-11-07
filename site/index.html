@@ -9,81 +9,119 @@
   <style>
     :root { color-scheme: light; font: 100%/1.4 system-ui, sans-serif; color: #182d31; }
     * { box-sizing: border-box; }
-    body { margin: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
-    header { display: flex; flex-wrap: wrap; align-items: center; gap: 0 2rem; padding: 0 clamp(.65rem, 3vw, 3rem); border-bottom: 1px solid #ccd7d4; }
-    .wordmark { margin: 0; font: bold 1.6rem/1.8 ui-monospace, monospace; letter-spacing: -.09em; }
-    [role="tablist"] { display: flex; align-self: stretch; max-width: 100%; overflow-x: auto; }
-    [role="tab"] { appearance: none; background: white; border: 0; border-bottom: 3px solid transparent; padding: .7rem clamp(.5rem, 1.5vw, 1.25rem); color: #495d60; font: inherit; cursor: pointer; }
-    [role="tab"]:hover { background: #f2f7f5; }
-    [role="tab"][aria-selected="true"] { border-bottom-color: #096659; color: #075c51; font-weight: 650; }
+    body { margin: 0; height: 100vh; height: 100dvh; display: grid; grid-template-columns: clamp(12rem, 20vw, 16rem) minmax(0, 1fr); }
+    aside { display: flex; flex-direction: column; min-height: 0; background: #f5f8f7; border-right: 1px solid #ccd7d4; }
+    header { display: flex; align-items: center; gap: .75rem; padding: .75rem 1rem; border-bottom: 1px solid #dbe4e1; }
+    .wordmark { margin: 0; font: bold 1.6rem/1.4 ui-monospace, monospace; letter-spacing: -.09em; }
+    .repo { margin-left: auto; font-size: .875rem; }
+    nav { overflow-y: auto; padding: .5rem .6rem 1rem; }
+    .group-label, nav h2 { margin: 1rem .6rem .3rem; color: #435b59; font-size: .8rem; font-weight: 650; }
+    nav a[href^="#manual/"] { padding-left: 1.3rem; font-size: .85rem; }
+    nav a.subsection { padding-left: 2.3rem; }
+    nav a { text-decoration: none; display: block; width: 100%; text-align: left; appearance: none; background: transparent; border: 0; border-left: 3px solid transparent; border-radius: .2rem; padding: .45rem .6rem; color: #344e50; font: inherit; font-size: .93rem; cursor: pointer; }
+    nav a:hover { background: #e8efed; }
+    nav a[aria-current="page"] { border-left-color: #096659; background: #dcefe8; color: #075c51; font-weight: 650; }
     a { color: #096659; text-underline-offset: .2em; }
-    :focus-visible { outline: 2px solid #a94e0a; outline-offset: -3px; }
-    .repo { margin-left: auto; padding: .5rem; font-size: .875rem; }
-    main, [role="tabpanel"], iframe { flex: 1; min-height: 0; }
-    main, [role="tabpanel"] { display: flex; flex-direction: column; }
-    [role="tabpanel"][hidden] { display: none; }
+    :focus-visible { outline: 2px solid #a94e0a; outline-offset: -2px; }
+    main, main > section, iframe { flex: 1; min-height: 0; min-width: 0; }
+    main, main > section { display: flex; flex-direction: column; }
+    main > section[hidden] { display: none; }
     iframe { display: block; width: 100%; border: 0; }
-    [role="tabpanel"] > a { align-self: flex-end; margin: .25rem 1rem; font-size: .875rem; }
+    main > section > a { align-self: flex-end; margin: .25rem 1rem; font-size: .875rem; }
+    #browse { display: none; }
     @media (max-width: 44rem) {
-      [role="tablist"] { order: 1; width: 100%; }
-      [role="tab"] { flex: 1; font-size: .875rem; }
+      body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+      aside { border-right: 0; border-bottom: 1px solid #ccd7d4; }
+      header { border: 0; }
+      #browse { display: block; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #075c51; background: white; border: 1px solid #bdceca; border-radius: .3rem; padding: .45rem .6rem; font: inherit; cursor: pointer; }
+      nav { display: none; max-height: 50vh; max-height: 50dvh; }
+      aside.open nav { display: block; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1 class="wordmark" aria-label="fgz examples and reference">fgz</h1>
-    <div role="tablist" aria-label="Examples and reference">
+  <aside aria-label="Site navigation">
+    <header>
+      <h1 class="wordmark" aria-label="fgz examples and reference">fgz</h1>
+      <button type="button" id="browse" aria-controls="navigation" aria-expanded="false" aria-label="Browse examples and reference"><span id="current"></span> ▾</button>
+      <a class="repo" href="https://github.com/dellaert/fgz">GitHub</a>
+    </header>
+    <nav id="navigation" aria-label="Examples and reference">
       <!-- tabs -->
-    </div>
-    <a class="repo" href="https://github.com/dellaert/fgz">GitHub</a>
-  </header>
+    </nav>
+  </aside>
   <main>
     <!-- panels -->
   </main>
   <script>
-    const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
-    const panelId = tab => tab.getAttribute('aria-controls');
-    function show(selected) {
-      for (const tab of tabs) {
-        const active = tab === selected;
-        tab.setAttribute('aria-selected', String(active));
-        tab.tabIndex = active ? 0 : -1;
-        const panel = document.getElementById(panelId(tab));
-        panel.hidden = !active;
+    const navigation = document.getElementById('navigation');
+    const links = Array.from(navigation.querySelectorAll('a[href^="#"]'));
+    const panels = document.querySelectorAll('main > section');
+    const browse = document.getElementById('browse');
+    const current = document.getElementById('current');
+
+    function menu(open) {
+      browse.closest('aside').classList.toggle('open', open);
+      browse.setAttribute('aria-expanded', String(open));
+    }
+    browse.addEventListener('click', () => {
+      const open = browse.getAttribute('aria-expanded') === 'false';
+      menu(open);
+      if (open) navigation.querySelector('[aria-current="page"]').focus();
+    });
+    navigation.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && browse.getAttribute('aria-expanded') === 'true') {
+        menu(false);
+        browse.focus();
+      }
+    });
+
+    function activeLink() {
+      return links.find(link => link.hash === location.hash) || links[0];
+    }
+    const manual = document.querySelector('#manual iframe');
+    function scrollManual() {
+      const [page, section] = activeLink().hash.slice(1).split('/');
+      if (page !== 'manual') return;
+      if (section) manual.contentDocument?.getElementById(decodeURIComponent(section))?.scrollIntoView();
+      else manual.contentWindow.scrollTo(0, 0);
+    }
+    manual.addEventListener('load', scrollManual);
+
+    function show() {
+      const selected = activeLink();
+      const page = selected.hash.slice(1).split('/')[0];
+      const manualSections = document.getElementById('manual-sections');
+      if (manualSections) manualSections.hidden = page !== 'manual';
+      current.textContent = selected.textContent;
+      browse.setAttribute('aria-label', 'Browse examples and reference, current page: ' + selected.textContent);
+      for (const link of links) {
+        if (link === selected) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      }
+      for (const panel of panels) {
+        panel.hidden = panel.id !== page;
         const frame = panel.querySelector('iframe[data-src]');
-        if (active && frame) {
+        if (!panel.hidden && frame) {
           frame.src = frame.dataset.src;
           delete frame.dataset.src;
         }
       }
+      scrollManual();
     }
-    function select(tab) {
-      show(tab);
-      const hash = '#' + panelId(tab);
-      if (location.hash !== hash) history.pushState(null, '', hash);
-    }
-    function restore() {
-      show(tabs.find(tab => '#' + panelId(tab) === location.hash) || tabs[0]);
-    }
-    for (const [i, tab] of tabs.entries()) {
-      tab.addEventListener('click', event => {
-        select(tab);
-        // A pointer click enters the demo; keyboard focus stays on the tab strip.
-        if (event.detail) document.getElementById(panelId(tab)).querySelector('iframe').focus();
-      });
-      tab.addEventListener('keydown', event => {
-        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-        const last = tabs.length - 1;
-        const index = { ArrowLeft: (i + last) % tabs.length, ArrowRight: (i + 1) % tabs.length, Home: 0, End: last }[event.key];
-        if (index === undefined) return;
-        event.preventDefault();
-        tabs[index].focus();
-        select(tabs[index]);
-      });
-    }
-    window.addEventListener('hashchange', restore);
-    restore();
+    navigation.addEventListener('click', event => {
+      const link = event.target.closest('a[href^="#"]');
+      if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      if (location.hash !== link.hash) history.pushState(null, '', link.hash);
+      show();
+      const wasOpen = browse.getAttribute('aria-expanded') === 'true';
+      menu(false);
+      if (event.detail) document.querySelector('main > section:not([hidden]) iframe').focus();
+      else if (wasOpen) browse.focus();
+    });
+    window.addEventListener('hashchange', show);
+    show();
   </script>
 </body>
 </html>

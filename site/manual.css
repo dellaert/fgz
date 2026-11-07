@@ -1,0 +1,4 @@
+/* The outer sidebar provides the navigation. MyST still provides search and theme controls. */
+.myst-top-nav-menu-button {
+  display: none;
+}

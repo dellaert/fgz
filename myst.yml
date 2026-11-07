@@ -9,3 +9,6 @@ site:
   options:
     favicon: site/favicon.svg
     logo_text: fgz
+    style: site/manual.css
+    hide_toc: true
+    hide_outline: true

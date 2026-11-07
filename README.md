@@ -17,10 +17,11 @@ Build the offline examples from a checkout with dependencies installed.
 npm run example:browser
 ```
 
-Open either file directly in a browser:
+Open the generated HTML directly in a browser:
 
 - `dist/slam-elimination.html` steps through the six [SLAM elimination diagrams](examples/examples.md#toy-slam-elimination-sequence). Use **←** and **→** or the buttons. **View fgz source** shows the authored file for the current stage.
 - `dist/contact.html` lets you select a variable in the [pose/contact graph](examples/browser/contact.fgz) and inspect its neighborhood.
+- `dist/examples/` contains a standalone applet for every top-level `examples/*.fgz` file. Select a variable or factor to inspect its connections, use the zoom control on dense figures, or expand **FGZ source** to read the diagram.
 
 Each HTML file embeds its code and assets. A web app can import the same renderer from its pinned fgz dependency.
 
@@ -201,9 +202,10 @@ For now, the simplest approach is to copy [tikz/fgz.tikz.tex](tikz/fgz.tikz.tex)
 
 ## Building the examples and reference manual
 
-The site opens the pose/contact demo immediately. The top tabs switch between
-available demos and the MyST reference manual. Each demo also has a standalone
-HTML download.
+The site opens the pose/contact demo immediately. One left sidebar contains the
+featured demos, the example catalog, and the sections of the MyST reference
+manual. On narrow screens, use **Browse** to open the same navigation.
+Each applet has a standalone HTML download.
 
 To build and preview the site, run these commands from the repository root:
 
