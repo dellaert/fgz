@@ -54,6 +54,11 @@ function glyph(parent: Element, radius: number, square: boolean, fill: string) {
     : append(parent, "circle", { r: radius, fill });
 }
 
+function mutedColor(color: string) {
+  const muted = `color-mix(in srgb, ${color} 45%, white)`;
+  return typeof CSS !== "undefined" && !CSS.supports("color", muted) ? color : muted;
+}
+
 type Position = Pick<GraphVariable, "x" | "y">;
 
 type ArrowEndpoint = Position & { radius: number; square: boolean };
@@ -170,6 +175,7 @@ export function renderFactorGraph(
     return { parent: id, child: child.id, group };
   }));
 
+  const mutedInk = mutedColor(ink);
   const factors = graph.factors.map(factor => {
     const color = factor.color ?? stroke;
     const radius = factor.label ? labelRadius(factor.label, 11) : (classic ? classicFactorRadius : 4);
@@ -200,16 +206,20 @@ export function renderFactorGraph(
     }
     const factorFill = classic ? (factor.color ?? classicFactor) : color;
     const shape = glyph(group, radius, factor.shape === "square", factor.label ? "white" : factorFill);
-    if (classic && !factor.label) {
-      shape.setAttribute("stroke", factorFill);
-      shape.setAttribute("stroke-width", "0.67");
+    const border = factor.label ? color : factorFill;
+    const outlined = classic || !!factor.label;
+    if (outlined) shape.setAttribute("stroke-width", factor.label ? "1.5" : "0.67");
+    const text = factor.label ? label(group, factor.label, classic) : undefined;
+    const mutedFill = mutedColor(factorFill);
+    const mutedBorder = mutedColor(border);
+
+    function paint(dimmed: boolean) {
+      // Keep marker fills opaque so the edges drawn to their centers stay covered.
+      if (text) text.setAttribute("fill", dimmed ? mutedInk : ink);
+      else shape.setAttribute("fill", dimmed ? mutedFill : factorFill);
+      if (outlined) shape.setAttribute("stroke", dimmed ? mutedBorder : border);
     }
-    if (factor.label) {
-      shape.setAttribute("stroke", color);
-      shape.setAttribute("stroke-width", "1.5");
-      label(group, factor.label, classic);
-    }
-    return { factor, group, lines, highlightable: options.isHighlightable?.(factor) ?? true };
+    return { factor, group, lines, paint, highlightable: options.isHighlightable?.(factor) ?? true };
   });
 
   const selectableIds = new Set<string>();
@@ -257,14 +267,14 @@ export function renderFactorGraph(
       group.setAttribute("data-active", String(active));
       group.setAttribute("opacity", id === null || active ? "1" : "0.3");
     }
-    for (const { factor, group, lines, highlightable } of factors) {
+    for (const { factor, group, lines, paint, highlightable } of factors) {
       const active = highlightable && id !== null && factor.variables.includes(id);
       const dim = highlightable && id !== null && !active;
       if (active) {
         for (const endpoint of factor.variables) neighbors.add(endpoint);
       }
       group.setAttribute("data-active", String(active));
-      group.setAttribute("opacity", dim ? "0.45" : "1");
+      paint(dim);
       for (const line of lines) {
         line.setAttribute("data-active", String(active));
         line.setAttribute("stroke-width", active ? "2.5" : "1.5");
