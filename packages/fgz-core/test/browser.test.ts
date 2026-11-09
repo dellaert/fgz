@@ -101,6 +101,9 @@ node c {a} (0.5, 0)
     expect(z.getAttribute("data-active")).toBe("false");
     expect(svg.querySelectorAll('[data-factor][data-active="true"]')).toHaveLength(1);
     expect(svg.querySelectorAll('[data-edge][data-active="true"]')).toHaveLength(2);
+    const square = svg.querySelector("[data-factor] rect")!;
+    const dot = svg.querySelector("[data-factor] circle")!;
+    expect(dot.getAttribute("fill")).toBe("color-mix(in srgb, #243438 45%, white)");
 
     for (const key of ["Enter", " "]) {
       const event = new KeyboardEvent("keydown", { key, cancelable: true });
@@ -109,6 +112,9 @@ node c {a} (0.5, 0)
       expect(onSelect).toHaveBeenLastCalledWith("z");
       expect(z.getAttribute("aria-pressed")).toBe("true");
       expect(svg.querySelectorAll('[data-edge][data-active="true"]')).toHaveLength(1);
+      expect(square.getAttribute("fill")).toBe("white");
+      expect(square.getAttribute("stroke")).toBe("color-mix(in srgb, teal 45%, white)");
+      expect(dot.getAttribute("fill")).toBe("#243438");
     }
     setSelection("y");
     expect(y.getAttribute("aria-pressed")).toBe("true");
@@ -116,6 +122,8 @@ node c {a} (0.5, 0)
     expect(() => setSelection("missing")).toThrow(RangeError);
     setSelection(null);
     expect(svg.querySelector('[data-active="true"]')).toBeNull();
+    expect(square.getAttribute("stroke")).toBe("teal");
+    expect(dot.getAttribute("fill")).toBe("#243438");
     expect(onSelect).toHaveBeenCalledTimes(3);
   });
 
@@ -212,9 +220,15 @@ factor {x0, x1} label=motion
     expect(stance.getAttribute("data-active")).toBe("true");
     expect(x1.getAttribute("data-active")).toBe("false");
     expect(first.getAttribute("data-active")).toBe("true");
-    expect(second.getAttribute("opacity")).toBe("0.45");
+    expect(second.hasAttribute("opacity")).toBe(false);
+    expect(second.querySelector("circle")?.getAttribute("fill")).toBe("white");
+    expect(second.querySelector("text")?.getAttribute("fill")).toBe("color-mix(in srgb, #243438 45%, white)");
     expect(motion.getAttribute("data-active")).toBe("false");
-    expect(motion.getAttribute("opacity")).toBe("1");
+    expect(motion.querySelector("text")?.getAttribute("fill")).toBe("#243438");
+    const dimmedId = second.getAttribute("data-factor");
+    for (const edge of svg.querySelectorAll(`[data-factor-id="${dimmedId}"]`)) {
+      expect(edge.getAttribute("opacity")).toBe("0.3");
+    }
     const motionId = motion.getAttribute("data-factor");
     for (const edge of svg.querySelectorAll(`[data-factor-id="${motionId}"]`)) {
       expect(edge.getAttribute("data-active")).toBe("false");
